@@ -45,7 +45,7 @@ const UserAuthForm: () => JSX.Element = () => {
     }
     return (
         <section className="flex items-center justify-center h-screen">
-            <div className="bg-blue-200 w-[400px] h-[400px] flex justify-center rounded-md">
+            <div className="bg-neutral-500 sm:w-[420px] sm:h-[450px] max-sm:w-[300px] max-sm:h-[450px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <h2>LOG IN</h2>
@@ -57,7 +57,7 @@ const UserAuthForm: () => JSX.Element = () => {
                                    placeholder='email'
                                    name='email'
                                    id="email"
-                                   className={'w-full p-1 rounded-[4px] '}
+                                   className={'w-full h-[36px] p-1 rounded-[4px] '}
                                    required
                                    value={formik.values.email}
                                    onChange={formik.handleChange}
@@ -71,7 +71,7 @@ const UserAuthForm: () => JSX.Element = () => {
                                            id='password'
                                            placeholder='Password'
                                            name='password'
-                                           className={'w-full p-1 rounded-[4px]'}
+                                           className={'w-full h-[36px] p-1 rounded-[4px] '}
                                            required
                                            value={formik.values.password}
                                            onChange={formik.handleChange}
