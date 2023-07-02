@@ -7,14 +7,14 @@ interface SignInProps {
 const Login: FC<SignInProps> = ({}) => {
     return (
         <>
-            <div className={'flex justify-center'}>
-                <div className='haha flex justify-center'>
+            <section className={'w-full grid grid-cols-2 gap-2'}>
+                <div className=''>
                     <h1>
                         hahaha
                     </h1>
                 </div>
                 <UserAuthForm/>
-            </div>
+            </section>
         </>
     );
 }
