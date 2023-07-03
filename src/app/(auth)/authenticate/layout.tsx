@@ -7,7 +7,6 @@ export default function Layout({children}: { children: React.ReactNode }) {
                      backgroundSize: 'cover',
                      backgroundRepeat: 'no-repeat',
                  }}>
-        <div className={'absolute h-full w-full bg-black z-10 opacity-50 '}></div>
-        {children}
-    </main>
+        <div className={'absolute h-full w-full bg-black z-10 opacity-70 '}></div>
+        {children}</main>
 }

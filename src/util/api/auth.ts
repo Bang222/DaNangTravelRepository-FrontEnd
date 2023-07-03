@@ -12,7 +12,7 @@ export const loginAPI = async (loginDTO:LoginDTO,router) => {
 export const RegisterApi = async (registerDTO:RegisterDTO,router) => {
     const res = await axios.post('auth/register',registerDTO)
     if(res.data) {
-        router.push('/login', undefined, { shallow: true })
+        router.push('/', undefined, { shallow: true })
     }
     return res
 }

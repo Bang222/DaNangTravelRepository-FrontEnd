@@ -9,7 +9,7 @@ interface SignInProps {
 }
 
 const AuthForm: FC<SignInProps> = ({}) => {
-    const [switchForm, setSwitchForm] = useState<boolean>(false)
+    const [switchForm, setSwitchForm] = useState<boolean>(true)
     return (
         <>
             <section
@@ -29,9 +29,8 @@ const AuthForm: FC<SignInProps> = ({}) => {
                     </div>
                 </div>
                 {switchForm ? <LoginForm setSwitchForm={setSwitchForm}/> : <RegisterForm
-                    setSwitchForm={switchForm ? <LoginForm setSwitchForm={setSwitchForm}/> :
-                        <RegisterForm setSwitchForm ={setSwitchForm}/>}
-                />}
+                    setSwitchForm={setSwitchForm}/>
+                }
             </section>
         </>
     );

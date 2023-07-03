@@ -1,5 +1,5 @@
 'use client'
-import {FC, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {RegisterApi} from "@/util/api/auth";
@@ -9,8 +9,12 @@ import Link from "next/link";
 import {RegisterDTO} from "@/types";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Label from "@/components/ui/Label";
+interface Props{
+    setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-const RegisterForm: () => JSX.Element = () => {
+const RegisterForm: (props) => JSX.Element = (props) => {
+    const {setSwitchForm} = props;
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
     // const [email,setEmail] = useState<string>('')
     // const [password,setPassword] = useState<string>('')
@@ -181,19 +185,15 @@ const RegisterForm: () => JSX.Element = () => {
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.password}</p>
                         </div>
                         <button
-                            className="submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                            className="submit-button max-md:text-[16px] text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
                             type={"submit"}
                         >
                             Register
                         </button>
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
-                        <a href="#" className="text-blue-200">Forgot password</a>
-                    </div>
-                    <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>You got a account?</Paragraph>
-                        <Link className={'text-blue-300 text-[19px] max-md:text-[14px]'} to={'/login'}
-                              href={'/register'}>Login here</Link>
+                        <button onClick={(e) => setSwitchForm(true) } className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Login here</button>
                     </div>
                 </div>
             </div>
