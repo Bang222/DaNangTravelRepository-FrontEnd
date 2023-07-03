@@ -3,7 +3,7 @@ import {cva, VariantProps} from "class-variance-authority";
 import {FC} from "react";
 
 const headingVariants = cva(
-    'dark:text-white lg:text-left font-extrabold leading-tight tracking-tighter',
+    'dark:text-white max-md:text-xl font-extrabold leading-tight tracking-tighter',
     {
         variants: {
             size: {

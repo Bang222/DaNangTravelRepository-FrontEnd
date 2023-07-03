@@ -1,4 +1,5 @@
-import {FC} from 'react';
+import React, {FC} from 'react';
+import AuthForm from "@/components/AuthForm";
 
 interface PageProps {
 }
@@ -7,7 +8,9 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({}) => {
     return (
-        <div> register </div>
+        <section className={"relative flex w-screen container mx-auto px-4 z-50"}>
+            <AuthForm/>
+        </section>
     );
 }
 

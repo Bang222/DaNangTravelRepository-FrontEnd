@@ -3,7 +3,7 @@ import {VariantProps, cva} from 'class-variance-authority'
 import {cn} from "@/util/utils";
 
 export const paragraphVariants = cva(
-    'max-w-prose text-black-700 max-sm:text-[12px] dark:text-black-300 mb-2',
+    'text-black-700 max-sm:text-[12px] dark:text-black-300',
     {
         variants: {
             size: {
@@ -18,12 +18,12 @@ export const paragraphVariants = cva(
     }
 )
 
-interface ParagraphProps
-    extends React.HTMLAttributes<HTMLParagraphElement>,
+interface LabelProps
+    extends React.HTMLAttributes<HTMLLabelElement>,
         VariantProps<typeof paragraphVariants> {
 }
 
-const Paragraph = React.forwardRef<HTMLParagraphElement, ParagraphProps>(
+const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     ({className, size, children, ...props}, ref) => {
         return (
             <p
@@ -36,6 +36,6 @@ const Paragraph = React.forwardRef<HTMLParagraphElement, ParagraphProps>(
     }
 )
 
-Paragraph.displayName = 'Paragraph';
+Label.displayName = 'Label';
 
-export default Paragraph;
+export default Label;

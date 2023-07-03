@@ -4,15 +4,17 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {loginAPI} from "@/util/api/auth";
 import {useRouter} from 'next/navigation';
+import Paragraph from "@/components/ui/Paragraph";
+import Link from "next/link";
 
-const UserAuthForm: () => JSX.Element = () => {
+const LoginForm: () => JSX.Element = () => {
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
     // const [email,setEmail] = useState<string>('')
     // const [password,setPassword] = useState<string>('')
     const router = useRouter()
 
     async function handleLogin(loginDTO, router) {
-        const res = await loginAPI(loginDTO, router)
+        await loginAPI(loginDTO, router)
     }
 
     const formik = useFormik({
@@ -45,14 +47,15 @@ const UserAuthForm: () => JSX.Element = () => {
     }
     return (
         <section className="flex items-center justify-center h-screen">
-            <div className="bg-neutral-500 sm:w-[420px] sm:h-[450px] max-sm:w-[300px] max-sm:h-[450px] flex justify-center rounded-md">
+            <div
+                className="bg-neutral-500 sm:w-[420px] sm:h-[450px] max-sm:w-[300px] max-sm:h-[450px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <h2>LOG IN</h2>
                     </div>
-                    <form onSubmit={formik.handleSubmit}>
+                    <form className={'pb-5'} onSubmit={formik.handleSubmit}>
                         <label>Email</label>
-                        <div className="pt-[8px] pb-[24px]">
+                        <div className="pt-[8px] pb-[24px] text-black">
                             <input type='text'
                                    placeholder='email'
                                    name='email'
@@ -65,13 +68,14 @@ const UserAuthForm: () => JSX.Element = () => {
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.email}</p>
                         </div>
                         <label>Password</label>
-                        <div className="pt-[8px] pb-[24px]">
+                        <div className="pt-[8px] pb-[24px] text-black">
                             {showHidePassword ? <>
                                     <input type='password'
                                            id='password'
                                            placeholder='Password'
                                            name='password'
-                                           className={'w-full h-[36px] p-1 rounded-[4px] '}
+                                           color={'black'}
+                                           className={'w-full h-[36px] p-1 rounded-[4px] text-black '}
                                            required
                                            value={formik.values.password}
                                            onChange={formik.handleChange}
@@ -84,7 +88,7 @@ const UserAuthForm: () => JSX.Element = () => {
                                         fontSize: "inherit",
                                         display: "flex",
                                         justifyContent: "center",
-                                        color: "white"
+                                        color: "black"
                                     }} className="fa-thin fa-eye-slash"/></p>
                                 </> :
                                 <>
@@ -98,30 +102,30 @@ const UserAuthForm: () => JSX.Element = () => {
                                         fontSize: "inherit",
                                         display: "flex",
                                         justifyContent: "center",
-                                        color: "white"
+                                        color: "black"
                                     }} className="fa-thin fa-eye"/></p>
                                 </>
                             }
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.password}</p>
                         </div>
-                        <div className='p-1 pt-[12px] pb-[12px] w-full pl-[36px] pr-[36px]'>
-                            <div className='bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1'>
-                                <button className="submit-button text-[18px] font-medium"
-                                        type={"submit"}
-                                >
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    Log in
-                                </button>
-                            </div>
-                        </div>
+                        <button
+                            className="submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                            type={"submit"}
+                        >
+                            Log in
+                        </button>
                     </form>
+                    <div className={'w-full flex justify-center p-1'}>
+                        <a href="#" className="text-blue-200">Forgot password</a>
+                    </div>
+                    <div className={'w-full flex justify-center p-1'}>
+                        <Paragraph>Do you have a account? </Paragraph>
+                        <Link className={'text-blue-300 text-[19px] max-md:text-[14px]'} href={'/register'}>Register here</Link>
+                    </div>
                 </div>
             </div>
         </section>
     );
 }
 
-export default UserAuthForm;
+export default LoginForm;

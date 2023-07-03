@@ -1,10 +1,18 @@
-import axios from 'axios';
-import {LoginDTO} from "@/types";
+
+import {LoginDTO, RegisterDTO} from "@/types";
+import axios from "../axiosCustomize"
 
 export const loginAPI = async (loginDTO:LoginDTO,router) => {
-    const res = await axios.post('http://localhost:4000/auth/login',loginDTO)
+    const res = await axios.post('auth/login',loginDTO)
     if(res.data) {
-        router.push('/register', undefined, { shallow: true })
+        router.push('/', undefined, { shallow: true })
+    }
+    return res
+}
+export const RegisterApi = async (registerDTO:RegisterDTO,router) => {
+    const res = await axios.post('auth/register',registerDTO)
+    if(res.data) {
+        router.push('/login', undefined, { shallow: true })
     }
     return res
 }
