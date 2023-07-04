@@ -17,12 +17,11 @@ const LoginForm: (props) => JSX.Element = (props) => {
     const router = useRouter()
 
     const [loginError, setLoginError] = useState("");
-    const [myValue, setMyValue] =  useStorage<boolean>('token','localStorage')
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
 
     const { mutate, isLoading } = useMutation(loginAPI, {
         onSuccess: (userRq) => {
-            setMyValue(`${userRq.token}`)
+            localStorage.setItem('token',userRq.token)
             router.push('/');
         },
         onError: (error) => {

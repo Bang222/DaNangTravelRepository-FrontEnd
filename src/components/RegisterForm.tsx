@@ -5,8 +5,6 @@ import * as Yup from "yup";
 import {RegisterApi} from "@/util/api/auth";
 import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
-import Link from "next/link";
-import {RegisterDTO} from "@/types";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Label from "@/components/ui/Label";
 interface Props{
