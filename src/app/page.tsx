@@ -1,9 +1,11 @@
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
       <main className="w-screen h-screen overflow-auto font-poppins">
           <title>Home pages</title>
           <section>
+              <Navbar/>
               <div className="mt-3 text-center">
                   <h1 className="text-[3rem]">Welcome to Blogs Of Bang danh :v</h1>
                   <p>Tour</p>

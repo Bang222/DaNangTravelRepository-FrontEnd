@@ -5,23 +5,34 @@ import * as Yup from "yup";
 import {loginAPI} from "@/util/api/auth";
 import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
-import Link from "next/link";
 import LargeHeading from "@/components/ui/LargeHeading";
+import {useMutation} from "react-query";
+import useStorage from "@/components/hooks/UseStorage";
 interface Props{
     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const LoginForm: (props) => JSX.Element = (props) => {
     const { setSwitchForm } = props
-    const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
-    // const [email,setEmail] = useState<string>('')
-    // const [password,setPassword] = useState<string>('')
     const router = useRouter()
 
-    async function handleLogin(loginDTO, router) {
-        await loginAPI(loginDTO, router)
-    }
+    const [loginError, setLoginError] = useState("");
+    const [myValue, setMyValue] =  useStorage<boolean>('token','localStorage')
+    const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
 
+    const { mutate, isLoading } = useMutation(loginAPI, {
+        onSuccess: (userRq) => {
+            setMyValue(`${userRq.token}`)
+            router.push('/');
+        },
+        onError: (error) => {
+            setLoginError(error.message);
+        },
+    });
+
+    // async function handleLogin(loginDTO) {
+    //     await loginAPI(loginDTO)
+    // }
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -44,7 +55,7 @@ const LoginForm: (props) => JSX.Element = (props) => {
                 email: values.email,
                 password: values.password,
             };
-            handleLogin(loginDTO, router)
+            mutate(loginDTO)
         },
     });
     const handleShowHidePassword = () => {
@@ -53,7 +64,7 @@ const LoginForm: (props) => JSX.Element = (props) => {
     return (
         <section className="flex items-center justify-center h-screen">
             <div
-                className="bg-neutral-500 sm:w-[420px] sm:h-[450px] max-sm:w-[300px] max-sm:h-[450px] flex justify-center rounded-md">
+                className="bg-neutral-500 sm:w-[420px] sm:h-min-[450px] max-sm:w-max-[300px] max-sm:h-[450px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <LargeHeading size="sm">LOG IN</LargeHeading>
@@ -70,7 +81,7 @@ const LoginForm: (props) => JSX.Element = (props) => {
                                    value={formik.values.email}
                                    onChange={formik.handleChange}
                             />
-                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.email}</p>
+                            <Paragraph status={'error'}>{formik.errors.email}</Paragraph>
                         </div>
                         <label>Password</label>
                         <div className="pt-[8px] pb-[24px] text-black">
@@ -111,14 +122,15 @@ const LoginForm: (props) => JSX.Element = (props) => {
                                     }} className="fa-thin fa-eye"/></p>
                                 </>
                             }
-                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.password}</p>
+                            <Paragraph status={'error'}>{formik.errors.password}</Paragraph>
                         </div>
                         <button
                             className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
                             type={"submit"}
                         >
-                            Log in
+                            {isLoading ? "Logging in..." : "Login"}
                         </button>
+                        {loginError && <Paragraph status={"error"} className={'text-center'} >{loginError}</Paragraph>}
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
                         <a href="#" className="text-blue-200 max-md:text-[12px]">Forgot password</a>

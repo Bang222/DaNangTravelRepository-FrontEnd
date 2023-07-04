@@ -66,7 +66,7 @@ const RegisterForm: (props) => JSX.Element = (props) => {
     return (
         <section className="flex items-center justify-center h-screen">
             <div
-                className="bg-neutral-500 sm:w-[500px] sm:h-[700px] max-sm:w-max-[400px] max-sm:h-max-[700px] flex justify-center rounded-md">
+                className="bg-neutral-500 sm:w-[500px] sm:h-min[700px] max-sm:w-max-[400px] max-sm:h-max-[650px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <LargeHeading size="sm" className={'text-center'}>Register</LargeHeading>

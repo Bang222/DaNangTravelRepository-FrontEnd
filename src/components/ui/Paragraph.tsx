@@ -11,9 +11,14 @@ export const paragraphVariants = cva(
                 sm: 'text-sm sm:text-base',
                 lg: 'text-5xl sm:text-5xl',
             },
+            status: {
+                default: '',
+                error:'text-red-500 mb-0 pt-2 sm:text-[14px] max-sm:text-[10px]'
+            }
         },
         defaultVariants: {
             size: 'default',
+            status: 'default'
         },
     }
 )
@@ -24,12 +29,12 @@ interface ParagraphProps
 }
 
 const Paragraph = React.forwardRef<HTMLParagraphElement, ParagraphProps>(
-    ({className, size, children, ...props}, ref) => {
+    ({className, size,status, children, ...props}, ref) => {
         return (
             <p
                 ref={ref}
                 {...props}
-                className={cn(paragraphVariants({size, className}))}>
+                className={cn(paragraphVariants({status, size, className}))}>
                 {children}
             </p>
         )

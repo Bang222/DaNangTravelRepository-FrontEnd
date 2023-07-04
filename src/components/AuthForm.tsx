@@ -1,15 +1,18 @@
 'use client'
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import LoginForm from "@/components/LoginForm";
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import RegisterForm from "@/components/RegisterForm";
+import useStorage from "@/components/hooks/UseStorage";
 
 interface SignInProps {
 }
 
 const AuthForm: FC<SignInProps> = ({}) => {
     const [switchForm, setSwitchForm] = useState<boolean>(true)
+    const [myValue, setMyValue] =  useStorage<boolean>('formAuth','localStorage')
+    useEffect(() => { setMyValue(`${switchForm}`) },[setMyValue, switchForm])
     return (
         <>
             <section

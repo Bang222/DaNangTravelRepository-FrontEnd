@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
@@ -19,8 +21,10 @@
     "eslint-config-next": "13.4.7",
     "formik": "^2.4.2",
     "next": "13.4.7",
+    "next-auth": "^4.22.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-query": "^3.39.3",
     "server-only": "^0.0.1",
     "tailwind-merge": "^1.13.2",
     "typescript": "5.1.6",
