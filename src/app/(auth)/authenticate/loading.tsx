@@ -1,4 +1,6 @@
+'use client'
 import { FC } from "react";
+import {CircularProgress} from "@mui/material";
 
 interface LoadingProps {
 }
@@ -7,7 +9,10 @@ interface LoadingProps {
 
 const Loading: FC<LoadingProps> = ({}) => {
   return (
-    <div> Loading </div>
+      <div className={'flex justify-center items-center relative z-50 h-screen bg-light'}>
+        <CircularProgress color="secondary" />
+      </div>
+
   );
 };
 
