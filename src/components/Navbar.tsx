@@ -162,24 +162,23 @@ export default function PrimarySearchAppBar() {
     );
 
     return (
-        <Box>
-            <AppBar position="static" className={'bg-black md:pl-[48px] md:pr-[48px]'}>
-                <Toolbar className={''}>
+        <Box  sx={{ flexGrow: 1 }}>
+            <AppBar position="static" className={'bg-black'}>
+                <Toolbar className={'w-full max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
                     <Box className={'flex'}>
                         <Typography
                             variant="h6"
                             component="div"
-                            className={'pl-2 pr-2'}
-                            sx={{display: {xs: 'block', sm: 'none'}}}
+                            className={' max-sm:flex  max-sm:items-center  max-sm:pr-3 max-sm:block sm:hidden'}
                         >
                             DN
                         </Typography>
                         <Typography
-                            className={'flex items-center'}
+                            className={'sm:flex items-center block max-sm:hidden'}
                             variant="h6"
                             noWrap
                             component="div"
-                            sx={{display: {xs: 'none', sm: 'block'}}}
+                            // sx={{display: {xs: 'none',sm: 'block',md: 'block'}}}
                         >
                             Danang Travel
                         </Typography>
@@ -190,40 +189,20 @@ export default function PrimarySearchAppBar() {
                             <StyledInputBase
                                 placeholder="Search…"
                                 inputProps={{'aria-label': 'search'}}
+                                className={'sm:w-[400px] lg:w-[250px]'}
                             />
                         </Search>
-                    </Box>
-                    <Toolbar sx={{display: {xs: 'none', md: 'flex'}}} className={'md:justify-self-center w-full max-md:hover:snap-x'}>
+                    </Box >
+                    <Toolbar className={'max-lg:hidden lg:flex w-full justify-between'}>
                         <NavbarChild/>
                     </Toolbar>
-                    <Box sx={{display: {xs: 'none', md: 'flex'}}} className={''}>
+                    <Box className={'flex'}>
                         <Tooltip title="Cart" className={'text-white'}>
                             <IconButton>
                                 <ShoppingCartIcon/>
                             </IconButton>
                         </Tooltip>
-                        <Link href="/authenticate" underline="hover">
-                            <Tooltip title="Log In" className={'text-white'}>
-                                <IconButton>
-                                    <LoginIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
-                        <Link href="/user/:id" underline="hover">
-                            <Tooltip title="Profile" className={'text-white'}>
-                                <IconButton>
-                                    <AccountCircleIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
-                    </Box>
-                    <Box sx={{display: {xs: 'flex', md: 'none'}}}>
-                        <Tooltip title="Cart" className={'text-white'}>
-                            <IconButton>
-                                <ShoppingCartIcon/>
-                            </IconButton>
-                        </Tooltip>
-                        <Link href="/authenticate" underline="hover">
+                        <Link href="/login" underline="hover">
                             <Tooltip title="Log In" className={'text-white'}>
                                 <IconButton>
                                     <LoginIcon/>
@@ -239,7 +218,7 @@ export default function PrimarySearchAppBar() {
                         </Link>
                     </Box>
                 </Toolbar>
-                <Toolbar sx={{display: {xs: 'flex', md: 'none'}}}>
+                <Toolbar className={'max-lg:flex lg:hidden justify-center'}>
                     <NavbarChild/>
                 </Toolbar>
             </AppBar>

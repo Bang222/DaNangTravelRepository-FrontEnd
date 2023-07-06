@@ -7,6 +7,7 @@ import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Label from "@/components/ui/Label";
+import Link from "next/link";
 interface Props{
     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -191,7 +192,7 @@ const RegisterForm: (props) => JSX.Element = (props) => {
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>You got a account?</Paragraph>
-                        <button onClick={(e) => setSwitchForm(true) } className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Login here</button>
+                        <Link to={'/login'}  className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'} href={"/login"}>Login here</Link>
                     </div>
                 </div>
             </div>

@@ -5,14 +5,8 @@ import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Zoom from '@mui/material/Zoom';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import UpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
-import { SxProps } from '@mui/system';
 import {NextPage} from "next";
 import Link from "next/link";
 
@@ -21,7 +15,6 @@ interface TabPanelProps {
     dir?: string;
     index: number;
     value: number;
-    Link:string
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -78,32 +71,10 @@ const NavbarChild:NextPage = () => {
         enter: theme.transitions.duration.enteringScreen,
         exit: theme.transitions.duration.leavingScreen,
     };
-
-    const fabs = [
-        {
-            color: 'primary' as 'primary',
-            sx: fabStyle as SxProps,
-            icon: <AddIcon />,
-            label: 'Add',
-        },
-        {
-            color: 'secondary' as 'secondary',
-            sx: fabStyle as SxProps,
-            icon: <EditIcon />,
-            label: 'Edit',
-        },
-        {
-            color: 'inherit' as 'inherit',
-            sx: { ...fabStyle, ...fabGreenStyle } as SxProps,
-            icon: <UpIcon />,
-            label: 'Expand',
-        },
-    ];
-
     return (
         <Box
             sx={{
-                bgcolor: 'background.paper',
+                // bgcolor: 'background.paper',
                 position: 'relative',
             }}
             className={'w-5/6 snap-mandatory snap-x'}
@@ -121,6 +92,7 @@ const NavbarChild:NextPage = () => {
                     <Tab label="blog" {...a11yProps(0)} />
                     <Tab label="Item Two" {...a11yProps(1)} />
                     <Tab label="Item Three" {...a11yProps(2)} />
+                    <Tab label="Item four" {...a11yProps(3)} />
                 </Tabs>
             </AppBar>
         </Box>

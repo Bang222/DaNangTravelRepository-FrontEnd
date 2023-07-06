@@ -1,7 +1,4 @@
 import Navbar from "@/components/Navbar";
-import {useMutation} from "react-query";
-import {loginAPI} from "@/util/api/auth";
-
 export default function Home() {
   return (
       <main className="w-screen h-screen overflow-auto font-poppins">

@@ -10,9 +10,6 @@ interface SignInProps {
 }
 
 const AuthForm: FC<SignInProps> = ({}) => {
-    const [switchForm, setSwitchForm] = useState<boolean>(true)
-    const [myValue, setMyValue] =  useStorage<boolean>('formAuth','localStorage')
-    useEffect(() => { setMyValue(`${switchForm}`) },[setMyValue, switchForm])
     return (
         <>
             <section
@@ -31,9 +28,7 @@ const AuthForm: FC<SignInProps> = ({}) => {
                             utilities. </Paragraph>
                     </div>
                 </div>
-                {switchForm ? <LoginForm setSwitchForm={setSwitchForm}/> : <RegisterForm
-                    setSwitchForm={setSwitchForm}/>
-                }
+                <LoginForm/>
             </section>
         </>
     );

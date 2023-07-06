@@ -8,12 +8,13 @@ import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import {useMutation} from "react-query";
 import useStorage from "@/components/hooks/UseStorage";
-interface Props{
-    setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
-}
+import Link from "next/link";
+// interface Props{
+//     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
+// }
 
-const LoginForm: (props) => JSX.Element = (props) => {
-    const { setSwitchForm } = props
+const LoginForm: () => JSX.Element = () => {
+    // const { setSwitchForm } = props
     const router = useRouter()
 
     const [loginError, setLoginError] = useState("");
@@ -136,7 +137,7 @@ const LoginForm: (props) => JSX.Element = (props) => {
                     </div>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>Do you have a account? </Paragraph>
-                        <button onClick={(e) => setSwitchForm(false) } className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register here</button>
+                        <Link href="/register" className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register here</Link>
                     </div>
                 </div>
             </div>
