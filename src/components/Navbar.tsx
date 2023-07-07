@@ -9,7 +9,6 @@ import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
@@ -62,7 +61,8 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
-export default function PrimarySearchAppBar() {
+const PrimarySearchAppBar = () => {
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -160,11 +160,14 @@ export default function PrimarySearchAppBar() {
             </MenuItem>
         </Menu>
     );
-
     return (
-        <Box  sx={{ flexGrow: 1 }}>
-            <AppBar position="static" className={'bg-black'}>
-                <Toolbar className={'w-full max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
+        <Box  sx={{
+            width: '100%',
+            height: '100%',
+            backgroundColor:'black'
+        }}>
+            <AppBar position="static" sx={{backgroundColor:'black'}}>
+                <Toolbar sx={{width: '100%',backgroundColor:'black',justifyContent:'center'}}  className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
                     <Box className={'flex'}>
                         <Typography
                             variant="h6"
@@ -193,24 +196,28 @@ export default function PrimarySearchAppBar() {
                             />
                         </Search>
                     </Box >
-                    <Toolbar className={'max-lg:hidden lg:flex w-full justify-between'}>
+                    <Toolbar
+                        variant="h6"
+                        noWrap
+                        component="div"
+                        sx={{ display: { xs:'none',md:'flex',lg:'flex',width: '100%',justifyContent:'between' } }}>
                         <NavbarChild/>
                     </Toolbar>
-                    <Box className={'flex'}>
-                        <Tooltip title="Cart" className={'text-white'}>
+                    <Box sx={{display:'flex'}}>
+                        <Tooltip title="Cart" sx={{color:'white'}}>
                             <IconButton>
                                 <ShoppingCartIcon/>
                             </IconButton>
                         </Tooltip>
                         <Link href="/login" underline="hover">
-                            <Tooltip title="Log In" className={'text-white'}>
+                            <Tooltip title="Log In" sx={{color:'white'}}>
                                 <IconButton>
                                     <LoginIcon/>
                                 </IconButton>
                             </Tooltip>
                         </Link>
                         <Link href="/user/:id" underline="hover">
-                            <Tooltip title="Profile" className={'text-white'}>
+                            <Tooltip title="Profile" sx={{color:'white'}}>
                                 <IconButton>
                                     <AccountCircleIcon/>
                                 </IconButton>
@@ -218,10 +225,11 @@ export default function PrimarySearchAppBar() {
                         </Link>
                     </Box>
                 </Toolbar>
-                <Toolbar className={'max-lg:flex lg:hidden justify-center'}>
+                <Box  sx={{ display: { xs: 'flex', md: 'none' }, justifyContent:'center' }}>
                     <NavbarChild/>
-                </Toolbar>
+                </Box>
             </AppBar>
         </Box>
     );
 }
+export default PrimarySearchAppBar

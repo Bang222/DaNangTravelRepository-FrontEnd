@@ -74,15 +74,15 @@ const NavbarChild:NextPage = () => {
     return (
         <Box
             sx={{
-                // bgcolor: 'background.paper',
+                bgcolor: 'background.paper',
                 position: 'relative',
+                width:'80%',
+
             }}
-            className={'w-5/6 snap-mandatory snap-x'}
         >
-            <AppBar position="static" className="bg-black text-white max-md:text-[12px]">
+            <AppBar position="static" sx={{backgroundColor:'black'}}>
                 <Tabs
                     value={value}
-                    link={Link}
                     onChange={handleChange}
                     textColor="white"
                     variant="fullWidth"
