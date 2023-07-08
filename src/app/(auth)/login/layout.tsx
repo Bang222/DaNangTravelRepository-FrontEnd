@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Layout({children}: { children: React.ReactNode }) {
+export default function RootLayout({children,}: { children: React.ReactNode }) {
     return <main className={'relative text-white w-screen h-screen z-10'}
                  style={{
                      backgroundImage: `url(${'https://vietravelasia.com/api/files/202306271350-27d15e1f93-MAIN%20BANNER-01.jpg'})`,

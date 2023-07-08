@@ -1,15 +1,13 @@
+'use client'
 import * as React from 'react';
-import SwipeableViews from 'react-swipeable-views';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import { useTheme } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Zoom from '@mui/material/Zoom';
-import Fab from '@mui/material/Fab';
 import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
-import { SxProps } from '@mui/system';
 import {NextPage} from "next";
 import Link from "next/link";
 
@@ -102,20 +100,19 @@ const NavbarChild:NextPage = () => {
                     textColor="white"
                     variant="fullWidth"
                     centered
-                    noWrap
                     selectionFollowsFocus={false}
                 >
                     <Link href="/feed" passHref>
-                        <Tab label="Posts" textColor="white" onClick={() => handleChangeIndex(0)}/>
+                        <Tab icon={<PostAddIcon />} sx={{fontSize:'12px'}} label="Posts" textColor="white" onClick={() => handleChangeIndex(0)}/>
                     </Link>
                     <Link href="/" passHref>
-                        <Tab label="home" textColor="white" onClick={() => handleChangeIndex(1)}/>
+                        <Tab label="home" icon={<PostAddIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(1)}/>
                     </Link>
                     <Link href="/#" passHref>
-                        <Tab label="Experience" textColor="white" onClick={() => handleChangeIndex(2)}/>
+                        <Tab label="Experience" icon={<PostAddIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>
                     </Link>
                     <Link href="/#" passHref>
-                        <Tab label="Experience" textColor="white" onClick={() => handleChangeIndex(3)}/>
+                        <Tab label="Experience" icon={<PostAddIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(3)}/>
                     </Link>
                 </Tabs>
 
