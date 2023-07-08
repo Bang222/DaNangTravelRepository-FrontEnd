@@ -18,6 +18,7 @@ export interface UserRequestDTO {
         lastName: string;
         email: string;
         role: string;
+        emailConfirmed:boolean;
     };
 }
 export interface UserDTO {
@@ -26,4 +27,5 @@ export interface UserDTO {
     lastName: string;
     email: string;
     role: string;
+    emailConfirmed:boolean;
 }

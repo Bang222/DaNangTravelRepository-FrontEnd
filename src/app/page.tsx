@@ -4,8 +4,7 @@ export default function Home () {
    return (
       <main>
           <title>Home pages</title>
-          <section>
-                <Navbar/>
+          <section className={'h-10000px'}>
               <div className="mt-3 text-center">
                   <h1 className="text-[3rem]">Welcome to Blogs Of Bang danh :v</h1>
                   <p>Tour</p>

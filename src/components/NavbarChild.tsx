@@ -5,8 +5,11 @@ import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
+import Zoom from '@mui/material/Zoom';
+import Fab from '@mui/material/Fab';
 import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
+import { SxProps } from '@mui/system';
 import {NextPage} from "next";
 import Link from "next/link";
 
@@ -15,6 +18,17 @@ interface TabPanelProps {
     dir?: string;
     index: number;
     value: number;
+}
+function LinkTab(props) {
+    return (
+        <Tab
+            component="a"
+            onClick={event => {
+                event.preventDefault();
+            }}
+            {...props}
+        />
+    );
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -29,7 +43,7 @@ function TabPanel(props: TabPanelProps) {
             aria-labelledby={`action-tab-${index}`}
             {...other}
         >
-                {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+            {value === index && <Link sx={{ p: 3 }} href={children}>{children}</Link>}
         </Typography>
     );
 }
@@ -71,29 +85,40 @@ const NavbarChild:NextPage = () => {
         enter: theme.transitions.duration.enteringScreen,
         exit: theme.transitions.duration.leavingScreen,
     };
+
+
     return (
         <Box
             sx={{
                 bgcolor: 'background.paper',
                 position: 'relative',
-                width:'80%',
-
+                width:'80%'
             }}
         >
-            <AppBar position="static" sx={{backgroundColor:'black'}}>
+            <AppBar position="static" sx={{display:'flex',backgroundColor:'black', color:'white',width:'100%' }}>
                 <Tabs
                     value={value}
                     onChange={handleChange}
                     textColor="white"
                     variant="fullWidth"
+                    centered
                     noWrap
-                    className={'snap-x'}
+                    selectionFollowsFocus={false}
                 >
-                    <Tab label="blog" {...a11yProps(0)} />
-                    <Tab label="Item Two" {...a11yProps(1)} />
-                    <Tab label="Item Three" {...a11yProps(2)} />
-                    <Tab label="Item four" {...a11yProps(3)} />
+                    <Link href="/feed" passHref>
+                        <Tab label="Posts" textColor="white" onClick={() => handleChangeIndex(0)}/>
+                    </Link>
+                    <Link href="/" passHref>
+                        <Tab label="home" textColor="white" onClick={() => handleChangeIndex(1)}/>
+                    </Link>
+                    <Link href="/#" passHref>
+                        <Tab label="Experience" textColor="white" onClick={() => handleChangeIndex(2)}/>
+                    </Link>
+                    <Link href="/#" passHref>
+                        <Tab label="Experience" textColor="white" onClick={() => handleChangeIndex(3)}/>
+                    </Link>
                 </Tabs>
+
             </AppBar>
         </Box>
     );

@@ -7,7 +7,6 @@ import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import {useMutation} from "react-query";
-import useStorage from "@/components/hooks/UseStorage";
 import Link from "next/link";
 // interface Props{
 //     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
@@ -30,9 +29,6 @@ const LoginForm: () => JSX.Element = () => {
         },
     });
 
-    // async function handleLogin(loginDTO) {
-    //     await loginAPI(loginDTO)
-    // }
     const formik = useFormik({
         initialValues: {
             email: "",

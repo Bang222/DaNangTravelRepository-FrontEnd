@@ -20,6 +20,7 @@ import Link from "next/link";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
+import {useUserDetailAPI} from "@/util/api/auth";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -62,6 +63,7 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 }));
 
 const PrimarySearchAppBar = () => {
+    const { data,isLoading, isError,} = useUserDetailAPI();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -200,10 +202,10 @@ const PrimarySearchAppBar = () => {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs:'none',md:'flex',lg:'flex',width: '100%',justifyContent:'between' } }}>
+                        sx={{ display: { xs:'none',sm:'none',md:'flex',lg:'flex',width: '100%',justifyContent:'between' } }}>
                         <NavbarChild/>
                     </Toolbar>
-                    <Box sx={{display:'flex'}}>
+                    <Box className={'flex'}>
                         <Tooltip title="Cart" sx={{color:'white'}}>
                             <IconButton>
                                 <ShoppingCartIcon/>
@@ -212,7 +214,7 @@ const PrimarySearchAppBar = () => {
                         <Link href="/login" underline="hover">
                             <Tooltip title="Log In" sx={{color:'white'}}>
                                 <IconButton>
-                                    <LoginIcon/>
+                                    {data?.id ? '' : <LoginIcon/>}
                                 </IconButton>
                             </Tooltip>
                         </Link>
@@ -225,7 +227,7 @@ const PrimarySearchAppBar = () => {
                         </Link>
                     </Box>
                 </Toolbar>
-                <Box  sx={{ display: { xs: 'flex', md: 'none' }, justifyContent:'center' }}>
+                <Box  sx={{ display: { xs: 'flex',sm:'flex', md: 'none' }, justifyContent:'center' }}>
                     <NavbarChild/>
                 </Box>
             </AppBar>
