@@ -21,6 +21,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -63,7 +64,7 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 }));
 
 const PrimarySearchAppBar = () => {
-    const { data,isLoading, isError,} = useUserDetailAPI();
+    const {data, isLoading, isError,} = useUserDetailAPI();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -163,13 +164,14 @@ const PrimarySearchAppBar = () => {
         </Menu>
     );
     return (
-        <Box  sx={{
+        <Box sx={{
             width: '100%',
             height: '100%',
-            backgroundColor:'black'
+            backgroundColor: 'black'
         }}>
-            <AppBar position="static" sx={{backgroundColor:'black'}}>
-                <Toolbar sx={{width: '100%',backgroundColor:'black',justifyContent:'center'}}  className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
+            <AppBar position="static" sx={{backgroundColor: 'black'}}>
+                <Toolbar sx={{width: '100%', backgroundColor: 'black', justifyContent: 'center'}}
+                         className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
                     <Box className={'flex'}>
                         <Typography
                             variant="h6"
@@ -197,37 +199,58 @@ const PrimarySearchAppBar = () => {
                                 className={'sm:w-[400px] lg:w-[250px]'}
                             />
                         </Search>
-                    </Box >
+                    </Box>
                     <Toolbar
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs:'none',sm:'none',md:'flex',lg:'flex',width: '100%',justifyContent:'between' } }}>
+                        sx={{
+                            display: {
+                                xs: 'none',
+                                sm: 'none',
+                                md: 'flex',
+                                lg: 'flex',
+                                width: '100%',
+                                justifyContent: 'between'
+                            }
+                        }}>
                         <NavbarChild/>
                     </Toolbar>
                     <Box className={'flex'}>
-                        <Tooltip title="Cart" sx={{color:'white'}}>
+                        <Tooltip title="Cart" sx={{color: 'white'}}>
                             <IconButton>
                                 <ShoppingCartIcon/>
                             </IconButton>
                         </Tooltip>
-                        <Link href="/login" underline="hover">
-                            <Tooltip title="Log In" sx={{color:'white'}}>
-                                <IconButton>
-                                    {data?.id ? '' : <LoginIcon/>}
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
-                        <Link href="/user/:id" underline="hover">
-                            <Tooltip title="Profile" sx={{color:'white'}}>
-                                <IconButton>
-                                    <AccountCircleIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
+                        {data ?
+                            <Box sx={{display:'flex'}}>
+                                <Link href="/user/:id" underline="hover">
+                                    <Tooltip title="Profile" sx={{color: 'white'}}>
+                                        <IconButton>
+                                            <AccountCircleIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Link>
+                                <Link href="login">
+                                    <Tooltip title="Log out" sx={{color: 'white'}}>
+                                        <IconButton>
+                                            <LogoutIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Link>
+                            </Box>
+                           :
+                            <Link href="/login" underline="hover">
+                                <Tooltip title="Log In" sx={{color: 'white'}}>
+                                    <IconButton>
+                                        <LoginIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                        }
                     </Box>
                 </Toolbar>
-                <Box  sx={{ display: { xs: 'flex',sm:'flex', md: 'none' }, justifyContent:'center' }}>
+                <Box sx={{display: {xs: 'flex', sm: 'flex', md: 'none'}, justifyContent: 'center'}}>
                     <NavbarChild/>
                 </Box>
             </AppBar>
