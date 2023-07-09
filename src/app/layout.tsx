@@ -15,7 +15,6 @@ export default function RootLayout({children,}: { children: React.ReactNode }) {
         <QueryClientProvider>
             <html lang="en">
                 <body className={inter.className}>
-                     {/*<Navbar/>*/}
                      {children}
                 </body>
             </html>
