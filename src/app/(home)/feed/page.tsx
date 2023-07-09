@@ -1,5 +1,7 @@
 import React, {FC} from 'react';
-import Navbar from "@/components/Navbar";
+import Post from "@/components/Post";
+import CreatePost from "@/components/CreatePost";
+import {useRouter} from "next/router";
 
 interface FeedProps {
 }
@@ -9,8 +11,13 @@ interface FeedProps {
 const Page: FC<FeedProps> = ({}) => {
     return (
         <>
-            <div> Feed </div>
+            <div></div>
+            <div className={'col-span-2'}>
+                <CreatePost/>
+                <Post/>
+            </div>
         </>
+
     );
 }
 

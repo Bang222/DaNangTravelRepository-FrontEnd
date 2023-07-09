@@ -1,21 +1,15 @@
-import Navbar from "@/components/Navbar";
 import React from "react";
-export default function Home () {
-   return (
-      <main>
-          <title>Home pages</title>
-          <section className={'h-10000px'}>
-              <div className="mt-3 text-center">
-                  <h1 className="text-[3rem]">Welcome to Blogs Of Bang danh :v</h1>
-                  <p>Tour</p>
-              </div>
-              <div
-                  className={
-                      'max-w-screen flex flex-col justify-center item-center text-[1.15rem] mt-12'
-                  }
-              >
-              </div>
-          </section>
-      </main>
-  )
+import Post from "@/components/Post";
+import CreatePost from "@/components/CreatePost";
+
+export default function Home() {
+    return (
+        <>
+            <div className="md:block"></div>
+            <div className={'md:col-span-2 col-span-4  w-6/6 p-3.5'}>
+                <CreatePost/>
+                <Post/>
+            </div>
+        </>
+    )
 }
