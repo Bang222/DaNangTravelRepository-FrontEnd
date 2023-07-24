@@ -3,11 +3,11 @@ import {VariantProps, cva} from 'class-variance-authority'
 import {cn} from "@/util/utils";
 
 export const paragraphVariants = cva(
-    'text-black-700 max-sm:text-[8px] dark:text-black-300',
+    'text-black-700',
     {
         variants: {
             size: {
-                default: 'text-base sm:text-lg',
+                default: 'text-base sm:text-[15px]',
                 sm: 'text-sm sm:text-base',
                 lg: 'text-5xl sm:text-5xl',
             },

@@ -2,12 +2,14 @@
 import React, {FC, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {loginAPI} from "@/util/api/auth";
 import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
-import {useMutation} from "react-query";
 import Link from "next/link";
+import {setCookie} from "@/util/api/cookies";
+import {useMutation} from "@tanstack/react-query";
+import {loginAPI} from "@/util/api/apiReuqest";
+import Cookies from "js-cookie";
 // interface Props{
 //     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
 // }
@@ -20,8 +22,9 @@ const LoginForm: () => JSX.Element = () => {
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
 
     const { mutate, isLoading } = useMutation(loginAPI, {
-        onSuccess: (userRq) => {
-            localStorage.setItem('token',userRq.token)
+        onSuccess: (userDTO) => {
+            const token = userDTO.token
+            Cookies.set('token', token)
             router.push('/');
         },
         onError: (error) => {
@@ -36,7 +39,7 @@ const LoginForm: () => JSX.Element = () => {
         },
         validationSchema: Yup.object({
             email: Yup.string()
-                .max(20, "Maximum 20 characters")
+                .max(50, "Maximum 20 characters")
                 .min(6, "Minimum 6 characters")
                 .required("Please Input UserName"),
             password: Yup.string()
@@ -60,7 +63,7 @@ const LoginForm: () => JSX.Element = () => {
     return (
         <section className="flex items-center justify-center h-screen">
             <div
-                className="bg-neutral-500 sm:w-[420px] sm:h-min-[450px] max-sm:w-max-[300px] max-sm:h-[450px] flex justify-center rounded-md">
+                className="bg-neutral-500 sm:w-[420px] sm:h-min-[450px] w-[350px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <LargeHeading size="sm">LOG IN</LargeHeading>
@@ -133,7 +136,7 @@ const LoginForm: () => JSX.Element = () => {
                     </div>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>Do you have a account? </Paragraph>
-                        <Link href="/register" className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register here</Link>
+                        <Link href="/register" className={'flex items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register here</Link>
                     </div>
                 </div>
             </div>

@@ -5,27 +5,37 @@ export interface LoginDTO {
 export interface RegisterDTO {
     firstName: string;
     lastName:string;
-    address?: string;
-    phone?: string;
+    address: string;
+    sex: string;
     email: string;
     password: string;
 }
 export interface UserRequestDTO {
     token: string;
     user?: {
-        id: number;
+        id: string;
         firstName: string;
         lastName: string;
         email: string;
+        sex: string;
+        isEmailValidated: boolean;
+        address: string;
+        phone: string;
+        createdTime: Date;
+        profilePicture: string;
         role: string;
-        emailConfirmed:boolean;
     };
 }
 export interface UserDTO {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
+    sex: string;
+    isEmailValidated: boolean;
+    address: string;
+    phone: string;
+    createdTime: Date;
+    profilePicture: string;
     role: string;
-    emailConfirmed:boolean;
 }

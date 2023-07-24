@@ -1,4 +1,5 @@
-'use client'
+"use client"
+
 import {styled, alpha} from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,13 +16,14 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LoginIcon from '@mui/icons-material/Login';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import React from "react";
+import React, {useEffect} from "react";
 import Link from "next/link";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
-import LogoutIcon from '@mui/icons-material/Logout';
+
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -61,15 +63,13 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
             width: '20ch',
         },
     },
-}));
+}))
 
 const PrimarySearchAppBar = () => {
-    const {data, isLoading, isError,} = useUserDetailAPI();
-
+    const {isLoading, status} = useUserDetailAPI()
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
-
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -163,13 +163,14 @@ const PrimarySearchAppBar = () => {
             </MenuItem>
         </Menu>
     );
+
     return (
         <Box sx={{
             width: '100%',
             height: '100%',
             backgroundColor: 'black'
         }}>
-            <AppBar position="static" sx={{backgroundColor: 'black'}}>
+            <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
                 <Toolbar sx={{width: '100%', backgroundColor: 'black', justifyContent: 'center'}}
                          className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
                     <Box className={'flex'}>
@@ -222,31 +223,41 @@ const PrimarySearchAppBar = () => {
                                 <ShoppingCartIcon/>
                             </IconButton>
                         </Tooltip>
-                        {data ?
-                            <Box sx={{display:'flex'}}>
-                                <Link href="/user/:id" underline="hover">
-                                    <Tooltip title="Profile" sx={{color: 'white'}}>
-                                        <IconButton>
-                                            <AccountCircleIcon/>
-                                        </IconButton>
-                                    </Tooltip>
-                                </Link>
-                                <Link href="login">
-                                    <Tooltip title="Log out" sx={{color: 'white'}}>
-                                        <IconButton>
-                                            <LogoutIcon/>
-                                        </IconButton>
-                                    </Tooltip>
-                                </Link>
-                            </Box>
-                           :
-                            <Link href="/login" underline="hover">
-                                <Tooltip title="Log In" sx={{color: 'white'}}>
-                                    <IconButton>
-                                        <LoginIcon/>
-                                    </IconButton>
-                                </Tooltip>
-                            </Link>
+                        {isLoading ?
+                        <Link href="/login" underline="hover">
+                            <Tooltip title="Log In" sx={{color: 'white'}}>
+                                <IconButton>
+                                    <LoginIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Link> : <>
+                            {status !== "error" ?
+                                <Box sx={{display:'flex'}}>
+                                    <Link href="/user/:id" underline="hover">
+                                        <Tooltip title="Profile" sx={{color: 'white'}}>
+                                            <IconButton>
+                                                <AccountCircleIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Link>
+                                    <a href={'http://localhost:4000/api/logout'}>
+                                        <Tooltip title="Log out" sx={{color: 'white'}}>
+                                            <IconButton>
+                                                <LogoutIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    </a>
+                                </Box>
+                                :
+                        <Link href="/login" underline="hover">
+                            <Tooltip title="Log In" sx={{color: 'white'}}>
+                                <IconButton>
+                                    <LoginIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </Link>
+                            }
+                        </>
                         }
                     </Box>
                 </Toolbar>

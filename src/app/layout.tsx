@@ -1,8 +1,7 @@
 import './globals.css'
 import {Inter} from 'next/font/google'
 import React from "react";
-import QueryClientProvider from "@/components/QueryClientProvider";
-import Navbar from "@/components/Navbar";
+import QueryClientProvider from "@/app/util/Provider";
 
 const inter = Inter({subsets: ['latin']})
 
@@ -15,7 +14,7 @@ export default function RootLayout({children,}: { children: React.ReactNode }) {
         <QueryClientProvider>
             <html lang="en">
                 <body className={inter.className}>
-                     {children}
+                   {children}
                 </body>
             </html>
         </QueryClientProvider>

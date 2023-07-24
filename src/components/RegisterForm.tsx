@@ -2,63 +2,73 @@
 import React, {FC, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {RegisterApi} from "@/util/api/auth";
 import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Label from "@/components/ui/Label";
 import Link from "next/link";
+import {RegisterApi} from "@/util/api/apiReuqest";
+import {useMutation} from "@tanstack/react-query";
 interface Props{
     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const RegisterForm: (props) => JSX.Element = (props) => {
-    const {setSwitchForm} = props;
+const RegisterForm: (props) => JSX.Element = () => {
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
-    // const [email,setEmail] = useState<string>('')
-    // const [password,setPassword] = useState<string>('')
+    const [registerError, setRegisterError] = useState("");
+    const [registerSuccess, setRegisterSuccess] = useState("")
     const router = useRouter()
 
-    const handleRegister = async (RegisterDTO, router) => {
-        await RegisterApi(RegisterDTO, router)
-    }
+
+    const { mutate, isLoading } = useMutation(RegisterApi, {
+        onSuccess: () => {
+            setRegisterSuccess('Confirm your email')
+            setRegisterError('')
+        },
+        onError: (error) => {
+            setRegisterError(error.message);
+            setRegisterSuccess('');
+        },
+    });
 
     const formik = useFormik({
         initialValues: {
             email: "",
             password: "",
+            confirmPassword:'',
             firstName: "",
             lastName: "",
             address: "",
-            phone: "",
+            sex: "",
         },
-        validationSchema: Yup.object({
+        validationSchema: Yup.object().shape({
             firstName: Yup.string().required('Please Input First Name'),
+            lastName: Yup.string().required('Please Input Last Name'),
+            address: Yup.string().required('Please Input Address'),
+            sex:Yup.string().required('null'),
             email: Yup.string()
-                .max(20, "Maximum 20 characters")
+                .max(50, "Maximum 20 characters")
                 .min(6, "Minimum 6 characters")
                 .required("Please Input Email"),
             password: Yup.string()
-                .required("Please Input Password")
-            // .matches(
-            //     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{4,19}$/,
-            //     "Minimum 6 characters, at least one letter, one number, one special character"
-            // ),
+                .required("Please Input Password"),
+            confirmPassword: Yup.string()
+                .required("Please Input Confirm Password").oneOf([Yup.ref('password')],'Password Does not match')
         }),
         onSubmit: (values) => {
             const RegisterDTO = {
-                email: values.email,
-                password: values.password,
                 firstName: values.firstName,
                 lastName: values.lastName,
+                email: values.email,
+                password: values.password,
                 address: values.address,
-                dayOfBirth: values.dayOfBirth,
-                place: values.place,
-                phone: values.phone,
+                sex: values.sex,
             };
-            handleRegister(RegisterDTO, router)
+            console.log(RegisterDTO)
+            mutate(RegisterDTO)
         },
     });
+    console.log(formik)
     const handleShowHidePassword = () => {
         setShowHidePassword(!showHidePassword)
     }
@@ -66,20 +76,20 @@ const RegisterForm: (props) => JSX.Element = (props) => {
         <section className="flex items-center justify-center h-screen">
             <div
                 className="bg-neutral-500 sm:w-[500px] sm:h-min[700px] max-sm:w-max-[400px] max-sm:h-max-[650px] flex justify-center rounded-md">
-                <div className={'p-7 w-full'}>
-                    <div className={'pb-7 text-center font-bold'}>
+                <div className={'pl-7 pr-7 pt-5 pb-3 w-full'}>
+                    <div className={'pb-5 text-center font-bold'}>
                         <LargeHeading size="sm" className={'text-center'}>Register</LargeHeading>
                     </div>
-                    <form className={'pb-5'} onSubmit={formik.handleSubmit}>
+                    <form className={'pb-2'} onSubmit={formik.handleSubmit}>
                         <div className={'grid grid-cols-2 gap-2.5'}>
                             <div>
                                 <Label>First Name</Label>
-                                <div className="pt-[8px] pb-[12px] text-black">
+                                <div className="pt-[4px] pb-[8px] text-black">
                                     <input type='text'
                                            placeholder='firstName'
                                            name='firstName'
                                            id="firstName"
-                                           className={'w-full h-[36px] p-1 rounded-[4px] '}
+                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
                                            required
                                            value={formik.values.firstName}
                                            onChange={formik.handleChange}
@@ -89,53 +99,54 @@ const RegisterForm: (props) => JSX.Element = (props) => {
                             </div>
                             <div>
                                 <Label>Last Name</Label>
-                                <div className="pt-[8px] pb-[12px] text-black">
+                                <div className="pt-[4px] pb-[8px] text-black">
                                     <input type='text'
                                            placeholder='lastName'
                                            name='lastName'
                                            id="lastName"
-                                           className={'w-full h-[36px] p-1 rounded-[4px] '}
+                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
                                            required
                                            value={formik.values.lastName}
                                            onChange={formik.handleChange}
                                     />
-                                    <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.firstName}</p>
+                                    <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.lastName}</p>
                                 </div>
                             </div>
                         </div>
-                        <Label className={'max-md:text-[12px]'}>Phone</Label>
-                        <div className="pt-[8px] pb-[12px] text-black">
-                            <input type='text'
-                                   placeholder='phone'
-                                   name='phone'
-                                   id="phone"
-                                   className={'w-full h-[36px] p-1 rounded-[4px] '}
-                                   required
-                                   value={formik.values.phone}
-                                   onChange={formik.handleChange}
-                            />
-                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.firstName}</p>
-                        </div>
-                        <Label>address</Label>
-                        <div className="pt-[8px] pb-[12px] text-black">
-                            <input type='text'
-                                   placeholder='address'
-                                   name='address'
-                                   id="address"
-                                   className={'w-full h-[36px] p-1 rounded-[4px] '}
-                                   required
-                                   value={formik.values.address}
-                                   onChange={formik.handleChange}
-                            />
-                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.firstName}</p>
+                        <div className={'grid grid-cols-4 gap-2.5'}>
+                            <div className={'col-span-3'}>
+                                <Label>Address</Label>
+                                <div className="pt-[4px] pb-[8px] text-black">
+                                    <input type='text'
+                                           placeholder='City'
+                                           name='address'
+                                           id="address"
+                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                           required
+                                           value={formik.values.address}
+                                           onChange={formik.handleChange}
+                                    />
+                                    <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.address}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <Label htmlFor={'sex'} className={'max-md:text-[12px]'}>Sex:</Label>
+                                <select id={'sex'} value={formik.values.sex} onChange={formik.handleChange} onBlur={formik.handleBlur} className=" rounded-[8px] mt-[4px] h-[32px] text-black">
+                                    <option value=''>Choose</option>
+                                    <option value='Male'>Male</option>
+                                    <option value='Female'>Female</option>
+                                    <option value='LGBT'>LGBT</option>
+                                </select >
+                                <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.sex}</p>
+                            </div>
                         </div>
                         <Label>Email</Label>
-                        <div className="pt-[8px] pb-[12px] text-black">
+                        <div className="pt-[4px] pb-[8px] text-black">
                             <input type='text'
                                    placeholder='email'
                                    name='email'
                                    id="email"
-                                   className={'w-full h-[36px] p-1 rounded-[4px] '}
+                                   className={'w-full h-[32px] p-1 rounded-[4px] '}
                                    required
                                    value={formik.values.email}
                                    onChange={formik.handleChange}
@@ -143,16 +154,29 @@ const RegisterForm: (props) => JSX.Element = (props) => {
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.email}</p>
                         </div>
                         <Label>Password</Label>
-                        <div className="pt-[8px] pb-[12px] text-black">
+                        <div className="pt-[4px] pb-[8px] text-black">
+                            <input type='password'
+                                   placeholder='Password'
+                                   name='password'
+                                   id="password"
+                                   className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                   required
+                                   value={formik.values.password}
+                                   onChange={formik.handleChange}
+                            />
+                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.password}</p>
+                        </div>
+                        <Label>Confirm Password</Label>
+                        <div className="pt-[4px] pb-[24px] text-black">
                             {showHidePassword ? <>
                                     <input type='password'
-                                           id='password'
-                                           placeholder='Password'
-                                           name='password'
+                                           id='confirmPassword'
+                                           placeholder='confirmPassword'
+                                           name='confirmPassword'
                                            color={'black'}
-                                           className={'w-full h-[36px] p-1 rounded-[4px] text-black '}
+                                           className={'w-full h-[32px] p-1 rounded-[4px] text-black '}
                                            required
-                                           value={formik.values.password}
+                                           value={formik.values.confirmPassword}
                                            onChange={formik.handleChange}
 
                                     />
@@ -167,8 +191,8 @@ const RegisterForm: (props) => JSX.Element = (props) => {
                                     }} className="fa-thin fa-eye-slash"/></p>
                                 </> :
                                 <>
-                                    <input type='text' id='password' placeholder='Password'
-                                           value={formik.values.password}
+                                    <input type='text' id='confirmPassword' placeholder='confirmPassword'
+                                           value={formik.values.confirmPassword}
                                            onChange={formik.handleChange}/>
                                     <p className="absolute bottom-50 right-3 top-[24px] cursor-pointer"
                                        onClick={handleShowHidePassword}
@@ -181,19 +205,22 @@ const RegisterForm: (props) => JSX.Element = (props) => {
                                     }} className="fa-thin fa-eye"/></p>
                                 </>
                             }
-                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.password}</p>
+                            <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.confirmPassword}</p>
                         </div>
                         <button
-                            className="submit-button max-md:text-[16px] text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                            className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                            disabled={isLoading}
                             type={"submit"}
                         >
-                            Register
+                            {isLoading ? 'loading': 'Register'}
                         </button>
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>You got a account?</Paragraph>
                         <Link to={'/login'}  className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'} href={"/login"}>Login here</Link>
                     </div>
+                    {registerError && <Paragraph status={"error"} className={'text-center'} >{registerError}</Paragraph> }
+                    {registerSuccess &&  <a href={'https://mail.google.com/mail/u/0/#inbox'}>{registerSuccess} </a>}
                 </div>
             </div>
         </section>

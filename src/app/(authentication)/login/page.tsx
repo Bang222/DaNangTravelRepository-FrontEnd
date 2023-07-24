@@ -1,9 +1,7 @@
 import React, {FC} from 'react';
-import AuthForm from "@/components/AuthForm";
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import LoginForm from "@/components/LoginForm";
-import RegisterForm from "@/components/RegisterForm";
 
 interface PageProps {
 }
@@ -12,7 +10,7 @@ interface PageProps {
 const Page: FC<PageProps> = ({}) => {
     return (
         <>
-            <title>Register</title>
+            <title>Login</title>
             <section className={"relative flex w-screen container mx-auto px-4 z-50"}>
                 <div
                     className={'w-full lg:grid grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:items-center max-sm:flex max-sm:justify-center max-sm:items-center'}>
@@ -30,7 +28,7 @@ const Page: FC<PageProps> = ({}) => {
                                 utilities. </Paragraph>
                         </div>
                     </div>
-                    <RegisterForm/>
+                    <LoginForm/>
                 </div>
             </section>
         </>

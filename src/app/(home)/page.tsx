@@ -2,7 +2,7 @@ import React from "react";
 import Post from "@/components/Post";
 import CreatePost from "@/components/CreatePost";
 
-export default function Home() {
+export default async function Home() {
     return (
         <>
             <div className="md:block"></div>

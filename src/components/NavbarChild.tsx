@@ -47,14 +47,11 @@ const NavbarChild:NextPage = () => {
                     <Link href="/" passHref>
                         <Tab icon={<HomeIcon />} sx={{fontSize:'12px'}} label="Home" textColor="white" onClick={() => handleChangeIndex(0)}/>
                     </Link>
-                    <Link href="/feed" passHref>
-                        <Tab label="Post" icon={<PostAddIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(1)}/>
-                    </Link>
                     <Link href="/tour" passHref>
-                        <Tab label="Tour" icon={<TourIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>
+                        <Tab label="Tour" icon={<TourIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(1)}/>
                     </Link>
                     <Link href="/experience" passHref>
-                        <Tab label="Experience" icon={<MoodIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(3)}/>
+                        <Tab label="Experience" icon={<MoodIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>
                     </Link>
                 </Tabs>
 
