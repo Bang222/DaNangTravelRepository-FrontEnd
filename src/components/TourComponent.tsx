@@ -43,11 +43,14 @@ export default function TourComponent() {
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-    console.log('lakaka', data)
-
     return (
         <>
             {isLoading ? <Paragraph>Loading...</Paragraph> : <> {data?.map((tour: TourDTO) => {
+                const startDate = new Date(tour.startDate);
+                const endDate = new Date(tour.endDate)
+                const formattedStartDate = startDate.toLocaleDateString();
+                const differenceInMilliseconds = endDate - startDate;
+                const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
                 return (
                     <Card sx={{maxWidth: '100%',marginTop:'48px',marginBottom:'48px'}} key={tour.id}>
                         <CardHeader
@@ -81,8 +84,8 @@ export default function TourComponent() {
                                 <Paragraph><b>Name: </b>{tour.name}</Paragraph>
                                 <Paragraph><b>Price: </b>{tour.price}/Per</Paragraph>
                                 <Paragraph><b>Address: </b>{tour.address}</Paragraph>
-                                <Paragraph><b>Day Start: </b>{tour.startDate} <p>{tour.endDate - tour.startDate} days</p></Paragraph>
-                            </Typography>
+                                <Paragraph><b>Day Start: </b>{formattedStartDate} <Paragraph> <b>total:</b> {differenceInDays} days</Paragraph></Paragraph>
+                                </Typography>
                         </CardContent>
                         <div className={'w-full flex justify-center'}>
                             <div style={{backgroundColor: '#A9A9A9', width:'90%' ,height:'1px'}}></div>
