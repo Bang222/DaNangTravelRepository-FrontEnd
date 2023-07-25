@@ -23,6 +23,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
+import {useRouter} from "next/navigation";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -67,6 +68,12 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 
 const PrimarySearchAppBar = () => {
     const {isLoading, status} = useUserDetailAPI()
+    // const router = useRouter()
+    // const handleClickSetNav = () => {
+    //     localStorage.setItem('navChild',String(0))
+    //     router.push('/')
+    // }
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -171,7 +178,7 @@ const PrimarySearchAppBar = () => {
             backgroundColor: 'black'
         }}>
             <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
-                <Toolbar sx={{width: '100%', backgroundColor: 'black', justifyContent: 'center'}}
+                <Toolbar sx={{ width: '100%', backgroundColor: 'black', justifyContent: 'center'}}
                          className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
                     <Box className={'flex'}>
                         <Typography
@@ -179,7 +186,7 @@ const PrimarySearchAppBar = () => {
                             component="div"
                             className={' max-sm:flex  max-sm:items-center  max-sm:pr-3 max-sm:block sm:hidden'}
                         >
-                            DN
+                            <Link href={'/'}>DN</Link>
                         </Typography>
                         <Typography
                             className={'sm:flex items-center block max-sm:hidden'}
@@ -188,7 +195,7 @@ const PrimarySearchAppBar = () => {
                             component="div"
                             // sx={{display: {xs: 'none',sm: 'block',md: 'block'}}}
                         >
-                            Danang Travel
+                            <Link href={'/'}>DaNang Travel</Link>
                         </Typography>
                         <Search className={'rounded-[30px]'}>
                             <SearchIconWrapper>

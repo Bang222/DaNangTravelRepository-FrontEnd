@@ -1,25 +1,23 @@
 'use client'
+
 import * as React from 'react';
 import {styled} from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton, {IconButtonProps} from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import {red} from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import CommentIcon from '@mui/icons-material/Comment';
 import {Tooltip} from "@mui/material";
-import {useGetAllTourApi} from "@/util/api/apiReuqest";
+import {RegisterApi, upVoteTourApi, useGetAllTourApi} from "@/util/api/apiReuqest";
 import {TourDTO} from "@/types/tourDTO";
 import Paragraph from "@/components/ui/Paragraph";
+import {useMutation} from "@tanstack/react-query";
+import ModalCommentOfTour from "@/components/modal/ModalCommentOfTour";
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -36,24 +34,42 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
         duration: theme.transitions.duration.shortest,
     }),
 }));
-
+interface vote {
+    status: boolean;
+    total: number;
+}
 export default function TourComponent() {
     const {data, isLoading} = useGetAllTourApi()
+    const {mutate} = useMutation(upVoteTourApi, {
+        onSuccess: () => {
+           // setTotalVote(dataVote?.total);
+           // setVoteStatus(dataVote?.status);
+        },
+        onError: (error) => {
+            setErr(error.message);
+        },
+    });
+    const [userId, setUserId] = React.useState<string>(localStorage?.getItem('userId'))
+    const {err, setErr} = React.useState<string>('')
     const [expanded, setExpanded] = React.useState(false);
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+    const handleClickUpvote = (tourId: string) => {
+        mutate(tourId)
+    }
     return (
         <>
-            {isLoading ? <Paragraph>Loading...</Paragraph> : <> {data?.map((tour: TourDTO) => {
+            {isLoading ? <Paragraph>Loading...</Paragraph> : <> {data && data?.map((tour: TourDTO) => {
                 const startDate = new Date(tour.startDate);
                 const endDate = new Date(tour.endDate)
                 const formattedStartDate = startDate.toLocaleDateString();
                 const differenceInMilliseconds = endDate - startDate;
                 const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
                 return (
-                    <Card sx={{maxWidth: '100%',marginTop:'48px',marginBottom:'48px'}} key={tour.id}>
+                    <Card sx={{maxWidth: '100%', marginTop: '48px', marginBottom: '48px'}} key={tour.id}>
                         <CardHeader
+                            // src={} alt={}
                             avatar={
                                 <Avatar sx={{bgcolor: red[500]}} aria-label="recipe">
                                     R
@@ -75,68 +91,62 @@ export default function TourComponent() {
                         {/*/>*/}
                         <CardContent>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <div className={'w-full flex justify-center'}>
+                            <div className={'w-full flex justify-center mb-[12px]'}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={tour.imageUrl} alt={'err'} loading={'lazy'}
-                                     className={'h-[300px] object-cover'}/>
+                                     className={'w-full object-cover'}/>
                             </div>
-                            <Typography>
-                                <Paragraph><b>Name: </b>{tour.name}</Paragraph>
-                                <Paragraph><b>Price: </b>{tour.price}/Per</Paragraph>
-                                <Paragraph><b>Address: </b>{tour.address}</Paragraph>
-                                <Paragraph><b>Day Start: </b>{formattedStartDate} <Paragraph> <b>total:</b> {differenceInDays} days</Paragraph></Paragraph>
-                                </Typography>
+                            <div className={'grid grid-flow-col justify-stretch'}>
+                                <div>
+                                    <Paragraph><b>Name: </b>{tour.name}</Paragraph>
+                                    <Paragraph><b>Price: </b>{tour.price}/Per</Paragraph>
+                                    <Paragraph><b>Address: </b>{tour.address}</Paragraph>
+                                    <Paragraph><b>Day Start: </b>{formattedStartDate} <Paragraph>
+                                        <b>Total:</b> {differenceInDays} days</Paragraph></Paragraph>
+                                </div>
+                                <div className={'grid  lg:flex items-end justify-around pb-[10px]'}>
+                                    <button
+                                        className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'}>Detail
+                                    </button>
+                                    <button
+                                        className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'}>Booking
+                                    </button>
+                                </div>
+                            </div>
                         </CardContent>
                         <div className={'w-full flex justify-center'}>
-                            <div style={{backgroundColor: '#A9A9A9', width:'90%' ,height:'1px'}}></div>
+                            <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
                         </div>
-                        <CardActions>
-                            {tour.upVote?.includes(localStorage.getItem('userId')) ?
-                                <IconButton aria-label="add to favorites" sx={{color: 'red'}}>
+                        <CardActions sx={{width: '100%'}}>
+                            {tour.upVote?.includes(userId) ?
+                                <IconButton aria-label="add to favorites" sx={{color: 'red'}}
+                                            onClick={() => handleClickUpvote(tour.id)}
+                                >
                                     <FavoriteIcon/>
                                 </IconButton>
-                                :  <IconButton aria-label="add to favorites" sx={{color: 'black'}}>
+                                : <IconButton aria-label="add to favorites" sx={{color: 'black'}}
+                                              onClick={() => handleClickUpvote(tour.id)}>
                                     <FavoriteIcon/>
                                 </IconButton>
                             }
-                            <Typography>{tour.upVote?.length - 1}</Typography>
-                            <ExpandMore
-                                expand={expanded}
-                                onClick={handleExpandClick}
-                                aria-expanded={expanded}
-                                aria-label="show more"
-                            >
+                            <Typography>{tour.upVote?.length -1}</Typography>
+                            <Typography>
                                 <Tooltip title="comment" placement="top" sx={{color: 'black'}}>
-                                    <CommentIcon/>
+                                    <ModalCommentOfTour
+                                        id={tour.id}
+                                        name={tour.name}
+                                        comments={Number(tour.comments?.length)}
+                                        store={tour.store}
+                                        createdAt={tour.createdAt}
+                                        imageUrl={tour.imageUrl}/>
                                 </Tooltip>
-                            </ExpandMore>
+                            </Typography>
                             <Typography>{tour.comments?.length}</Typography>
                         </CardActions>
                         <div className={'w-full flex justify-center'}>
-                            <div style={{backgroundColor: '#A9A9A9', width:'90%' ,height:'1px'}}></div>
+                            <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
                         </div>
-                        <Collapse in={expanded} timeout="auto" unmountOnExit>
-                            {tour.comments?.map((comment) => {
-                                return (
-                                    <>
-                                        <section className={'flex pt-2 pb-2'}>
-                                            <CardHeader
-                                                avatar={
-                                                    <Avatar  sx={{bgcolor: red[500]}} alt={comment.user.firstName} src={comment.user.profilePicture} aria-label="recipe">
-                                                    </Avatar>
-                                                }
-                                                ></CardHeader>
-                                            <div className={'bg-zinc-300 p-2 rounded-[10px]'}>
-                                                <Paragraph className={'font-bold m-0 text-[10px]'}> {comment.user.firstName} {comment.user.lastName} </Paragraph>
-                                                <Paragraph className={'text-[8px]'}> {comment.content}</Paragraph>
-                                            </div>
-                                        </section>
-                                    </>
-                                )
-                            })}
-                        </Collapse>
                     </Card>
-
                 )
             })} </>}
         </>

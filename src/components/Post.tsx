@@ -18,6 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import LoginIcon from "@mui/icons-material/Login";
 import {Tooltip} from "@mui/material";
+import ModalCommentOfTour from "@/components/modal/ModalCommentOfTour";
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -75,16 +76,13 @@ export default function Post() {
                 <IconButton aria-label="add to favorites" sx={{color: 'black'}}>
                     <FavoriteIcon />
                 </IconButton>
-                <ExpandMore
-                    expand={expanded}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
+                <Typography
                     aria-label="show more"
                 >
                     <Tooltip title="comment" placement="top" sx={{color: 'black'}}>
-                        <CommentIcon />
+                        {/*<ModalCommentOfTour><CommentIcon /></ModalCommentOfTour>*/}
                     </Tooltip>
-                </ExpandMore>
+                </Typography>
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>

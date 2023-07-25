@@ -13,16 +13,7 @@ export interface TourDTO {
     startAddress: string;
     comments?: [
         {
-            id: string;
-            experienceId?: string;
-            tourId?: string;
-            content: string;
-            createdAt: Date;
-            user: {
-                lastName:string;
-                firstName:string;
-                profilePicture: string;
-            }
+           id:string
         }
     ]
     store: {
@@ -34,4 +25,20 @@ export interface TourDTO {
     upVote: string[];
     createdAt: Date;
     status: string;
+}
+export interface CommentTourDTO {
+    id: string;
+    experienceId?: string;
+    tourId?: string;
+    content: string;
+    createdAt: Date;
+    user: {
+        lastName:string;
+        firstName:string;
+        profilePicture: string;
+    }
+}
+export interface voteDTO {
+    status: string[];
+    total: number;
 }

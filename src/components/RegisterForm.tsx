@@ -9,7 +9,8 @@ import Label from "@/components/ui/Label";
 import Link from "next/link";
 import {RegisterApi} from "@/util/api/apiReuqest";
 import {useMutation} from "@tanstack/react-query";
-interface Props{
+
+interface Props {
     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -20,7 +21,7 @@ const RegisterForm: (props) => JSX.Element = () => {
     const router = useRouter()
 
 
-    const { mutate, isLoading } = useMutation(RegisterApi, {
+    const {mutate, isLoading} = useMutation(RegisterApi, {
         onSuccess: () => {
             setRegisterSuccess('Confirm your email')
             setRegisterError('')
@@ -35,7 +36,7 @@ const RegisterForm: (props) => JSX.Element = () => {
         initialValues: {
             email: "",
             password: "",
-            confirmPassword:'',
+            confirmPassword: '',
             firstName: "",
             lastName: "",
             address: "",
@@ -45,7 +46,7 @@ const RegisterForm: (props) => JSX.Element = () => {
             firstName: Yup.string().required('Please Input First Name'),
             lastName: Yup.string().required('Please Input Last Name'),
             address: Yup.string().required('Please Input Address'),
-            sex:Yup.string().required('null'),
+            sex: Yup.string().required('null'),
             email: Yup.string()
                 .max(50, "Maximum 20 characters")
                 .min(6, "Minimum 6 characters")
@@ -53,7 +54,7 @@ const RegisterForm: (props) => JSX.Element = () => {
             password: Yup.string()
                 .required("Please Input Password"),
             confirmPassword: Yup.string()
-                .required("Please Input Confirm Password").oneOf([Yup.ref('password')],'Password Does not match')
+                .required("Please Input Confirm Password").oneOf([Yup.ref('password')], 'Password Does not match')
         }),
         onSubmit: (values) => {
             const RegisterDTO = {
@@ -68,7 +69,6 @@ const RegisterForm: (props) => JSX.Element = () => {
             mutate(RegisterDTO)
         },
     });
-    console.log(formik)
     const handleShowHidePassword = () => {
         setShowHidePassword(!showHidePassword)
     }
@@ -131,12 +131,14 @@ const RegisterForm: (props) => JSX.Element = () => {
                             </div>
                             <div>
                                 <Label htmlFor={'sex'} className={'max-md:text-[12px]'}>Sex:</Label>
-                                <select id={'sex'} value={formik.values.sex} onChange={formik.handleChange} onBlur={formik.handleBlur} className=" rounded-[8px] mt-[4px] h-[32px] text-black">
+                                <select id={'sex'} value={formik.values.sex} onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className=" rounded-[8px] mt-[4px] h-[32px] text-black">
                                     <option value=''>Choose</option>
                                     <option value='Male'>Male</option>
                                     <option value='Female'>Female</option>
                                     <option value='LGBT'>LGBT</option>
-                                </select >
+                                </select>
                                 <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.sex}</p>
                             </div>
                         </div>
@@ -207,20 +209,30 @@ const RegisterForm: (props) => JSX.Element = () => {
                             }
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.confirmPassword}</p>
                         </div>
-                        <button
-                            className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
-                            disabled={isLoading}
-                            type={"submit"}
-                        >
-                            {isLoading ? 'loading': 'Register'}
-                        </button>
+                        {isLoading ?
+                            <button
+                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-zinc-700 rounded-xl flex justify-center shadow-md cursor-progress p-1 pt-[5px] pb-[5px] w-full"
+                                disabled
+                                type={"submit"}
+                            >
+                                Loading...
+                            </button>
+                            :
+                            <button
+                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                                type={"submit"}
+                            >
+                                Register
+                            </button>
+                        }
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>You got a account?</Paragraph>
-                        <Link to={'/login'}  className={'mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'} href={"/login"}>Login here</Link>
+                        <Link to={'/login'} className={'flex justify-center items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}
+                              href={"/login"}>Login here</Link>
                     </div>
-                    {registerError && <Paragraph status={"error"} className={'text-center'} >{registerError}</Paragraph> }
-                    {registerSuccess &&  <a href={'https://mail.google.com/mail/u/0/#inbox'}>{registerSuccess} </a>}
+                    {registerError && <Paragraph status={"error"} className={'text-center'}>{registerError}</Paragraph>}
+                    {registerSuccess && <a className={'flex justify-center text-blue-300 text-[12px] font-bold'} href={'https://mail.google.com/mail/u/0/#inbox'}>{registerSuccess} </a>}
                 </div>
             </div>
         </section>

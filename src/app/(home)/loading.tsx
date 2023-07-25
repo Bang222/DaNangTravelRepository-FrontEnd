@@ -9,10 +9,9 @@ interface LoadingProps {
 
 const Loading: FC<LoadingProps> = ({}) => {
     return (
-        <div className={'flex justify-center items-center absolute z-100 h-screen bg-light'}>
+        <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
             <CircularProgress color="secondary"/>
         </div>
-
     );
 };
 

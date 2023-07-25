@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Post from "@/components/Post";
 import CreatePost from "@/components/CreatePost";
 
