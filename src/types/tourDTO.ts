@@ -12,9 +12,6 @@ export interface TourDTO {
     endingAddress: string;
     startAddress: string;
     comments?: [
-        {
-           id:string
-        }
     ]
     store: {
         id: string;
