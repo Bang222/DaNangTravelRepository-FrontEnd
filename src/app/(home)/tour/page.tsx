@@ -7,6 +7,7 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
+
     return (
         <>
             <div className="lg:block"></div>

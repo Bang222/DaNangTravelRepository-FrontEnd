@@ -1,4 +1,4 @@
-import {LoginDTO, RegisterDTO, UserDTO, UserRequestDTO, voteDTO} from "@/types";
+import {CommentsDTO, commentsDTO, LoginDTO, RegisterDTO, UserDTO, UserRequestDTO, voteDTO} from "@/types";
 import axios from "axios";
 import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";
@@ -8,7 +8,6 @@ import {getCookie} from "@/util/api/cookies";
 export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
         const res = await axios.post('http://localhost:4000/api/auth/login', loginDTO)
-        console.log('haha',endPointAPI.login)
         if (!res.data) {
             throw new Error("can not find user");
         }
@@ -63,5 +62,38 @@ export const getCommentsOfTour = async (tourId: string) => {
         return data
     } catch (err) {
         throw new Error('sorry can not find comments');
+    }
+}
+export const postCommentsOfTour = async (commentDTO :CommentsDTO) => {
+    try {
+        const token = getCookie('token')
+        const res = await axios.post('http://localhost:4000/api/tour/create/comment',commentDTO , {
+            headers: {Authorization : `Bearer ${token}`}
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('sorry can not find comments');
+    }
+}
+export const useGetWeather = () => {
+    try{
+    // const api = {
+    //     key: "05e07e9af78ffd8691289b6165e7423a",
+    //     base: "https://api.openweathermap.org/data/2.5/",
+    // };
+        return useQuery({
+            queryKey: ['weather'],
+            queryFn: async () => {
+                const data = await axios.get('https://api.openweathermap.org/data/2.5/weather?q=DaNang&units=metric&APPID=05e07e9af78ffd8691289b6165e7423a')
+                return data.data
+            },
+            cacheTime: 1000
+        })
+    }catch (err) {
+        console.log('sorry Weather Data not found');
     }
 }

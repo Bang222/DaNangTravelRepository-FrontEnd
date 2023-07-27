@@ -23,7 +23,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
-import {useRouter} from "next/navigation";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -68,11 +67,6 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 
 const PrimarySearchAppBar = () => {
     const {isLoading, status} = useUserDetailAPI()
-    // const router = useRouter()
-    // const handleClickSetNav = () => {
-    //     localStorage.setItem('navChild',String(0))
-    //     router.push('/')
-    // }
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -178,22 +172,24 @@ const PrimarySearchAppBar = () => {
             backgroundColor: 'black'
         }}>
             <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
-                <Toolbar sx={{ width: '100%', backgroundColor: 'black', justifyContent: 'center'}}
-                         className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}>
-                    <Box className={'flex'}>
+                <Toolbar sx={{ display: 'flex',width: '100%', backgroundColor: 'black', justifyContent: 'space-around'}}
+                         // className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}
+                >
+                    <Box sx={{ display: 'flex'}}>
                         <Typography
                             variant="h6"
                             component="div"
-                            className={' max-sm:flex  max-sm:items-center  max-sm:pr-3 max-sm:block sm:hidden'}
+                            sx={{display: {xs: 'flex', sm: 'none'},alignItems:'center', paddingRight: '12px'
+                        }}
+                            // className={' max-sm:flex  max-sm:items-center  max-sm:pr-3 max-sm:block sm:hidden'}
                         >
                             <Link href={'/'}>DN</Link>
                         </Typography>
                         <Typography
-                            className={'sm:flex items-center block max-sm:hidden'}
                             variant="h6"
                             noWrap
                             component="div"
-                            // sx={{display: {xs: 'none',sm: 'block',md: 'block'}}}
+                            sx={{display: {xs: 'none',sm: 'flex',md: 'flex'}}}
                         >
                             <Link href={'/'}>DaNang Travel</Link>
                         </Typography>
@@ -208,23 +204,10 @@ const PrimarySearchAppBar = () => {
                             />
                         </Search>
                     </Box>
-                    <Toolbar
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{
-                            display: {
-                                xs: 'none',
-                                sm: 'none',
-                                md: 'flex',
-                                lg: 'flex',
-                                width: '100%',
-                                justifyContent: 'between'
-                            }
-                        }}>
+                    <div className={'hidden sf7:flex justify-between w-[35%]'}>
                         <NavbarChild/>
-                    </Toolbar>
-                    <Box className={'flex'}>
+                    </div>
+                    <Box sx={{display: 'flex',}}>
                         <Tooltip title="Cart" sx={{color: 'white'}}>
                             <IconButton>
                                 <ShoppingCartIcon/>
@@ -268,9 +251,9 @@ const PrimarySearchAppBar = () => {
                         }
                     </Box>
                 </Toolbar>
-                <Box sx={{display: {xs: 'flex', sm: 'flex', md: 'none'}, justifyContent: 'center'}}>
+                <div className={'flex sf7:hidden justify-around'}>
                     <NavbarChild/>
-                </Box>
+                </div>
             </AppBar>
         </Box>
     );

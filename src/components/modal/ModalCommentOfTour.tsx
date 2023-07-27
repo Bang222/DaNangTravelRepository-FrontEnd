@@ -19,17 +19,20 @@ import CardActions from "@mui/material/CardActions";
 import ClearIcon from '@mui/icons-material/Clear';
 import {Tooltip} from "@mui/material";
 import {useMutation} from "@tanstack/react-query";
-import {getCommentsOfTour} from "@/util/api/apiReuqest";
-import {useState} from "react";
-import {CommentTourDTO} from "@/types";
+import {getCommentsOfTour, postCommentsOfTour} from "@/util/api/apiReuqest";
+import {useEffect, useMemo, useState} from "react";
+import SendIcon from '@mui/icons-material/Send';
+import {CommentsDTO, CommentTourDTO} from "@/types";
+import CommentOfTour from "@/components/commentOfTour";
+import {useUserDetailAPI} from "@/util/api/auth";
 
 const style = {
     position: 'absolute' as 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width:'40%',
-    height:'80%',
+    width: '40%',
+    height: '80%',
     bgcolor: 'background.paper',
     border: '1px solid #000',
     boxShadow: 24,
@@ -44,26 +47,27 @@ const CustomButton = styled(Button)({
 });
 
 export interface props {
+    id: string;
+    name: string;
+    imageUrl: string;
+    comments: number;
+    createdAt: Date;
+    store: {
         id: string;
         name: string;
-        imageUrl: string;
-        comments:number;
-        createdAt:Date;
-        store: {
-            id: string;
-            name: string;
-            slogan: string;
-            isActive: boolean;
-        }
+        slogan: string;
+        isActive: boolean;
+    }
 }
 
 const ModalCommentOfTour: React.FC<props> = ({...props}) => {
+    const {data:userData,isLoading:isLoadingUser, status} = useUserDetailAPI()
     const [commentsError, setCommentsError] = useState("");
     const [commentsSuccess, setCommentsSuccess] = useState("")
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const {mutate,isLoading,data} =useMutation(getCommentsOfTour,{
+    const {mutate, isLoading, data, } = useMutation(getCommentsOfTour, {
         onSuccess: () => {
             setCommentsError('')
         },
@@ -75,30 +79,62 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const handleClickTurnOffModal = () => {
         setOpen(false)
     }
-    const handleClickComments = (tourId:string) => {
+    const handleClickComments = (tourId: string) => {
         mutate(tourId)
     }
+    const [commentError, setCommentError] = useState("");
+    const [content, setContent] = React.useState<string>()
+    const {mutate: mutateComment, data: dataComment} = useMutation(postCommentsOfTour, {
+        onSuccess: () => {
+            return dataComment
+        },
+        onError: (error) => {
+            setCommentError(error.message);
+        }
+    })
+    const handleClickSendComment = (e) => {
+        if (!content?.trim()) return;
+        const commentData = {
+            tourId: props.id,
+            content: content
+        }
+        mutateComment(commentData as CommentsDTO)
+        mutate(props.id)
+        setContent('')
+    }
+    const handleContentChange = (event) => {
+        setContent(event.target.value);
+    };
     return (
         <div className=''>
             <CustomButton onClick={handleOpen}><CommentIcon/></CustomButton>
             <Modal
-                sx={{width: '100%', display: 'flex', justifyContent:'center', alignItems: 'center'}}
+                sx={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                 disableEnforceFocus={true}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Card sx={{height: {xs:'fit-content', md:'90%'}, maxHeight: {xs: '70%'},width: {xs:'80vw',lg:'50vw'}, marginTop: '48px', marginBottom: '48px',overflowY: 'scroll'}}>
+                <Card sx={{
+                    height: {xs: 'fit-content', md: '90%'},
+                    maxHeight: {xs: '70%'},
+                    width: {xs: '80vw', lg: '50vw'},
+                    marginTop: '48px',
+                    marginBottom: '48px',
+                    overflowY: 'scroll',
+                    position: 'relative',
+                    paddingBottom: props.comments > 1 ? '60px' : '50px'
+                }}>
                     <CardHeader
-                        // src={} alt={}
+                        //src={} alt={}
                         avatar={
                             <Avatar sx={{bgcolor: red[500]}} aria-label="recipe">
                                 R
                             </Avatar>
                         }
                         action={
-                            <IconButton aria-label="settings" onClick={handleClickTurnOffModal}>
+                            <IconButton sx={{fontSize: '30px'}} aria-label="settings" onClick={handleClickTurnOffModal}>
                                 <ClearIcon/>
                             </IconButton>
                         }
@@ -107,7 +143,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     />
                     <CardContent>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <div className={'w-full flex justify-center mb-[12px]'}>
+                        <div className={'w-full flex justify-center mb-[12px] h-[450px]'}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={props.imageUrl} alt={'err'} loading={'lazy'}
                                  className={'w-full object-cover'}/>
@@ -135,15 +171,17 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     </div>
                     <CardActions sx={{width: '100%'}}>
                         <Box sx={{display: 'flex', justifyContent: 'space-around', width: '100%'}}>
-                        <Typography sx={{display: 'flex'}}>
-                            <Tooltip title="comment" placement="top" sx={{color: 'black', cursor:'pointer','&:hover': {
-                                backgroundColor: '#D3D3D3',
-                                color: 'blue'
-                            },}} onClick={()=> handleClickComments(props.id)} >
-                                <CommentIcon/>
-                            </Tooltip>
-                            <Paragraph>{props.comments}</Paragraph>
-                        </Typography>
+                            <Typography sx={{display: 'flex'}}>
+                                <Tooltip title="comment" placement="top" sx={{
+                                    color: 'black', cursor: 'pointer', '&:hover': {
+                                        backgroundColor: '#D3D3D3',
+                                        color: 'blue'
+                                    },
+                                }} onClick={(e) => handleClickComments(props.id)}>
+                                    <CommentIcon/>
+                                </Tooltip>
+                                <Paragraph>{props.comments}</Paragraph>
+                            </Typography>
                             <Typography>
                                 <Paragraph className={'text-blue-500'}> see more</Paragraph>
                             </Typography>
@@ -153,23 +191,59 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
                     </div>
                     <CardContent>
-                        {isLoading ? <Paragraph>Loading...</Paragraph> :<>
-                            { data && data?.map((comment:CommentTourDTO) => {return (
-                                <section className={'flex pt-2 pb-2'} key={comment.id}>
-                                    <CardHeader
+                        {isLoading ? <Paragraph>Loading...</Paragraph> : <>
+                            {data && data?.map((comment: CommentTourDTO) => {
+                                return (
+                                    <section className={'flex pt-2 pb-2'} key={comment.id}>
+                                        <CommentOfTour
+                                            user ={comment.user}
+                                            tourId={comment.tourId}
+                                            id={comment.id}
+                                            content = {comment.content}
+                                        />
+                                    </section>
+                                )
+                            })}
+                        </>}
+                    </CardContent>
+                    <CardContent sx={{
+                        position: 'fixed',
+                        paddingTop: 0,
+                        paddingBottom: '0!important',
+                        bottom: {xs: props.comments >= 1 ? '15%' : '15%',md: props.comments >= 1 ? '15%' : '15%'},
+                        backgroundColor: '#B8B8B8',
+                        margin: '0',
+                        width: {xs: '80vw', lg: '50vw'}
+                    }}>
+                        <section className={'flex items-center'}>
+                            <CardHeader sx={{paddingRight: 0, paddingLeft: 0}}
                                         avatar={
-                                            <Avatar  sx={{bgcolor: red[500]}} alt={comment.user.firstName} src={comment.user.profilePicture} aria-label="recipe">
+                                            <Avatar sx={{bgcolor: red[500]}} alt={'user'}
+                                                    aria-label="recipe">
                                             </Avatar>
                                         }
-                                    ></CardHeader>
-                                    <div className={'bg-zinc-300 p-2 rounded-[10px]'}>
-                                        <Paragraph className={'font-bold m-0 text-[10px]'}> {comment.user.firstName} {comment.user.lastName} </Paragraph>
-                                        <Paragraph className={'text-[8px]'}> {comment.content}</Paragraph>
-                                    </div>
-                                </section>
-
-                            )})}
-                             </>}
+                            ></CardHeader>
+                            <div className={' flex justify-center items-center w-[65%] md:w-[80%]'}>
+                                <textarea type='text'
+                                          placeholder='comment'
+                                          name='content'
+                                          id="content"
+                                          className={'flex-1 h-10 p-2 resize-none rounded-lg focus:outline-none  '}
+                                          value={content}
+                                          onChange={handleContentChange}
+                                />
+                            </div>
+                            <div className={'pl-3.5'}>
+                                <Tooltip title="comment" placement="top" sx={{
+                                    color: 'grey', cursor: 'pointer', '&:hover': {
+                                        color: 'blue'
+                                    },
+                                    fontSize: '20px'
+                                }} onClick={(e)=>handleClickSendComment(e)}>
+                                    <SendIcon/>
+                                </Tooltip>
+                            </div>
+                        </section>
                     </CardContent>
                 </Card>
             </Modal>

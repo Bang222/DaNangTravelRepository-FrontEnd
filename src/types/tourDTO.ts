@@ -39,3 +39,7 @@ export interface voteDTO {
     status: string[];
     total: number;
 }
+export interface CommentsDTO{
+    content: string;
+    tourId: string;
+}

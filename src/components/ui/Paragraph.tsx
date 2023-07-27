@@ -11,6 +11,7 @@ export const paragraphVariants = cva(
                 md:'text-3xl sm:text-xl',
                 sm: 'text-sm sm:text-base',
                 lg: 'text-5xl sm:text-5xl',
+                sx: 'text-[8px] sm:text-[12px]'
             },
             status: {
                 default: '',

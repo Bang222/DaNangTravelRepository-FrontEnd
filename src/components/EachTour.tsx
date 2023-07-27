@@ -43,7 +43,6 @@ interface TourDetailProps {
 //bang
 
 const EachTour: FC<TourDetailProps> = ({...tour}) => {
-    const [upVote,setUpVote]= React.useState<>([])
     const {err, setErr} = React.useState<string>('')
     const {mutate,data, isIdle} = useMutation(upVoteTourApi, {
         onSuccess: () => {
@@ -59,7 +58,9 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     }
     const startDate = new Date(tour.startDate);
     const endDate = new Date(tour.endDate)
-    const formattedStartDate = startDate.toLocaleDateString();
+    const createdAt = new Date(tour.createdAt);
+    const formattedStartDate = startDate.toLocaleDateString('es-uk');
+    const formatCreateAt = createdAt.toLocaleDateString('es-uk');
     const differenceInMilliseconds = endDate - startDate;
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
     return (
@@ -77,7 +78,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                     </IconButton>
                 }
                 title={tour.store.name}
-                subheader={tour.createdAt}
+                subheader={formatCreateAt}
             />
             {/*<CardMedia*/}
             {/*    component="img"*/}
@@ -87,18 +88,18 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             {/*/>*/}
             <CardContent>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <div className={'w-full flex justify-center mb-[12px]'}>
+                <div className={'w-full flex justify-center mb-[12px] h-[500px]'}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tour.imageUrl} alt={'err'} loading={'lazy'}
                          className={'w-full object-cover'}/>
                 </div>
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
-                        <Paragraph><b>Name: </b>{tour.name}</Paragraph>
-                        <Paragraph><b>Price: </b>{tour.price}/Per</Paragraph>
-                        <Paragraph><b>Address: </b>{tour.address}</Paragraph>
-                        <Paragraph><b>Day Start: </b>{formattedStartDate} <Paragraph>
-                            <b>Total:</b> {differenceInDays} days</Paragraph></Paragraph>
+                        <Paragraph>Name: <b>{tour.name}</b></Paragraph>
+                        <Paragraph>Price: <b>{tour.price}/Per</b></Paragraph>
+                        <Paragraph>Address: <b>{tour.address}</b></Paragraph>
+                        <Paragraph>Day Start: <b>{formattedStartDate}</b> <Paragraph>
+                            Total: <b>{differenceInDays}Days {differenceInDays -1}Night</b></Paragraph></Paragraph>
                     </div>
                     <div className={'grid  lg:flex items-end justify-around pb-[10px]'}>
                         <button
@@ -144,9 +145,6 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             <div className={'w-full flex justify-center'}>
                 <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
             </div>
-            <CardContent>
-
-            </CardContent>
         </>
     );
 }
