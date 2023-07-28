@@ -61,15 +61,17 @@ export interface props {
 }
 
 const ModalCommentOfTour: React.FC<props> = ({...props}) => {
-    const {data:userData,isLoading:isLoadingUser, status} = useUserDetailAPI()
-    const [commentsError, setCommentsError] = useState("");
+    const [commentData, setCommentData] = useState<CommentTourDTO[]>([])
+    const [commentsError, setCommentsError] = useState<string>("");
     const [commentsSuccess, setCommentsSuccess] = useState("")
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const {mutate, isLoading, data, } = useMutation(getCommentsOfTour, {
-        onSuccess: () => {
+        onSuccess: (data) => {
             setCommentsError('')
+            setCommentData(data)
+
         },
         onError: (error) => {
             setCommentsError(error.message);
@@ -85,8 +87,8 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const [commentError, setCommentError] = useState("");
     const [content, setContent] = React.useState<string>()
     const {mutate: mutateComment, data: dataComment} = useMutation(postCommentsOfTour, {
-        onSuccess: () => {
-            return dataComment
+        onSuccess: (dataComment) => {
+            setCommentData([...commentData,dataComment])
         },
         onError: (error) => {
             setCommentError(error.message);
@@ -99,7 +101,6 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
             content: content
         }
         mutateComment(commentData as CommentsDTO)
-        mutate(props.id)
         setContent('')
     }
     const handleContentChange = (event) => {
@@ -192,7 +193,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     </div>
                     <CardContent>
                         {isLoading ? <Paragraph>Loading...</Paragraph> : <>
-                            {data && data?.map((comment: CommentTourDTO) => {
+                            {commentData && commentData?.map((comment: CommentTourDTO) => {
                                 return (
                                     <section className={'flex pt-2 pb-2'} key={comment.id}>
                                         <CommentOfTour
