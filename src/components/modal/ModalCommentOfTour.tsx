@@ -25,6 +25,7 @@ import SendIcon from '@mui/icons-material/Send';
 import {CommentsDTO, CommentTourDTO} from "@/types";
 import CommentOfTour from "@/components/commentOfTour";
 import {useUserDetailAPI} from "@/util/api/auth";
+import {useSelector} from "react-redux";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -58,10 +59,12 @@ export interface props {
         slogan: string;
         isActive: boolean;
     }
+    commentData: CommentTourDTO[];
+    setCommentData: React.Dispatch<React.SetStateAction<CommentTourDTO[]>>;
 }
 
 const ModalCommentOfTour: React.FC<props> = ({...props}) => {
-    const [commentData, setCommentData] = useState<CommentTourDTO[]>([])
+    const user = useSelector((state) => state.auth.value?.user)
     const [commentsError, setCommentsError] = useState<string>("");
     const [commentsSuccess, setCommentsSuccess] = useState("")
     const [open, setOpen] = React.useState(false);
@@ -70,13 +73,20 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const {mutate, isLoading, data, } = useMutation(getCommentsOfTour, {
         onSuccess: (data) => {
             setCommentsError('')
-            setCommentData(data)
-
+            props.setCommentData(data)
         },
         onError: (error) => {
             setCommentsError(error.message);
             setCommentsSuccess('');
         },
+    })
+    const {mutate: mutateComment, data: dataComment} = useMutation(postCommentsOfTour, {
+        onSuccess: (dataComment) => {
+            props.setCommentData([...props.commentData,dataComment])
+        },
+        onError: (error) => {
+            setCommentError(error.message);
+        }
     })
     const handleClickTurnOffModal = () => {
         setOpen(false)
@@ -86,14 +96,6 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     }
     const [commentError, setCommentError] = useState("");
     const [content, setContent] = React.useState<string>()
-    const {mutate: mutateComment, data: dataComment} = useMutation(postCommentsOfTour, {
-        onSuccess: (dataComment) => {
-            setCommentData([...commentData,dataComment])
-        },
-        onError: (error) => {
-            setCommentError(error.message);
-        }
-    })
     const handleClickSendComment = (e) => {
         if (!content?.trim()) return;
         const commentData = {
@@ -181,7 +183,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                                 }} onClick={(e) => handleClickComments(props.id)}>
                                     <CommentIcon/>
                                 </Tooltip>
-                                <Paragraph>{props.comments}</Paragraph>
+                                <Paragraph>{!props.comments ? props.commentData.length : props.comments  }</Paragraph>
                             </Typography>
                             <Typography>
                                 <Paragraph className={'text-blue-500'}> see more</Paragraph>
@@ -193,7 +195,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     </div>
                     <CardContent>
                         {isLoading ? <Paragraph>Loading...</Paragraph> : <>
-                            {commentData && commentData?.map((comment: CommentTourDTO) => {
+                            {props.commentData && props.commentData?.map((comment: CommentTourDTO) => {
                                 return (
                                     <section className={'flex pt-2 pb-2'} key={comment.id}>
                                         <CommentOfTour
@@ -219,7 +221,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         <section className={'flex items-center'}>
                             <CardHeader sx={{paddingRight: 0, paddingLeft: 0}}
                                         avatar={
-                                            <Avatar sx={{bgcolor: red[500]}} alt={'user'}
+                                            <Avatar sx={{bgcolor: red[500]}} src={user.profilePicture} alt={'user'}
                                                     aria-label="recipe">
                                             </Avatar>
                                         }

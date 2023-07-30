@@ -1,4 +1,4 @@
-import {FC, useMemo} from 'react';
+import {FC, useMemo, useState} from 'react';
 import CardHeader from "@mui/material/CardHeader";
 import Avatar from "@mui/material/Avatar";
 import {red} from "@mui/material/colors";
@@ -12,9 +12,10 @@ import Typography from "@mui/material/Typography";
 import {Tooltip} from "@mui/material";
 import ModalCommentOfTour from "@/components/modal/ModalCommentOfTour";
 import * as React from "react";
-import {TourDTO} from "@/types";
+import {CommentTourDTO, TourDTO} from "@/types";
 import {useMutation} from "@tanstack/react-query";
 import {upVoteTourApi} from "@/util/api/apiReuqest";
+import {useSelector} from "react-redux";
 
 interface TourDetailProps {
     id: string
@@ -43,8 +44,10 @@ interface TourDetailProps {
 //bang
 
 const EachTour: FC<TourDetailProps> = ({...tour}) => {
+    const token = useSelector((state) => state.auth.value?.token)
     const {err, setErr} = React.useState<string>('')
-    const {mutate,data, isIdle} = useMutation(upVoteTourApi, {
+    const [commentData, setCommentData] = useState<CommentTourDTO[]>([])
+    const {mutate,data} = useMutation(upVoteTourApi, {
         onSuccess: () => {
             // setTotalVote(dataVote?.total);
             // setVoteStatus(dataVote?.status);
@@ -54,6 +57,10 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
         },
     });
     const handleClickUpvote = (tourId: string) => {
+        // const data = {
+        //     tourId:tourId,
+        //     token:token
+        // }
         mutate(tourId)
     }
     const startDate = new Date(tour.startDate);
@@ -137,7 +144,10 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                             comments={Number(tour.comments?.length)}
                             store={tour.store}
                             createdAt={tour.createdAt}
-                            imageUrl={tour.imageUrl}/>
+                            imageUrl={tour.imageUrl}
+                            commentData= {commentData}
+                            setCommentData = {setCommentData}
+                        />
                     </Tooltip>
                 </Typography>
                 <Typography>{tour.comments?.length}</Typography>

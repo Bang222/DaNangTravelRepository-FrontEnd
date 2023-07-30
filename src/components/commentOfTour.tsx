@@ -4,6 +4,7 @@ import Avatar from "@mui/material/Avatar";
 import {red} from "@mui/material/colors";
 import Paragraph from "@/components/ui/Paragraph";
 import * as React from "react";
+import {useSelector} from "react-redux";
 
 interface CommentOfTourProps {
     user: {

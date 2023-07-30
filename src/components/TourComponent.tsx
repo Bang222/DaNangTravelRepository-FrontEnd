@@ -7,10 +7,13 @@ import {useGetAllTourApi} from "@/util/api/apiReuqest";
 import {TourDTO} from "@/types/tourDTO";
 import Paragraph from "@/components/ui/Paragraph";
 import EachTour from "@/components/EachTour";
-import {Card} from "@mui/material";
+import {Card, CircularProgress} from "@mui/material";
 import {router} from "next/client";
 import {useRouter} from "next/navigation";
 import {getCookie} from "@/util/api/cookies";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "@/redux/store";
+import {logIn, logOut} from "@/redux/feature/auth-slice";
 
 
 
@@ -21,17 +24,30 @@ interface vote {
 
 export default function TourComponent() {
     const {data, isLoading, isFetching} = useGetAllTourApi()
-    const [userId, setUserId] = React.useState<string>(localStorage?.getItem('userId'))
+    const dispatch = useDispatch<AppDispatch>();
+    const userIdInStore = useSelector((state) => state.auth.value?.user.id )
+    console.log(userIdInStore)
+    const isAuth = useSelector((state) => state.auth.value?.isAuth )
+
+    const [userId, setUserId] = React.useState<string>(userIdInStore)
     const router = useRouter()
     const handleClick = () => {
-       if(!getCookie('token')) {
-           router.push('/login')
-       }
+        if(data) {
+            const configData= {
+                token: getCookie('token'),
+                user: data
+            }
+             dispatch(logIn(configData))
+        }
+        if(!data) {
+            router.push('/login')
+        }
     }
-    console.log({isLoading, isFetching})
     return (
         <>
-            {isLoading ? <Paragraph>Loading...</Paragraph> : <> {data && data?.map((tour: TourDTO) => {
+            {isLoading ? <div className={'flex justify-center items-center h-screen'}>
+                <CircularProgress color="secondary"/>
+            </div> : <> {data && data?.map((tour: TourDTO) => {
                 return (
                     <Card sx={{maxWidth: '100%', marginTop: '48px', marginBottom: '48px'}} key={tour.id} onClick={handleClick} >
                         <EachTour

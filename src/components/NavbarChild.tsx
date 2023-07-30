@@ -14,12 +14,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import TourIcon from '@mui/icons-material/Tour';
 import MoodIcon from '@mui/icons-material/Mood';
 import {useEffect} from "react";
+import {getCookie, setCookie} from "@/util/api/cookies";
 
 const NavbarChild:NextPage = () => {
     const theme = useTheme();
-    const [value, setValue] = React.useState(localStorage?.getItem('navChild') ? Number(localStorage?.getItem('navChild')): 0);
+    const [value, setValue] = React.useState(getCookie('navChild') ? Number(getCookie('navChild')): 0);
     useEffect(()=>{
-        localStorage?.setItem('navChild',String(value))
+        setCookie('navChild',String(value))
     },[value])
     const handleChange = (event: unknown, newValue: number) => {
         setValue(newValue);

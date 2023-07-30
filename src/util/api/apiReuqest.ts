@@ -1,4 +1,4 @@
-import {CommentsDTO, commentsDTO, LoginDTO, RegisterDTO, UserDTO, UserRequestDTO, voteDTO} from "@/types";
+import {CommentsDTO, LoginDTO, RegisterDTO, UserDTO, UserRequestDTO, voteDTO} from "@/types";
 import axios from "axios";
 import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";

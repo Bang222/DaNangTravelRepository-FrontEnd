@@ -1,4 +1,5 @@
-'use client'
+'use client';
+
 import React, {FC, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -6,26 +7,25 @@ import {useRouter} from 'next/navigation';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Link from "next/link";
-import {setCookie} from "@/util/api/cookies";
 import {useMutation} from "@tanstack/react-query";
 import {loginAPI} from "@/util/api/apiReuqest";
-import Cookies from "js-cookie";
-// interface Props{
-//     setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
-// }
+import {setCookie} from "@/util/api/cookies";
+import {logIn} from '@/redux/feature/auth-slice'
+import {useDispatch} from 'react-redux'
+import {AppDispatch} from "@/redux/store";
 
 const LoginForm: () => JSX.Element = () => {
-    // const { setSwitchForm } = props
     const router = useRouter()
-
+    const dispatch = useDispatch<AppDispatch>();
     const [loginError, setLoginError] = useState("");
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
 
-    const { mutate, isLoading } = useMutation(loginAPI, {
-        onSuccess: (userDTO) => {
-            const token = userDTO.token
-            Cookies.set('token', token)
+    const { mutate, isLoading,data:userData } = useMutation(loginAPI, {
+        onSuccess: (userData) => {
+            const token = userData.token
+            setCookie('token', token)
             router.push('/');
+            return  dispatch(logIn(userData));
         },
         onError: (error) => {
             setLoginError(error.message);
