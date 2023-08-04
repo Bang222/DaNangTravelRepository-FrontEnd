@@ -11,7 +11,10 @@ export interface RegisterDTO {
     password: string;
 }
 export interface UserRequestDTO {
-    token: string;
+    token: {
+        access: string;
+        refresh:string;
+    };
     user?: {
         id: string;
         firstName: string;
@@ -38,4 +41,8 @@ export interface UserDTO {
     createdTime: Date;
     profilePicture: string;
     role: string;
+}
+export interface TourIdEndToken {
+    token:string
+    tourId:string
 }

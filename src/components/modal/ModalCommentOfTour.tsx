@@ -26,6 +26,7 @@ import {CommentsDTO, CommentTourDTO} from "@/types";
 import CommentOfTour from "@/components/commentOfTour";
 import {useUserDetailAPI} from "@/util/api/auth";
 import {useSelector} from "react-redux";
+import Slice from "@/components/ui/swiperSlice";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -50,7 +51,7 @@ const CustomButton = styled(Button)({
 export interface props {
     id: string;
     name: string;
-    imageUrl: string;
+    imageUrl: string[];
     comments: number;
     createdAt: Date;
     store: {
@@ -70,7 +71,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const {mutate, isLoading, data, } = useMutation(getCommentsOfTour, {
+    const {mutate, isLoading, data } = useMutation(getCommentsOfTour, {
         onSuccess: (data) => {
             setCommentsError('')
             props.setCommentData(data)
@@ -146,11 +147,9 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     />
                     <CardContent>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <div className={'w-full flex justify-center mb-[12px] h-[450px]'}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={props.imageUrl} alt={'err'} loading={'lazy'}
-                                 className={'w-full object-cover'}/>
-                        </div>
+                        <section className={'mb-4'}>
+                            <Slice previewImage ={props.imageUrl}  />
+                        </section>
                         <div className={'grid grid-flow-col justify-stretch'}>
                             <div>
                                 <Paragraph size={"md"}><b>Name: </b>{props.name}</Paragraph>
@@ -183,7 +182,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                                 }} onClick={(e) => handleClickComments(props.id)}>
                                     <CommentIcon/>
                                 </Tooltip>
-                                <Paragraph>{!props.comments ? props.commentData.length : props.comments  }</Paragraph>
+                                <Paragraph>{ props.commentData.length }</Paragraph>
                             </Typography>
                             <Typography>
                                 <Paragraph className={'text-blue-500'}> see more</Paragraph>

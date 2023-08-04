@@ -4,7 +4,10 @@ type InitialState = {
     value: AuthState
 }
 type AuthState = {
-    token: string;
+    token: {
+        access: string;
+        refresh: string;
+    };
     isAuth: boolean;
     isModerator:boolean;
     user: {
@@ -23,7 +26,10 @@ type AuthState = {
 }
 const initialState = {
     value: {
-        token:'',
+        token: {
+            access: '',
+            refresh: '',
+        },
         isAuth: false,
         isModerator: false,
         user: {
@@ -50,29 +56,13 @@ export const auth = createSlice({
             return {
                 value: {
                     isAuth: true,
-                    token:action.payload.token,
+                    token: action.payload.token,
                     isModerator:false,
                     user: action.payload.user
                 },
             };
         },
-        // toggleModerator: (state) => {
-        //     state.value.isModerator = !state
-        // }
     }
 })
 export const {logIn, logOut} = auth.actions;
 export default auth.reducer
-// {
-//     id: action.payload.user?.id,
-//         firstName: action.payload.user?.firstName,
-//     lastName: action.payload.user?.lastName,
-//     email: action.payload.user?.email,
-//     sex: action.payload.user?.sex,
-//     isEmailValidated: action.payload.user?.isEmailValidated,
-//     address: action.payload.user?.address,
-//     phone: action.payload.user?.phone,
-//     createdTime: action.payload.user?.createdTime,
-//     profilePicture: action.payload.user?.profilePicture,
-//     role: action.payload.user?.role,
-// }

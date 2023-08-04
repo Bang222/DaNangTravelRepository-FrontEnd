@@ -22,11 +22,12 @@ const LoginForm: () => JSX.Element = () => {
 
     const { mutate, isLoading,data:userData } = useMutation(loginAPI, {
         onSuccess: (userData) => {
-            const token = userData.token
+            const token = userData.token.access
             setCookie('token', token)
+            console.log(token)
+            dispatch(logIn(userData));
             router.push('/');
-            return  dispatch(logIn(userData));
-        },
+            },
         onError: (error) => {
             setLoginError(error.message);
         },

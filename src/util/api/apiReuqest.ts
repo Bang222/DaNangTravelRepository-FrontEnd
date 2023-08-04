@@ -1,4 +1,13 @@
-import {CommentsDTO, LoginDTO, RegisterDTO, UserDTO, UserRequestDTO, voteDTO} from "@/types";
+import {
+    CommentsDTO,
+    LoginDTO,
+    RegisterDTO,
+    TourDetailInterface,
+    TourIdEndToken,
+    UserDTO,
+    UserRequestDTO,
+    voteDTO
+} from "@/types";
 import axios from "axios";
 import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";
@@ -20,28 +29,32 @@ export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
 export const RegisterApi = async (registerDTO: RegisterDTO) => {
     try {
         return await axios.post('http://localhost:4000/api/auth/register', registerDTO)
-    } catch(e) {
+    } catch (e) {
         throw new Error('Email Registered')
     }
 }
 export const useGetAllTourApi = () => {
     try {
-        return useQuery<TourDTO[],Error>({
-            queryKey:['All-Tour'],
+        return useQuery<TourDTO[], Error>({
+            queryKey: ['All-Tour'],
             queryFn: async () => {
                 const data = await axios.get('http://localhost:4000/api/tour/all')
                 return data.data as TourDTO[]
             },
             cacheTime: 5000
         })
-    } catch(e) {
+    } catch (e) {
         throw new Error(e)
     }
 }
 export const upVoteTourApi = async (tourId: string) => {
     try {
-        const res = await axios.post('http://localhost:4000/api/tour/upvote', {tourId: tourId} , {
-            headers: {Authorization: `bearer ${getCookie('token')}`}
+        const userId = localStorage.getItem('userId');
+        const res = await axios.post('http://localhost:4000/api/tour/upvote', {tourId: tourId}, {
+            headers: {
+                Authorization: `bearer ${getCookie('token')}`,
+                "x-client-id": userId
+            }
         })
         if (!res.data) {
             throw new Error("can not find tour");
@@ -64,11 +77,14 @@ export const getCommentsOfTour = async (tourId: string) => {
         throw new Error('sorry can not find comments');
     }
 }
-export const postCommentsOfTour = async (commentDTO :CommentsDTO) => {
+export const postCommentsOfTour = async (commentDTO: CommentsDTO) => {
     try {
+        const userId = localStorage.getItem('userId');
         const token = getCookie('token')
-        const res = await axios.post('http://localhost:4000/api/tour/create/comment',commentDTO , {
-            headers: {Authorization : `Bearer ${token}`}
+        const res = await axios.post('http://localhost:4000/api/tour/create/comment', commentDTO, {
+            headers: {Authorization: `Bearer ${token}`,
+            "x-client-id": userId
+            }
         })
         if (!res.data) {
             throw new Error("can not found");
@@ -80,11 +96,7 @@ export const postCommentsOfTour = async (commentDTO :CommentsDTO) => {
     }
 }
 export const useGetWeather = () => {
-    try{
-    // const api = {
-    //     key: "05e07e9af78ffd8691289b6165e7423a",
-    //     base: "https://api.openweathermap.org/data/2.5/",
-    // };
+    try {
         return useQuery({
             queryKey: ['weather'],
             queryFn: async () => {
@@ -93,7 +105,24 @@ export const useGetWeather = () => {
             },
             cacheTime: 1000
         })
-    }catch (err) {
+    } catch (err) {
         console.log('sorry Weather Data not found');
+    }
+}
+export const getTourById = async (tourIdEndToken: TourIdEndToken) => {
+    try {
+        const userId = localStorage.getItem('userId');
+        const res = await axios.post('http://localhost:4000/api/tour-by-id', {tourId: tourIdEndToken.tourId}, {
+            headers: {Authorization: `Bearer ${tourIdEndToken.token}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as TourDetailInterface
+    } catch (err) {
+        throw new Error('sorry can not find comments');
     }
 }

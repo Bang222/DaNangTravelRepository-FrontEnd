@@ -6,15 +6,19 @@ import {useSelector} from "react-redux";
 
 export const useUserDetailAPI = () => {
     try {
-        const tokenRedux = useSelector((state)=> state.auth.value?.token)
+        const tokenRedux = useSelector((state) => state.auth.value?.token.access)
+        const userId = useSelector((state) => state.auth.value?.user.id)
         const tokenCookie = getCookie('token')
-        let token = tokenCookie ? tokenCookie:tokenRedux
+        let token = tokenCookie ? tokenCookie : tokenRedux
         return useQuery({
             queryFn: async () => {
-                const data = await axios.get('http://localhost:4000/api/user-detail',{
-                    headers: {"Authorization": `Bearer ${token}`}
+                const data = await axios.get('http://localhost:4000/api/user-detail', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "x-client-id": userId
+                    }
                 })
-                localStorage.setItem('userId',data.data.id)
+                localStorage.setItem('userId', data.data.id)
                 return data as UserDTO
             }
         })

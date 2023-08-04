@@ -8,8 +8,7 @@ import {TourDTO} from "@/types/tourDTO";
 import Paragraph from "@/components/ui/Paragraph";
 import EachTour from "@/components/EachTour";
 import {Card, CircularProgress} from "@mui/material";
-import {router} from "next/client";
-import {useRouter} from "next/navigation";
+import { useRouter} from "next/navigation";
 import {getCookie} from "@/util/api/cookies";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "@/redux/store";
@@ -26,20 +25,13 @@ export default function TourComponent() {
     const {data, isLoading, isFetching} = useGetAllTourApi()
     const dispatch = useDispatch<AppDispatch>();
     const userIdInStore = useSelector((state) => state.auth.value?.user.id )
-    console.log(userIdInStore)
     const isAuth = useSelector((state) => state.auth.value?.isAuth )
 
     const [userId, setUserId] = React.useState<string>(userIdInStore)
     const router = useRouter()
+    const auth = useSelector((state) => state.auth.value?.isAuth)
     const handleClick = () => {
-        if(data) {
-            const configData= {
-                token: getCookie('token'),
-                user: data
-            }
-             dispatch(logIn(configData))
-        }
-        if(!data) {
+        if(auth === false) {
             router.push('/login')
         }
     }

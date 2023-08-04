@@ -23,6 +23,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
+import {useRouter} from "next/navigation";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "@/redux/store";
+import {logOut} from "@/redux/feature/auth-slice";
+import {removeCookie} from "@/util/api/cookies";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -65,9 +70,11 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }))
 
-const PrimarySearchAppBar = () => {
+const PrimarySearchAppBar: React.FC = () => {
     const {isLoading, status} = useUserDetailAPI()
-
+    const isAuth = useSelector((state) => state.auth.value?.isAuth)
+    const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter()
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -77,7 +84,11 @@ const PrimarySearchAppBar = () => {
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
-
+    const handleClickLogOut = () => {
+        dispatch(logOut())
+        removeCookie('token')
+        router.push('/')
+    }
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
@@ -164,7 +175,6 @@ const PrimarySearchAppBar = () => {
             </MenuItem>
         </Menu>
     );
-
     return (
         <Box sx={{
             width: '100%',
@@ -213,15 +223,7 @@ const PrimarySearchAppBar = () => {
                                 <ShoppingCartIcon/>
                             </IconButton>
                         </Tooltip>
-                        {isLoading ?
-                        <Link href="/login" underline="hover">
-                            <Tooltip title="Log In" sx={{color: 'white'}}>
-                                <IconButton>
-                                    <LoginIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Link> : <>
-                            {status !== "error" ?
+                            { isAuth === true ?
                                 <Box sx={{display:'flex'}}>
                                     <Link href="/user/:id" underline="hover">
                                         <Tooltip title="Profile" sx={{color: 'white'}}>
@@ -230,13 +232,13 @@ const PrimarySearchAppBar = () => {
                                             </IconButton>
                                         </Tooltip>
                                     </Link>
-                                    <a href={'http://localhost:4000/api/logout'}>
+                                    <Typography onClick={handleClickLogOut}>
                                         <Tooltip title="Log out" sx={{color: 'white'}}>
                                             <IconButton>
                                                 <LogoutIcon/>
                                             </IconButton>
                                         </Tooltip>
-                                    </a>
+                                    </Typography>
                                 </Box>
                                 :
                         <Link href="/login" underline="hover">
@@ -247,8 +249,6 @@ const PrimarySearchAppBar = () => {
                             </Tooltip>
                         </Link>
                             }
-                        </>
-                        }
                     </Box>
                 </Toolbar>
                 <div className={'flex sf7:hidden justify-around'}>

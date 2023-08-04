@@ -13,15 +13,11 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import HomeIcon from '@mui/icons-material/Home';
 import TourIcon from '@mui/icons-material/Tour';
 import MoodIcon from '@mui/icons-material/Mood';
-import {useEffect} from "react";
-import {getCookie, setCookie} from "@/util/api/cookies";
 
 const NavbarChild:NextPage = () => {
     const theme = useTheme();
-    const [value, setValue] = React.useState(getCookie('navChild') ? Number(getCookie('navChild')): 0);
-    useEffect(()=>{
-        setCookie('navChild',String(value))
-    },[value])
+
+    const [value, setValue] = React.useState();
     const handleChange = (event: unknown, newValue: number) => {
         setValue(newValue);
     };
