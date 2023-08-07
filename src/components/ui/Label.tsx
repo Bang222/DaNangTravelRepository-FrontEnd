@@ -3,7 +3,7 @@ import {VariantProps, cva} from 'class-variance-authority'
 import {cn} from "@/util/utils";
 
 export const paragraphVariants = cva(
-    'text-black-700',
+    'text-black-700 py-2',
     {
         variants: {
             size: {
@@ -27,7 +27,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
     ({className, size, children, ...props}, ref) => {
         return (
             <p
-                ref={ref}
+                ref={...ref}
                 {...props}
                 className={cn(paragraphVariants({size, className}))}>
                 {children}
