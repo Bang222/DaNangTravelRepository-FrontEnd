@@ -73,7 +73,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     }
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
-        month:'short',
+        month:'numeric',
         day: 'numeric',
     }
     const startDate: Date = new Date(tour.startDate);
@@ -100,20 +100,11 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 title={tour.store.name}
                 subheader={formatCreateAt}
             />
-            {/*<CardMedia*/}
-            {/*    component="img"*/}
-            {/*    height="194"*/}
-            {/*    image="/static/images/cards/paella.jpg"*/}
-            {/*    alt="Paella dish"*/}
-            {/*/>*/}
+
             <CardContent>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {/*<div className={'w-full flex justify-center mb-[12px] h-[500px]'}>*/}
                 <section className={'mb-4'}>
                   <Slice previewImage ={previewImage}  />
                 </section>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {/*</div>*/}
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
                         <Paragraph>Name: <b>{tour.name}</b></Paragraph>

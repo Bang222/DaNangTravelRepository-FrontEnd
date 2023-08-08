@@ -65,7 +65,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [errorBooking, setErrorDataBooking] = React.useState<string>(null)
     const [isSuccesses, setIsSuccesses] = React.useState<boolean>()
 
-    const {mutate: mutateBooking, isLoading: isLoadingBooking, status,isSuccess} = useMutation(
+    const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
         async () => {
             try {
                 const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
@@ -382,7 +382,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         mutate(data)
     }, [])
 
-    useEffect( () => {
+    useEffect(() => {
             if (isSuccesses) {
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
@@ -401,7 +401,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 // router.push('/payment')
             }
         }
-    ,[isSuccesses])
+        , [isSuccesses])
     return (
         <>
             {!params ? router.push('/notfound') : <section className={'font-poppins bg-neutral-400'}>
@@ -841,7 +841,6 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                         maxHeight: 'max-content',
                                         maxWidth: '100%',
                                         mx: 'auto',
-                                        // to make the demo resizable
                                         marginY: '8px',
                                         overflow: 'auto',
                                         resize: 'none',
@@ -879,8 +878,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                         </Grid>
                     </Container>
                     {!errorBooking ?
-                       ''
-                        :  <div className={'nh:w-[74%] flex justify-center'}>
+                        ''
+                        : <div className={'nh:w-[74%] flex justify-center'}>
                             <Paragraph className={'font-bold text-center'} size="sx"
                                        status={'error'}>{errorBooking}</Paragraph>
                         </div>

@@ -153,18 +153,8 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         <div className={'grid grid-flow-col justify-stretch'}>
                             <div>
                                 <Paragraph size={"md"}><b>Name: </b>{props.name}</Paragraph>
-                                {/*<Paragraph><b>Price: </b>{props.price}/Per</Paragraph>*/}
-                                {/*<Paragraph><b>Address: </b>{props.address}</Paragraph>*/}
-                                {/*<Paragraph><b>Day Start: </b>{props.formattedStartDate} <Paragraph>*/}
-                                {/*    <b>Total:</b> {props.differenceInDays} days</Paragraph></Paragraph>*/}
                             </div>
                             <div className={'grid lg:flex items-end justify-center lg:justify-end pb-[10px]'}>
-                                {/*<button*/}
-                                {/*    className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'}>Detail*/}
-                                {/*</button>*/}
-                                {/*<button*/}
-                                {/*    className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full lg:ml-4 lg:mr-5'}>Booking*/}
-                                {/*</button>*/}
                             </div>
                         </div>
                     </CardContent>
