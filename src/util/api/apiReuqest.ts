@@ -1,4 +1,5 @@
 import {
+    BookingDTO,
     CommentsDTO,
     LoginDTO,
     RegisterDTO,
@@ -114,6 +115,22 @@ export const getTourById = async (tourIdEndToken: TourIdEndToken) => {
         const userId = localStorage.getItem('userId');
         const res = await axios.post('http://localhost:4000/api/tour-by-id', {tourId: tourIdEndToken.tourId}, {
             headers: {Authorization: `Bearer ${tourIdEndToken.token}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as TourDetailInterface
+    } catch (err) {
+        throw new Error('sorry can not find comments');
+    }
+}
+export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, userId:string,tourId: string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/booking/${tourId}`, bookingDTO, {
+            headers: {Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })

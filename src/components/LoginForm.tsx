@@ -70,7 +70,7 @@ const LoginForm: () => JSX.Element = () => {
                         <LargeHeading size="sm">LOG IN</LargeHeading>
                     </div>
                     <form className={'pb-5'} onSubmit={formik.handleSubmit}>
-                        <label>Email</label>
+                        <label  className={'font-bold'}>Email</label>
                         <div className="pt-[8px] pb-[24px] text-black">
                             <input type='text'
                                    placeholder='email'
@@ -83,7 +83,7 @@ const LoginForm: () => JSX.Element = () => {
                             />
                             <Paragraph status={'error'}>{formik.errors.email}</Paragraph>
                         </div>
-                        <label>Password</label>
+                        <label className={'font-bold'}>Password</label>
                         <div className="pt-[8px] pb-[24px] text-black">
                             {showHidePassword ? <>
                                     <input type='password'

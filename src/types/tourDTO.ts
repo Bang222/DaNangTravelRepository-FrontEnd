@@ -100,3 +100,20 @@ export interface TourDetailInterface {
 
     ]
 }
+export interface BookingDTO {
+    email: string;
+    firstName: string;
+    fullName: string;
+    adultPassengers: number;
+    childPassengers?: number;
+    toddlerPassengers?: number;
+    infantPassengers?: number;
+    address: string;
+    phone: string;
+    passenger?: {
+        name: string;
+        type: string;
+        sex: string;
+        dayOfBirth?: number;
+    }
+}
