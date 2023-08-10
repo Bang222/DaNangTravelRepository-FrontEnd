@@ -1,7 +1,9 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useRef, useState} from 'react';
 import * as React from "react";
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Navigation, Pagination, Scrollbar, A11y, FreeMode, Thumbs} from 'swiper/modules';
+import {Navigation, Pagination, Scrollbar, A11y, FreeMode, Thumbs, Autoplay} from 'swiper/modules';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -19,6 +21,8 @@ interface SlideProps {
 const Slice:FC<SlideProps> = (props) => {
     const { previewImage } = props
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    console.log(thumbsSwiper)
+    const swiperRef = useRef(null);
     return (
         <div>
             <Swiper
@@ -27,12 +31,20 @@ const Slice:FC<SlideProps> = (props) => {
                     '--swiper-navigation-color': '#fff',
                     '--swiper-pagination-color': '#fff',
                 }}
-                modules={[Navigation, FreeMode, Thumbs]}
+                centeredSlides={true}
+                autoplay={{
+                    delay: 5000,
+                    disableOnInteraction: false,
+                }}
                 thumbs={{swiper: thumbsSwiper}}
                 spaceBetween={50}
                 slidesPerView={1}
-                navigation
+                navigation={{
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                }}
                 pagination={{clickable: true}}
+                modules={[Autoplay,Navigation, FreeMode, Thumbs,Pagination]}
             >
                 {previewImage && previewImage?.map((item, index) =>
                     (
@@ -43,6 +55,12 @@ const Slice:FC<SlideProps> = (props) => {
                         </SwiperSlide>
                     )
                 )}
+                <div className="swiper-button-next bg-white rounded-full" style={{width:'30px', height:'30px'}}>
+                    <KeyboardArrowRightIcon sx={{color:'black', opacity:'1'}}/>
+                </div>
+                <div className="swiper-button-prev bg-white rounded-full" style={{width:'30px', height:'30px'}}>
+                    <KeyboardArrowLeftIcon sx={{color:'black'  ,opacity:'1'}}/>
+                </div>
             </Swiper>
             <Swiper
                 className={'mySwiper'}
@@ -51,6 +69,7 @@ const Slice:FC<SlideProps> = (props) => {
                 spaceBetween={10}
                 slidesPerView={4}
                 freeMode={true}
+                pagination={{ clickable: true }}
                 watchSlidesProgress={true}
                 modules={[FreeMode, Navigation, Thumbs]}
             >

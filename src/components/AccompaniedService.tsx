@@ -10,29 +10,30 @@ import SoupKitchenIcon from '@mui/icons-material/SoupKitchen';
 import HomeWorkIcon from '@mui/icons-material/HomeWork';
 
 interface AccompaniedServiceProps {
+    color:string
 }
 
 //bang
 
-const AccompaniedService: FC<AccompaniedServiceProps> = ({}) => {
+const AccompaniedService: FC<AccompaniedServiceProps> = ({color}) => {
     return (
         <CardContent>
             <div className={'grid grid-cols-2 gap-4'}>
                 <div className={'col-span-1'}>
-                    <Paragraph><DirectionsCarIcon sx={{color: 'blue'}}/> Transport
+                    <Paragraph><DirectionsCarIcon sx={{color: color}}/> Transport
                     </Paragraph>
-                    <Paragraph><AirplaneTicketIcon sx={{color: 'blue'}}/> Flight
+                    <Paragraph><AirplaneTicketIcon sx={{color: color}}/> Flight
                         tickets</Paragraph>
-                    <Paragraph><SupervisorAccountIcon sx={{color: 'blue'}}/> Tour
+                    <Paragraph><SupervisorAccountIcon sx={{color: color}}/> Tour
                         Guide</Paragraph>
-                    <Paragraph><HomeWorkIcon sx={{color: 'blue'}}/> Hotel</Paragraph>
+                    <Paragraph><HomeWorkIcon sx={{color: color}}/> Hotel</Paragraph>
                 </div>
                 <div className={'col-span-1'}>
                     <Paragraph><ConfirmationNumberIcon
-                        sx={{color: 'blue'}}/> Tickets</Paragraph>
-                    <Paragraph><LocalLibraryIcon sx={{color: 'blue'}}/> Local
+                        sx={{color: color}}/> Tickets</Paragraph>
+                    <Paragraph><LocalLibraryIcon sx={{color: color}}/> Local
                         Guide</Paragraph>
-                    <Paragraph><SoupKitchenIcon sx={{color: 'blue'}}/> Food
+                    <Paragraph><SoupKitchenIcon sx={{color: color}}/> Food
                         Service</Paragraph>
                 </div>
             </div>

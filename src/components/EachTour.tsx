@@ -20,6 +20,7 @@ import {useSelector} from "react-redux";
 import Slice from "@/components/ui/swiperSlice";
 import Link from "next/link";
 import LineCustom from "@/components/ui/LineCustom";
+import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 
 
 interface TourDetailProps {
@@ -65,6 +66,14 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             setErr(error.message);
         },
     });
+    const iconStyle: { color: string; "&:hover": { transform: string; color: string }; transition: string } = {
+        color: 'black',
+        transition: 'color 0.3s, transform 0.3s',
+        '&:hover': {
+            color: 'blue',
+            transform: 'rotate(360deg)',
+        },
+    };
     useEffect(()=>{
         setUpvote(tour.upVote.length)
     },[tour.upVote.length])
@@ -86,7 +95,6 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     return (
         <>
             <CardHeader
-                // src={} alt={}
                 avatar={
                     <Avatar src={tour.store.imgUrl} alt={'store'} sx={{bgcolor: red[500]}} aria-label="recipe">
                         R
@@ -94,7 +102,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 }
                 action={
                     <IconButton aria-label="settings">
-                        <MoreVertIcon/>
+                        <PublicSharpIcon sx={iconStyle}/>
                     </IconButton>
                 }
                 title={tour.store.name}

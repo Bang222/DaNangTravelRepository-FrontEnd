@@ -1,3 +1,7 @@
 /*.css-1x51dt5-MuiInputBase-input-MuiInput-input {*/
 /*    text-align: center;*/
 /*}*/
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    content: none !important;
+}

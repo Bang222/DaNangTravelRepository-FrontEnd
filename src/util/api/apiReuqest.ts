@@ -14,6 +14,7 @@ import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";
 import {useQuery} from "@tanstack/react-query";
 import {getCookie} from "@/util/api/cookies";
+import {CreateStoreDTO, informationStoreDTO} from "@/types/seller";
 
 export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
@@ -139,6 +140,23 @@ export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, us
         }
         const data = res.data;
         return data as TourDetailInterface
+    } catch (err) {
+        throw new Error('sorry can not find comments');
+    }
+}
+
+export const createStoreAPI = async (createStoreDTO:CreateStoreDTO, accessToken: string, userId:string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/store/create`, createStoreDTO, {
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as informationStoreDTO
     } catch (err) {
         throw new Error('sorry can not find comments');
     }

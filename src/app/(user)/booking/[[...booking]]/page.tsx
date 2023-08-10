@@ -833,7 +833,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                         Accompanied service
                                     </Typography>
                                     <LineCustom size={'100%'}/>
-                                    <AccompaniedService/>
+                                    <AccompaniedService color={'blue'}/>
                                 </Card>
                                 <Card
                                     variant="outlined"
