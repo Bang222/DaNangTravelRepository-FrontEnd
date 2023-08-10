@@ -42,7 +42,7 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                 // mx: 'auto',
                 overflow: 'auto',
                 resize: 'none',
-                paddingBottom: '12px'
+                paddingBottom: '12px',
             }}
         >
             <CardHeader
