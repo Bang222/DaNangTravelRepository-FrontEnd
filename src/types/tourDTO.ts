@@ -11,6 +11,9 @@ export interface TourDTO {
     endDate: Date;
     endingAddress: string;
     startAddress: string;
+    upVote: string[];
+    createdAt: Date;
+    status: string;
     comments: [
         {
             id: string;
@@ -32,9 +35,6 @@ export interface TourDTO {
         isActive: boolean;
         imgUrl: string;
     }
-    upVote: string[];
-    createdAt: Date;
-    status: string;
 }
 
 export interface CommentTourDTO {
@@ -115,5 +115,29 @@ export interface BookingDTO {
         type: string;
         sex: string;
         dayOfBirth?: number;
+    }
+}
+export interface CartDTO {
+    id:string
+    isActive:boolean
+    CreateAt:Date
+    userId:string
+    tourId:string
+    tour: {
+        id: string;
+        name: string;
+        description: string;
+        price: number;
+        quantity: number;
+        imageUrl: string[];
+        lastRegisterDate: Date;
+        address: string;
+        startDate: Date;
+        endDate: Date;
+        endingAddress: string;
+        startAddress: string;
+        upVote: string[];
+        createdAt: Date;
+        status: string;
     }
 }
