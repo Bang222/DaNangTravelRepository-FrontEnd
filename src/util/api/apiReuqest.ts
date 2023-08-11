@@ -193,3 +193,36 @@ export const getToCartAPI = async (accessToken: string, userId:string) => {
         throw new Error('sorry can not found cart');
     }
 }
+export const deleteOneValueCartByTourIdOfUserIdAPI = async (tourId:string, accessToken: string, userId:string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/delete-cart-by-id`, {tourId: tourId}, {
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as CartDTO
+    } catch (err) {
+        throw new Error('sorry can not found cart');
+    }
+}
+export const deleteAllValueCartAPI = async (accessToken: string, userId:string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/delete-all-cart` ,{},{
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Tour is null');
+    }
+}
+

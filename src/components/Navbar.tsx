@@ -144,7 +144,7 @@ const PrimarySearchAppBar: React.FC = () => {
                         <NavbarChild/>
                     </div>
                     <Box sx={{display: 'flex',}}>
-                        <Tooltip title="CartComponent" sx={{ color: showCart ? 'blue' : 'white' }} onClick={toggleCart}>
+                        <Tooltip title="Cart" sx={{ color: showCart ? 'blue' : 'white' }} onClick={toggleCart}>
                             <IconButton>
                                 <ShoppingCartIcon/>
                             </IconButton>

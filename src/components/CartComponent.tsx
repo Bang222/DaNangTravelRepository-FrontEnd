@@ -7,7 +7,13 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 import DoDisturbSharpIcon from '@mui/icons-material/DoDisturbSharp';
-import {addToCartAPI, getToCartAPI} from "@/util/api/apiReuqest";
+import {
+    addToCartAPI,
+    bookingAPI,
+    deleteAllValueCartAPI,
+    deleteOneValueCartByTourIdOfUserIdAPI,
+    getToCartAPI
+} from "@/util/api/apiReuqest";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useSelector} from "react-redux";
 import {CartDTO} from "@/types";
@@ -22,24 +28,77 @@ interface CartProps {
 const CartComponent: FC<CartProps> = ({toggleCart}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
-    const [CartData, setCartData] = React.useState<CartDTO>()
+    const [cartDataDelete, setCartDataDelete] = React.useState<CartDTO>()
+    const [cart, setCart] = React.useState<CartDTO[]>();
+
+
     const {data: cartData, isLoading, isError, isSuccess} = useQuery(['cart', userId], () =>
         getToCartAPI(accessToken, userId)
     );
-    const [cart, setCart] = React.useState<CartDTO[]>();
+    // const queryClient = useQueryClient();
 
+    // const addToCartMutation = useMutation((tourId) => addToCartAPI(accessToken, userId, tourId), {
+    //     onSuccess: () => {
+    //         queryClient.invalidateQueries(['cart', userId]);
+    //     },
+    // });
+    // isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccess:isSuccessDeleteAll
+    const {mutate: mutateDeleteAValueOfCart,data:dataCartDelete, isLoading: isLoadingDeleteAValueOfCart, status, isSuccess:isSuccessDeleteAValueOfCart} = useMutation(
+        async (tourId:string) => {
+            try {
+                const res = await deleteOneValueCartByTourIdOfUserIdAPI(tourId, accessToken, userId,)
+                return res;
+            } catch (error) {
+                throw error;
+            }
+        }, {
+            onSuccess: () => {
+                setCartDataDelete(dataCartDelete)
+            },
+            onError: (error) => {
+
+            },
+        });
+    const { mutate:mutateDeleteAll,isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccess:isSuccessDeleteAll} = useMutation(
+        async () => {
+            try {
+                const res = await deleteAllValueCartAPI(accessToken, userId)
+                return res;
+            } catch (error) {
+                throw error;
+            }
+        }, {
+            onSuccess: () => {
+                // setCartDataDelete(dataCartDelete)
+                return setCart([])
+            },
+            onError: (error) => {
+
+            },
+        });
+    // React.useEffect(()=>{
+    //     if(isSuccessDeleteAll) {
+    //         setCart([])
+    //     }
+    // },[isSuccessDeleteAll])
+    React.useEffect(() => {
+        if (isSuccessDeleteAValueOfCart) {
+            const data = cart?.filter((item) => item.tourId !== dataCartDelete?.tourId)
+            setCart(data);
+        }
+    }, [cart, dataCartDelete?.tourId, isSuccessDeleteAValueOfCart]);
     React.useEffect(() => {
         if (isSuccess) {
             setCart(cartData);
         }
-    }, [isSuccess, cartData]);
-    const queryClient = useQueryClient();
+    }, [cartData, isSuccess]);
 
-    const addToCartMutation = useMutation((tourId) => addToCartAPI(accessToken, userId, tourId), {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['cart', userId]);
-        },
-    });
+    const handleDeleteAValueInCart = (tourId:string) => {
+        mutateDeleteAValueOfCart(tourId)
+    }
+    const handleDeleteAll = () => {
+        mutateDeleteAll()
+    }
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'numeric',
@@ -47,15 +106,16 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
     }
     const optionsMoney: Intl.NumberFormatOptions =
         {style: 'currency', currency: 'VND'}
-    const overlayStyle:React.CSSProperties = {
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        zIndex:10,
-        width: '100%',
-        height: '100%',
-    };
+
+    // const overlayStyle:React.CSSProperties = {
+    //     backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    //     position: 'absolute',
+    //     top: 0,
+    //     left: 0,
+    //     zIndex:10,
+    //     width: '100%',
+    //     height: '100%',
+    // };
     return (
         <section className={'absolute opacity-95 top-[100%] z-[1300] right-0 w-[100%] nh:w-[40%] nh:right-[5%] lg:right-[10%]'}>
             <Card
@@ -131,7 +191,7 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                                                             '&:hover': {
                                                                 color: 'red',
                                                             },
-                                                        }}/>
+                                                        }} onClick={()=>handleDeleteAValueInCart(item.tourId)}/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -168,7 +228,7 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                                                             '&:hover': {
                                                                 color: 'red',
                                                             },
-                                                        }}/>
+                                                        }} onClick={()=>handleDeleteAValueInCart(item.tourId)}/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -184,12 +244,15 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                 <div className={'w-full flex justify-center mb-4'}>
                     <div style={{backgroundColor: 'black', width: `100%`, height: '1px'}}></div>
                 </div>
-                <div className={'flex justify-end'}>
-                    <button
-                        className="bg-white hover:bg-red-400 hover:text-white text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow">
+                {cart?.length> 0 ? <div className={'flex justify-end'}>
+                    <button onClick={() => handleDeleteAll() }
+                            className="bg-white hover:bg-red-400 hover:text-white text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow">
                         Remove All
                     </button>
                 </div>
+                :
+                    <div className={'flex justify-center items-center text-white'}> Cart Null</div>
+                }
             </Card>
         </section>
     );
