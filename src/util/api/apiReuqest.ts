@@ -1,5 +1,5 @@
 import {
-    BookingDTO,
+    BookingDTO, CartDTO,
     CommentsDTO,
     LoginDTO,
     RegisterDTO,
@@ -159,5 +159,37 @@ export const createStoreAPI = async (createStoreDTO:CreateStoreDTO, accessToken:
         return data as informationStoreDTO
     } catch (err) {
         throw new Error('sorry can not find comments');
+    }
+}
+export const addToCartAPI = async (tourId:string, accessToken: string, userId:string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/cart`, {tourId: tourId}, {
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as CartDTO
+    } catch (err) {
+        throw new Error('sorry can not found cart');
+    }
+}
+export const getToCartAPI = async (accessToken: string, userId:string) => {
+    try {
+        const res = await axios.get(`http://localhost:4000/api/get-cart`,{
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as CartDTO[]
+    } catch (err) {
+        throw new Error('sorry can not found cart');
     }
 }
