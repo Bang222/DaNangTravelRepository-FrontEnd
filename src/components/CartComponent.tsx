@@ -6,10 +6,12 @@ import LineCustom from "@/components/ui/LineCustom";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
+import DoDisturbSharpIcon from '@mui/icons-material/DoDisturbSharp';
 import {addToCartAPI, getToCartAPI} from "@/util/api/apiReuqest";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useSelector} from "react-redux";
 import {CartDTO} from "@/types";
+import Link from "next/link";
 
 interface CartProps {
     toggleCart: () => void;
@@ -20,8 +22,8 @@ interface CartProps {
 const CartComponent: FC<CartProps> = ({toggleCart}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
-    const [CartData,setCartData] = React.useState<CartDTO>()
-    const { data: cartData, isLoading, isError,isSuccess } = useQuery(['cart', userId], () =>
+    const [CartData, setCartData] = React.useState<CartDTO>()
+    const {data: cartData, isLoading, isError, isSuccess} = useQuery(['cart', userId], () =>
         getToCartAPI(accessToken, userId)
     );
     const [cart, setCart] = React.useState<CartDTO[]>();
@@ -38,16 +40,24 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
             queryClient.invalidateQueries(['cart', userId]);
         },
     });
-    console.log(cart);
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
     }
-    const optionsMoney:Intl.NumberFormatOptions  =
-    {style: 'currency', currency: 'VND'}
+    const optionsMoney: Intl.NumberFormatOptions =
+        {style: 'currency', currency: 'VND'}
+    const overlayStyle:React.CSSProperties = {
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex:10,
+        width: '100%',
+        height: '100%',
+    };
     return (
-        <section className={'absolute opacity-95 top-[100%] z-[1300] right-0 w-[100%] nh:w-[40%] nh:right-[5%]'}>
+        <section className={'absolute opacity-95 top-[100%] z-[1300] right-0 w-[100%] nh:w-[40%] nh:right-[5%] lg:right-[10%]'}>
             <Card
                 variant="outlined"
                 sx={{
@@ -64,10 +74,14 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                 }}
             >
                 <div className={'flex justify-between mb-4'}>
-                    <Paragraph size={'md'} className={'text-white font-bold'}>
+                    <Paragraph size={'md'} className={'text-white font-bold nh:hidden'}>
                         <ShoppingCartIcon sx={{fontSize: '2rem'}}/>
                     </Paragraph>
-                    <CloseIcon sx={{color: 'white', fontSize: '2rem'}} onClick={toggleCart}/>
+                    <CloseIcon sx={{color: 'white', fontSize: '2rem', cursor:'pointer',
+                        transition: 'color 0.3s',
+                        '&:hover': {
+                            color: 'red',
+                    }} } onClick={toggleCart}/>
                 </div>
                 <div className={'w-full flex justify-center mb-4'}>
                     <div style={{backgroundColor: 'black', width: `100%`, height: '1px'}}></div>
@@ -83,53 +97,98 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                             <th scope="col" className="px-2">Remove</th>
                         </tr>
                         </thead>
-                        {isLoading ?  <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
+                        {isLoading ? <div
+                            className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
                             <CircularProgress color="secondary"/>
                         </div> : (
                             <tbody className={'text-white'}>
-                            {cart && cart?.map((item)=>{
+                            {cart && cart?.map((item) => {
+                                const current = new Date()
+                                const lastRegister = new Date(item.tour.lastRegisterDate)
                                 const startDate = new Date(item.tour.startDate)
-                                const formatDate =  startDate.toLocaleDateString('es-uk',options)
-                                const formatPrice =  item.tour.price.toLocaleString('vi-VN',optionsMoney)
-                                return(
-                                <tr key={item.id}>
-                                    <td className={'px-2 pb-2'}>{item.tour.name}</td>
-                                    <td className={'px-2'}>{formatDate}</td>
-                                    <td className={'px-2'}>{formatPrice}</td>
-                                    <td className={'px-2'}>
-                                        <div className="flex justify-center">
-                                            <InventoryOutlinedIcon
-                                                sx={{
-                                                    fontSize: '18px',
-                                                    color: 'black',
-                                                    transition: 'color 0.3s',
-                                                    cursor: 'pointer',
-                                                    '&:hover': {
-                                                        color: 'blue',
-                                                    },
-                                                }}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td className={'px-2'}>
-                                        <div className="flex justify-center">
-                                            <DeleteOutlinedIcon sx={{
-                                                fontSize: '18px',
-                                                color: 'black',
-                                                transition: 'color 0.3s',
-                                                cursor: 'pointer',
-                                                '&:hover': {
-                                                    color: 'red',
-                                                },
-                                            }}/>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )})}
+                                const formatDate = startDate.toLocaleDateString('es-uk', options)
+                                const formatPrice = item.tour.price.toLocaleString('vi-VN', optionsMoney)
+                                return (
+                                    <>
+                                        {item.tour.status !== 'available' ?
+                                            <>
+                                            <tr className={'relative '}  key={item.id}>
+                                                <td className={'px-2 pb-2'}>{item.tour.name}</td>
+                                                <td className={'px-2'}>{formatDate}</td>
+                                                <td className={'px-2'}>{formatPrice}</td>
+                                                <td className={'px-2'}>
+                                                    <div className="flex">
+                                                        <Paragraph className={'font-bold text-black cursor-default'}  size={'sx'}> sold out</Paragraph>
+                                                    </div>
+                                                </td>
+                                                <td className={'px-2 z-[1000]'}>
+                                                    <div className="flex justify-center">
+                                                        <DeleteOutlinedIcon sx={{
+                                                            fontSize: '18px',
+                                                            color: 'black',
+                                                            transition: 'color 0.3s',
+                                                            cursor: 'pointer',
+                                                            '&:hover': {
+                                                                color: 'red',
+                                                            },
+                                                        }}/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </>
+                                            :
+                                            <tr key={item.id}>
+                                                <td className={'px-2 pb-2'}>{item.tour.name}</td>
+                                                <td className={'px-2'}>{formatDate}</td>
+                                                <td className={'px-2'}>{formatPrice}</td>
+                                                <td className={'px-2'}>
+                                                    <div className="flex justify-center">
+                                                        <Link href={`/booking/${item.tourId}`}>
+                                                            <InventoryOutlinedIcon
+                                                                sx={{
+                                                                    fontSize: '18px',
+                                                                    color: 'black',
+                                                                    transition: 'color 0.3s',
+                                                                    cursor: 'pointer',
+                                                                    '&:hover': {
+                                                                        color: 'blue',
+                                                                    },
+                                                                }}
+                                                            />
+                                                        </Link>
+                                                    </div>
+                                                </td>
+                                                <td className={'px-2'}>
+                                                    <div className="flex justify-center">
+                                                        <DeleteOutlinedIcon sx={{
+                                                            fontSize: '18px',
+                                                            color: 'black',
+                                                            transition: 'color 0.3s',
+                                                            cursor: 'pointer',
+                                                            '&:hover': {
+                                                                color: 'red',
+                                                            },
+                                                        }}/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </>
+                                )
+                            })}
                             </tbody>
                         )
                         }
                     </table>
+                </div>
+                <div className={'w-full flex justify-center mb-4'}>
+                    <div style={{backgroundColor: 'black', width: `100%`, height: '1px'}}></div>
+                </div>
+                <div className={'flex justify-end'}>
+                    <button
+                        className="bg-white hover:bg-red-400 hover:text-white text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow">
+                        Remove All
+                    </button>
                 </div>
             </Card>
         </section>
