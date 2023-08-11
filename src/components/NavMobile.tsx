@@ -33,7 +33,7 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
     ])
-    const [sectionOpen, setSectionOpen] = React.useState<boolean>(false);
+    const [sectionOpen, setSectionOpen] = React.useState<boolean>(true);
 
     const toggleSection = () => {
         setSectionOpen(!sectionOpen);
@@ -68,7 +68,7 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
     return (
         <>
             <section
-                className={`fixed z-50 bottom-0 w-screen h-[50px] bg-gradient-to-r from-cyan-500 to-blue-500 ${
+                className={`fixed z-50 bottom-0 w-screen h-[50px] bg-gray-900 ${
                     isSectionVisible ? 'down' : 'up'
                 } nh:hidden `}
             >
@@ -83,7 +83,7 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
                     </li>
                 </ul>
             </section>
-            <section className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'}`}>
+            <section className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>
                 <Card
                     variant="outlined"
                     sx={{

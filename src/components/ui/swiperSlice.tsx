@@ -21,7 +21,6 @@ interface SlideProps {
 const Slice:FC<SlideProps> = (props) => {
     const { previewImage } = props
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
-    console.log(thumbsSwiper)
     const swiperRef = useRef(null);
     return (
         <div>
