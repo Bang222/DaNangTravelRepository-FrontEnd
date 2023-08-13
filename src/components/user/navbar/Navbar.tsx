@@ -21,14 +21,17 @@ import Link from "next/link";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
-import NavbarChild from "@/components/NavbarChild";
+import NavbarChild from "@/components/user/navbar/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
 import {useRouter} from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "@/redux/store";
 import {logOut} from "@/redux/feature/auth-slice";
 import {removeCookie} from "@/util/api/cookies";
-import CartComponent from "@/components/CartComponent";
+import CartComponent from "@/components/user/CartComponent";
+import {useQuery} from "@tanstack/react-query";
+import {getToCartAPI} from "@/util/api/apiReuqest";
+import {CartDTO} from "@/types";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -77,11 +80,21 @@ const PrimarySearchAppBar: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter()
     const [showCart, setShowCart] = React.useState<boolean>(false);
+    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const userId = useSelector((state) => state.auth.value?.user.id)
+    const [cart, setCart] = React.useState<CartDTO[]>();
 
+    const {data: cartData, isLoading:isLoadingOfCart, isError:isErrorOfCart, isSuccess:isSuccessGetOfCart} = useQuery(['cart', userId], () =>
+        getToCartAPI(accessToken, userId)
+    );
+    React.useEffect(() => {
+        if (isSuccessGetOfCart) {
+            setCart(cartData);
+        }
+    }, [cartData, isSuccessGetOfCart]);
     const toggleCart = () => {
         setShowCart(!showCart);
     };
-
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -144,9 +157,11 @@ const PrimarySearchAppBar: React.FC = () => {
                         <NavbarChild/>
                     </div>
                     <Box sx={{display: 'flex',}}>
-                        <Tooltip title="Cart" sx={{ color: showCart ? 'blue' : 'white' }} onClick={toggleCart}>
+                        <Tooltip title="Cart" sx={{ color: showCart ? '#3d3ded' : 'white' }} onClick={toggleCart}>
                             <IconButton>
+                                <Badge color="error" badgeContent={cart?.length} max={10} >
                                 <ShoppingCartIcon/>
+                                </Badge>
                             </IconButton>
                         </Tooltip>
                             { isAuth === true ?
@@ -182,6 +197,11 @@ const PrimarySearchAppBar: React.FC = () => {
                 </div>
                 {showCart &&(<CartComponent
                     toggleCart ={toggleCart}
+                    cart={cart}
+                    accessToken={accessToken}
+                    userId={userId}
+                    setCart={setCart}
+                    isLoadingOfCart={isLoadingOfCart}
                 />)}
             </AppBar>
         </Box>

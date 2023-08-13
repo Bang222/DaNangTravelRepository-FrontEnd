@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
-import TourComponent from "@/components/TourComponent";
+import TourComponent from "@/components/user/TourComponent";
 import Introduction from "@/components/Introduction";
-import NavLeft from "@/components/NavLeft";
+import NavLeft from "@/components/user/navbar/NavLeft";
 
 interface PageProps {
 }

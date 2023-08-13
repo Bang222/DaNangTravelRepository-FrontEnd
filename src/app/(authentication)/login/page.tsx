@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/authForm/LoginForm";
 
 interface PageProps {
 }

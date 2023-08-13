@@ -23,7 +23,7 @@ import {getCommentsOfTour, postCommentsOfTour} from "@/util/api/apiReuqest";
 import {useEffect, useMemo, useState} from "react";
 import SendIcon from '@mui/icons-material/Send';
 import {CommentsDTO, CommentTourDTO} from "@/types";
-import CommentOfTour from "@/components/commentOfTour";
+import CommentOfTour from "@/components/user/commentOfTour";
 import {useUserDetailAPI} from "@/util/api/auth";
 import {useSelector} from "react-redux";
 import Slice from "@/components/ui/swiperSlice";
@@ -109,6 +109,13 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const handleContentChange = (event) => {
         setContent(event.target.value);
     };
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+    }
+    const createdAt = new Date(props.createdAt);
+    const formattedCreateAt = createdAt.toLocaleDateString('es-uk',options)
     return (
         <div className=''>
             <CustomButton onClick={handleOpen}><CommentIcon/></CustomButton>
@@ -143,7 +150,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                             </IconButton>
                         }
                         title={props.store.name}
-                        subheader={props.createdAt}
+                        subheader={formattedCreateAt}
                     />
                     <CardContent>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -152,7 +159,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         </section>
                         <div className={'grid grid-flow-col justify-stretch'}>
                             <div>
-                                <Paragraph size={"md"}><b>Name: </b>{props.name}</Paragraph>
+                                <Paragraph size={"sm"}><b>Name: </b>{props.name}</Paragraph>
                             </div>
                             <div className={'grid lg:flex items-end justify-center lg:justify-end pb-[10px]'}>
                             </div>
@@ -172,7 +179,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                                 }} onClick={(e) => handleClickComments(props.id)}>
                                     <CommentIcon/>
                                 </Tooltip>
-                                <Paragraph>{ props.commentData.length }</Paragraph>
+                                <Paragraph>{ props.commentData?.length }</Paragraph>
                             </Typography>
                             <Typography>
                                 <Paragraph className={'text-blue-500'}> see more</Paragraph>

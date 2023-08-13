@@ -1,9 +1,9 @@
 'use client'
 import {FC, useEffect, useState} from 'react';
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/authForm/LoginForm";
 import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
-import RegisterForm from "@/components/RegisterForm";
+import RegisterForm from "@/components/authForm/RegisterForm";
 import useStorage from "@/components/hooks/UseStorage";
 
 interface SignInProps {

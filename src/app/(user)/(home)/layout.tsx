@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/user/navbar/Navbar";
 import Introduction from "@/components/Introduction";
-import NavMobile from "@/components/NavMobile";
+import NavMobile from "@/components/user/navbar/NavMobile";
 
 export default async function RootLayout({children,}: { children: React.ReactNode }) {
     return (

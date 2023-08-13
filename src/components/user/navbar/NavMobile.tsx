@@ -3,7 +3,7 @@ import React, {FC, useEffect} from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
 import Link from "next/link";
-import NavLeft from "@/components/NavLeft";
+import NavLeft from "@/components/user/navbar/NavLeft";
 import {Card, CardContent} from "@mui/material";
 import CardHeader from "@mui/material/CardHeader";
 import Avatar from "@mui/material/Avatar";
@@ -20,26 +20,32 @@ interface NavMobileProps {
 }
 
 interface navBarLeftInterface {
-name:string
-href:string
-icon:any
+    name: string
+    href: string
+    icon: any
 }
 
 const NavMobile: FC<NavMobileProps> = ({}) => {
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
-        {name:'Account Seller', href:'#',icon: <StoreSharpIcon sx={{color:'white'}}/>},
-        {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>},
-        {name:'Used Tours', href:'#',icon: <FlightLandIcon sx={{color:'white'}}/>},
+        {name: 'Account Seller', href: '/seller', icon: <StoreSharpIcon sx={{color: 'white'}}/>},
+        {name: 'Follow Registered trip', href: '#', icon: <FlightTakeoffIcon sx={{color: 'white'}}/>},
+        {name: 'Used Tours', href: '#', icon: <FlightLandIcon sx={{color: 'white'}}/>},
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
     ])
     const [sectionOpen, setSectionOpen] = React.useState<boolean>(true);
-
     const toggleSection = () => {
         setSectionOpen(!sectionOpen);
     };
     const [isSectionVisible, setSectionVisible] = React.useState(true);
     const [prevScrollPos, setPrevScrollPos] = React.useState(0);
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth', // Use smooth scrolling behavior
+        });
+    };
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -74,16 +80,16 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
             >
                 <ul className={'flex justify-center items-center h-full'}>
                     <li className={'mr-4'}>
-                        <Link href={'/tour'}>
-                            <HomeIcon sx={{color: 'white', fontSize: '2rem'}}/>
-                        </Link>
+                        <HomeIcon sx={{color: 'white', fontSize: '2rem'}} onClick={scrollToTop}/>
                     </li>
                     <li>
-                        <BorderAllIcon onClick={toggleSection} className={'ml-4'} sx={{color: 'white', fontSize: '2rem'}}/>
+                        <BorderAllIcon onClick={toggleSection} className={'ml-4'}
+                                       sx={{color: 'white', fontSize: '2rem'}}/>
                     </li>
                 </ul>
             </section>
-            <section className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>
+            <section
+                className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>
                 <Card
                     variant="outlined"
                     sx={{
@@ -97,26 +103,30 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
                 >
                     <CardHeader
                         avatar={
-                            <Avatar src={user.profilePicture} alt={'user'} sx={{bgcolor: red[500]}} aria-label="recipe"/>
+                            <Avatar src={user.profilePicture} alt={'user'} sx={{bgcolor: red[500]}}
+                                    aria-label="recipe"/>
                         }
                         action={<IconButton>
                             <CloseIcon onClick={toggleSection}/>
                         </IconButton>
-                    }
+                        }
                         title={`${user.firstName} ${user.lastName}`}
                         subheader={'Your Profile'}
                     />
                     <LineCustom size={'100%'}/>
                     <CardContent>
                         <ul className={'m-3'}>
-                            {navBarLeft.map((item, index:number)=> {return(
-                                <li key={index} className={'mb-6'}>
-                                    <Link href={item.href}  className={'flex items-center'}>
-                                        <div className={'mr-4 p-1 bg-gradient-to-r from-cyan-500 to-blue-500  rounded-full'}>{item.icon} </div>
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            )})}
+                            {navBarLeft.map((item, index: number) => {
+                                return (
+                                    <li key={index} className={'mb-6'}>
+                                        <Link href={item.href} className={'flex items-center'}>
+                                            <div
+                                                className={'mr-4 p-1 bg-gradient-to-r from-cyan-500 to-blue-500  rounded-full'}>{item.icon} </div>
+                                            {item.name}
+                                        </Link>
+                                    </li>
+                                )
+                            })}
                         </ul>
                     </CardContent>
                 </Card>

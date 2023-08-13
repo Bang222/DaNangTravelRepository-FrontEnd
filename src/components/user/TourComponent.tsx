@@ -6,7 +6,7 @@ import IconButton, {IconButtonProps} from '@mui/material/IconButton';
 import {useGetAllTourApi} from "@/util/api/apiReuqest";
 import {TourDTO} from "@/types/tourDTO";
 import Paragraph from "@/components/ui/Paragraph";
-import EachTour from "@/components/EachTour";
+import EachTour from "@/components/user/EachTour";
 import {Card, CircularProgress} from "@mui/material";
 import { useRouter} from "next/navigation";
 import {getCookie} from "@/util/api/cookies";

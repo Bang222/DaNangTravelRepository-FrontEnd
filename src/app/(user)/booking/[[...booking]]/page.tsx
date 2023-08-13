@@ -38,8 +38,9 @@ import {bookingAPI, getTourById, RegisterApi} from "@/util/api/apiReuqest";
 import {useEffect, useState} from "react";
 import {BookingDTO, TourDetailInterface, TourIdEndToken} from "@/types";
 import {useSelector} from "react-redux";
-import AccompaniedService from "@/components/AccompaniedService";
+import AccompaniedService from "@/components/ui/AccompaniedService";
 import LargeHeading from "@/components/ui/LargeHeading";
+import {toast} from "react-toastify";
 
 
 interface BookingProps {
@@ -64,6 +65,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [dataBooking, setDataBooking] = React.useState()
     const [errorBooking, setErrorDataBooking] = React.useState<string>(null)
     const [isSuccesses, setIsSuccesses] = React.useState<boolean>()
+    const [isLoadingOfBooking, setLoadingOfBooking] = useState(false);
 
     const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
         async () => {
@@ -79,6 +81,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             },
             onError: (error) => {
                 setErrorDataBooking('Not Enough Slot')
+                toast.error("Sorry, Tour it's full slot")
             },
         });
     const {mutate, isLoading, data} = useMutation(getTourById, {
@@ -87,12 +90,13 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         },
         onError: (error) => {
             setTourError(error.message);
+            toast.error("Can not found Tour")
         },
     });
     const [adultCount, setAdultCount] = React.useState<number>(1)
     const [childCount, setChildCount] = React.useState<number>(0)
     const [toddlerCount, setToddlerCount] = React.useState<number>(0)
-    const [infrantCout, setInfrantCount] = React.useState<number>(0)
+    const [infantCout, setInfantCount] = React.useState<number>(0)
 
     const [email, setEmail] = React.useState<string>('')
     const [firstName, setFirstName] = React.useState<string>('')
@@ -105,7 +109,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [adults, setAdults] = React.useState<Passenger[]>([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
     const [children, setChildren] = React.useState<Passenger[]>([])
     const [toddlers, setToddlers] = React.useState<Passenger[]>([])
-    const [infants, setInfrants] = React.useState<Passenger[]>([])
+    const [infants, setInfants] = React.useState<Passenger[]>([])
     const router = useRouter()
 
     const handleClick = e => {
@@ -211,7 +215,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             fullName: fullName,
             firstName: firstName,
             phone: phone,
-            toddlerPassengers: infrantCout,
+            toddlerPassengers: infantCout,
             infantPassengers: toddlerCount,
             childPassengers: childCount,
             adultPassengers: adultCount,
@@ -220,12 +224,12 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         setDataBooking(configData)
         mutateBooking()
     }
-    const handleClickCount = (action: 'increase' | 'decrease', type: 'adultCount' | 'childCount' | 'toddlerCount' | 'infrantCout') => {
-        if (type === 'infrantCout') {
+    const handleClickCount = (action: 'increase' | 'decrease', type: 'adultCount' | 'childCount' | 'toddlerCount' | 'infantCout') => {
+        if (type === 'infantCout') {
             if (action === 'increase') {
-                setInfrantCount(infrantCout + 1);
-            } else if (action === 'decrease' && infrantCout > 0) {
-                setInfrantCount(infrantCout - 1);
+                setInfantCount(infantCout + 1);
+            } else if (action === 'decrease' && infantCout > 0) {
+                setInfantCount(infantCout - 1);
                 infants.pop()
             }
         }
@@ -322,7 +326,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             });
         }
         if (type === 'infants') {
-            setInfrants(prevInfant => {
+            setInfants(prevInfant => {
                 const updatedInfant = [...prevInfant];
                 if (updatedInfant[index]) {
                     updatedInfant[index][field] = value;
@@ -363,7 +367,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const InputAdultPrice = dataTour?.price * adultCount
     const InputChildPrice = dataTour?.price * childCount
     const InputToddlerPrice = dataTour?.price * toddlerCount * 0.7
-    const InputInfantPrice = dataTour?.price * infrantCout * 0.15
+    const InputInfantPrice = dataTour?.price * infantCout * 0.15
     const InputTotalPrice = InputAdultPrice + InputChildPrice + InputToddlerPrice + InputInfantPrice
 
     const adultPrice = InputAdultPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
@@ -387,11 +391,11 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
                 setToddlers([])
-                setInfrants([])
+                setInfants([])
                 setAdultCount(1)
                 setToddlerCount(0)
                 setChildCount(0)
-                setInfrantCount(0)
+                setInfantCount(0)
                 setFirstName('')
                 setEmail('')
                 setPhone('')
@@ -582,14 +586,14 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                             <Label className={'font-bold'}>Infant</Label>
                                                             <div className={'flex'}>
                                                                 <button className={'w-fit pl-2'}
-                                                                        onClick={() => handleClickCount('decrease', 'infrantCout')}>
+                                                                        onClick={() => handleClickCount('decrease', 'infantCout')}>
                                                                     <RemoveCircleIcon/></button>
-                                                                <InputCustom sx={{outline: 'none'}} id={'infrantCout'}
-                                                                             value={infrantCout} data={infrantCout}
+                                                                <InputCustom sx={{outline: 'none'}} id={'infantCout'}
+                                                                             value={infantCout} data={infantCout}
                                                                              type={'number'}
                                                                              name={'number'}/>
                                                                 <button className={'w-fit pr-2'}
-                                                                        onClick={() => handleClickCount('increase', 'infrantCout')}>
+                                                                        onClick={() => handleClickCount('increase', 'infantCout')}>
                                                                     <AddCircleIcon/></button>
                                                             </div>
                                                         </Grid>
@@ -704,7 +708,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                     </RadioGroup>
                                                 </FormControl>
                                             ))}
-                                            {[...Array(infrantCout)].map((item, index) => (
+                                            {[...Array(infantCout)].map((item, index) => (
                                                 <FormControl key={item}>
                                                     <Label className={'font-bold pb-0'}>Information
                                                         Infant {index + 1} </Label>
@@ -784,7 +788,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                            size={'sx'}>{formattedStartDate}</Paragraph>
                                                 <Paragraph className={'font-bold'} size={'sx'}>{formatEnd}</Paragraph>
                                                 <Paragraph className={'font-bold'}
-                                                           size={'sx'}>{adultCount} Adult, {childCount ? `${childCount} Child,` : ''} {toddlerCount > 0 ? `${toddlerCount} Toddler,` : ''} {infrantCout > 0 ? ` ${infrantCout} Infant` : ''}</Paragraph>
+                                                           size={'sx'}>{adultCount} Adult, {childCount ? `${childCount} Child,` : ''} {toddlerCount > 0 ? `${toddlerCount} Toddler,` : ''} {infantCout > 0 ? ` ${infantCout} Infant` : ''}</Paragraph>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -801,7 +805,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                 {toddlerCount > 0 ?
                                                     <Paragraph size={'sx'}> Toddler<b> x {toddlerCount}</b>
                                                     </Paragraph> : ''}
-                                                {infrantCout > 0 ? <Paragraph size={'sx'}>Infant<b> x{infrantCout}</b>
+                                                {infantCout > 0 ? <Paragraph size={'sx'}>Infant<b> x{infantCout}</b>
                                                 </Paragraph> : ''}
                                             </div>
                                             <div className={'col-span-1'}>
@@ -810,7 +814,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                     <Paragraph size={'sx'}> <b>{childPrice}  </b></Paragraph> : ''}
                                                 {toddlerCount > 0 ?
                                                     <Paragraph size={'sx'}> <b>{toddlerPrice}  </b></Paragraph> : ''}
-                                                {infrantCout > 0 ?
+                                                {infantCout > 0 ?
                                                     <Paragraph size={'sx'}> <b>{infantPrice}  </b></Paragraph> : ''}
                                             </div>
                                         </div>
@@ -869,10 +873,23 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                             <div className={'w-full lg:w-[60%] flex justify-center pt-3'}>
                                 <CardActions
                                     sx={{display: 'flex', justifyContent: 'center', width: {xs: '97%', lg: '50%'}}}>
-                                    <Button variant="solid" color="primary"
-                                            onClick={(e) => handleClick(e.target.value)}>
+                                    {isLoadingOfBooking ? (
+                                        <div className={''}>
+                                            <CircularProgress color="secondary" size={16}/>
+                                        </div>
+                                    ) : <Button variant="solid" color="primary"
+                                                onClick={(e) => {
+                                                    setLoadingOfBooking(true);
+                                                    setTimeout(() => {
+                                                        handleClick(e.target.value)
+                                                        setLoadingOfBooking(false);
+                                                    }, 2000);
+                                                }
+                                                }
+                                    >
                                         Payment
                                     </Button>
+                                    }
                                 </CardActions>
                             </div>
                         </Grid>

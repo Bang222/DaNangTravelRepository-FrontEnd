@@ -21,29 +21,18 @@ import Link from "next/link";
 
 interface CartProps {
     toggleCart: () => void;
+    accessToken: string;
+    userId: string;
+    setCart: React.Dispatch<React.SetStateAction<CartDTO[]>>
+    isLoadingOfCart:boolean;
+    cart:CartDTO[]
 }
 
 //bang
 
-const CartComponent: FC<CartProps> = ({toggleCart}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
-    const [cartDataDelete, setCartDataDelete] = React.useState<CartDTO>()
-    const [cart, setCart] = React.useState<CartDTO[]>();
+const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,cart,isLoadingOfCart}) => {
 
-
-    const {data: cartData, isLoading, isError, isSuccess} = useQuery(['cart', userId], () =>
-        getToCartAPI(accessToken, userId)
-    );
-    // const queryClient = useQueryClient();
-
-    // const addToCartMutation = useMutation((tourId) => addToCartAPI(accessToken, userId, tourId), {
-    //     onSuccess: () => {
-    //         queryClient.invalidateQueries(['cart', userId]);
-    //     },
-    // });
-    // isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccess:isSuccessDeleteAll
-    const {mutate: mutateDeleteAValueOfCart,data:dataCartDelete, isLoading: isLoadingDeleteAValueOfCart, status, isSuccess:isSuccessDeleteAValueOfCart} = useMutation(
+    const {mutate: mutateDeleteAValueOfCart,data:dataCartDelete, isLoading: isLoadingDeleteAValueOfCart, status, isSuccessGetOfCart:isSuccessGetOfCartDeleteAValueOfCart} = useMutation(
         async (tourId:string) => {
             try {
                 const res = await deleteOneValueCartByTourIdOfUserIdAPI(tourId, accessToken, userId,)
@@ -52,14 +41,16 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                 throw error;
             }
         }, {
-            onSuccess: () => {
-                setCartDataDelete(dataCartDelete)
+            onSuccess: (dataCartDelete) => {
+                const data = cart?.filter((item) => item.tourId !== dataCartDelete?.tourId)
+                setCart(data);
+                // setCartDataDelete(dataCartDelete)
             },
             onError: (error) => {
 
             },
         });
-    const { mutate:mutateDeleteAll,isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccess:isSuccessDeleteAll} = useMutation(
+    const { mutate:mutateDeleteAll,isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccessGetOfCart:isSuccessGetOfCartDeleteAll} = useMutation(
         async () => {
             try {
                 const res = await deleteAllValueCartAPI(accessToken, userId)
@@ -69,7 +60,6 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
             }
         }, {
             onSuccess: () => {
-                // setCartDataDelete(dataCartDelete)
                 return setCart([])
             },
             onError: (error) => {
@@ -77,21 +67,17 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
             },
         });
     // React.useEffect(()=>{
-    //     if(isSuccessDeleteAll) {
+    //     if(isSuccessGetOfCartDeleteAll) {
     //         setCart([])
     //     }
-    // },[isSuccessDeleteAll])
+    // },[isSuccessGetOfCartDeleteAll])]
     React.useEffect(() => {
-        if (isSuccessDeleteAValueOfCart) {
+        if (isSuccessGetOfCartDeleteAValueOfCart) {
             const data = cart?.filter((item) => item.tourId !== dataCartDelete?.tourId)
+            console.log(data)
             setCart(data);
         }
-    }, [cart, dataCartDelete?.tourId, isSuccessDeleteAValueOfCart]);
-    React.useEffect(() => {
-        if (isSuccess) {
-            setCart(cartData);
-        }
-    }, [cartData, isSuccess]);
+    }, [cart, dataCartDelete?.tourId, isSuccessGetOfCartDeleteAValueOfCart]);
 
     const handleDeleteAValueInCart = (tourId:string) => {
         mutateDeleteAValueOfCart(tourId)
@@ -157,7 +143,7 @@ const CartComponent: FC<CartProps> = ({toggleCart}) => {
                             <th scope="col" className="px-2">Remove</th>
                         </tr>
                         </thead>
-                        {isLoading ? <div
+                        {isLoadingOfCart ? <div
                             className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
                             <CircularProgress color="secondary"/>
                         </div> : (

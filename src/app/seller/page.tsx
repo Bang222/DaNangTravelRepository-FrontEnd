@@ -5,7 +5,7 @@ import LargeHeading from "@/components/ui/LargeHeading";
 import Paragraph from "@/components/ui/Paragraph";
 import Link from "next/link";
 import * as React from "react";
-import ModalCreateStore from "@/components/modal/ModalCreateStore";
+import ModalCreateStore from "@/components/modal/user/ModalCreateStore";
 import {useMutation} from "@tanstack/react-query";
 import {bookingAPI, createStoreAPI} from "@/util/api/apiReuqest";
 import {useSelector} from "react-redux";
@@ -17,6 +17,7 @@ interface PageProps {
 
 const Page: NextPage<PageProps> = ({}) => {
     const role = useSelector((state) => state.auth.value?.user.role)
+    const isAuth = useSelector((state) => state.auth.value?.user.role)
     const containerStyle:React.CSSProperties = {
         backgroundImage: `url('https://wallpaperaccess.com/full/3397663.jpg')`,
         backgroundSize: 'cover',

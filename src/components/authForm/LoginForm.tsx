@@ -133,7 +133,7 @@ const LoginForm: () => JSX.Element = () => {
                         {loginError && <Paragraph status={"error"} className={'text-center'} >{loginError}</Paragraph>}
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
-                        <a href="#" className="text-blue-200 max-md:text-[12px]">Forgot password</a>
+                        <a href="@/components/authForm/LoginForm#" className="text-blue-200 max-md:text-[12px]">Forgot password</a>
                     </div>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>Do you have a account? </Paragraph>

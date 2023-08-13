@@ -11,26 +11,23 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 import Paragraph from "@/components/ui/Paragraph";
 import CardActions from "@mui/material/CardActions";
-import {Tooltip} from "@mui/material";
-import ModalCommentOfTour from "@/components/modal/ModalCommentOfTour";
+import {CircularProgress, Tooltip} from "@mui/material";
+import ModalCommentOfTour from "@/components/modal/user/ModalCommentOfTour";
 import * as React from "react";
 import {CommentTourDTO, TourDTO} from "@/types";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {addToCartAPI, bookingAPI, upVoteTourApi} from "@/util/api/apiReuqest";
 import {useSelector} from "react-redux";
 import Slice from "@/components/ui/swiperSlice";
 import Link from "next/link";
 import LineCustom from "@/components/ui/LineCustom";
 import PublicSharpIcon from '@mui/icons-material/PublicSharp';
+import {toast} from "react-toastify";
 
 
 interface TourDetailProps {
     id: string
-    comments?: [
-        {
-            id: string
-        }
-    ]
+    comments: CommentTourDTO[]
     store: {
         id: string;
         name: string;
@@ -52,13 +49,16 @@ interface TourDetailProps {
 const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const token = useSelector<any>((state) => state.auth.value?.token)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const userId = useSelector((state) => state.auth.value?.user.id)
+    const [isLoadingOfCart, setLoadingOfCart] = useState(false);
 
     const user = useSelector((state) => state.auth.value?.user)
     const {err, setErr} = React.useState<string>('')
-    const [commentData, setCommentData] = useState<CommentTourDTO[]>(tour.comments)
+    const [commentData, setCommentData] = useState<CommentTourDTO[] | undefined>()
     const [upvote, setUpvote] = useState<number>(tour.upVote.length)
-    const [previewImage, setPreviewImage] = useState(tour?.imageUrl)
+    const [previewImage, setPreviewImage] = useState<string[]>(tour.imageUrl)
 
+    const queryClient = useQueryClient();
     const {mutate, data} = useMutation(upVoteTourApi, {
         onSuccess: (data) => {
             // setTotalVote(dataVote?.total);
@@ -66,11 +66,21 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             return setUpvote(upvote + data.total)
         },
         onError: (error) => {
+            toast.warn("Please Don\'t spam wait after 60s", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
             setErr(error.message);
         },
     });
-    const {mutate:mutateCart, data:dataCart} = useMutation(
-        async (tourId:string) => {
+    const {mutate: mutateCart, data: dataCart} = useMutation(
+        async (tourId: string) => {
             try {
                 const res = await addToCartAPI(tourId, accessToken, user.id)
                 return res;
@@ -78,17 +88,26 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 throw error;
             }
         }, {
-        onSuccess: () => {
-            // setTotalVote(dataVote?.total);
-            // setVoteStatus(dataVote?.status);
-        return;
-        },
-        onError: (error) => {
-        },
-    });
-    const handleAddToCart = (tourId: string) =>{
+            onSuccess: () => {
+                queryClient.invalidateQueries(['cart', userId]);
+                toast.success('Added to cart', {
+                        position: "top-center",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    },
+                )
+            },
+            onError: (error) => {
+                toast.error('Error Please Contact the Shop')
+            },
+        });
+    const handleAddToCart = (tourId: string) => {
         mutateCart(tourId)
-        console.log(tourId)
     }
     const iconStyle: { color: string; "&:hover": { transform: string; color: string }; transition: string } = {
         color: '#ccc',
@@ -104,6 +123,10 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const handleClickUpvote = (tourId: string) => {
         mutate(tourId)
     }
+    useEffect(() => {
+        setCommentData(tour.comments)
+    }, [tour.comments])
+
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'numeric',
@@ -114,6 +137,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const createdAt: Date = new Date(tour.createdAt);
     const formattedStartDate = startDate.toLocaleDateString('es-uk', options);
     const formatCreateAt = createdAt.toLocaleDateString('es-uk', options);
+    const formatPrice = tour.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const differenceInMilliseconds = endDate - startDate;
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
     return (
@@ -139,20 +163,21 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 </section>
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
-                        <Paragraph>Name: <b>{tour.name}</b></Paragraph>
-                        <Paragraph>Price: <b>{tour.price}/Per</b></Paragraph>
-                        <Paragraph>Address: <b>{tour.address}</b></Paragraph>
-                        <Paragraph>Day Start: <b>{formattedStartDate}</b> <Paragraph>
-                            Total: <b>{differenceInDays}Days {differenceInDays - 1}Night</b></Paragraph></Paragraph>
+                        <Paragraph size={'sm'}>Name: <b>{tour.name}</b></Paragraph>
+                        <Paragraph size={'sm'}>Price: <b>{formatPrice}/<b className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
+                        <Paragraph size={'sm'}>Address: <b>{tour.address}</b></Paragraph>
+                        <Paragraph size={'sm'}>Day Start: <b>{formattedStartDate}</b> <Paragraph size={'sm'}>
+                            Total: <b>{differenceInDays}</b> <span className={'text-[10px] lg:text-[12px]'}>Days</span>  <b>{differenceInDays - 1} </b> <span className={'text-[10px] lg:text-[12px]'}>Night</span></Paragraph></Paragraph>
                     </div>
-                    <div className={'grid  lg:flex items-end justify-around pb-[10px]'}>
+                    <div className={'grid lg:flex items-end justify-around pb-[10px]'}>
                         <button
-                            className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 w-[100px] rounded-full'}>
-                            <Link href={{pathname: `/tour/${tour.id}`}}>Detail</Link>
+                            className={'bg-blue-500 px-2 py-0.5 hover:bg-blue-700 text-white font-bold md:py-2 md:px-4 rounded-full lg:w-[100px]'}>
+                            <Link className={'text-[12px] md:text-[16px]'}
+                                  href={{pathname: `/tour/${tour.id}`}}>Detail</Link>
                         </button>
                         <button
-                            className={'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'}>
-                            <Link href={`/booking/${tour.id}`}>Booking</Link>
+                            className={'bg-blue-500 py-0.5 px-2 w-fit hover:bg-blue-700 text-white font-bold md:py-2 md:px-4 rounded-full'}>
+                            <Link href={`/booking/${tour.id}`} className={'text-[12px] md:text-[16px]'}>Booking</Link>
                         </button>
                     </div>
                 </div>
@@ -160,7 +185,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             <div className={'w-full flex justify-center'}>
                 <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
             </div>
-            <CardActions sx={{width: '100%', display:'flex', justifyContent: 'space-between'}}>
+            <CardActions sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
                 <div className={'flex items-center'}>
                     {(data?.status ? data?.status.includes(tour.userId) :
                         tour?.upVote.includes(tour.userId))
@@ -190,12 +215,25 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                             />
                         </Tooltip>
                     </Typography>
-                    <Typography>{commentData.length !== 0 ? commentData.length : tour.comments?.length}</Typography>
+                    <Typography>{!tour.comments?.length ? commentData?.length : tour.comments?.length}</Typography>
                 </div>
                 <div className={'mr-3 nh:mr-5 cursor-pointer'}>
-                    <Tooltip title="Add To Cart" placement="bottom" sx={{color: 'black'}} >
-                     <AddShoppingCartIcon onClick={() =>handleAddToCart(tour.id)}/>
-                    </Tooltip>
+                    {isLoadingOfCart ? (
+                        <div className={''}>
+                            <CircularProgress color="secondary" size={16}/>
+                        </div>
+                    ) : <Tooltip title="Add To Cart" placement="bottom"
+                                 sx={{color: 'black', '&:hover': {color: 'blue'}}}>
+                        <AddShoppingCartIcon onClick={() => {
+                            setLoadingOfCart(true);
+
+                            setTimeout(() => {
+                                handleAddToCart(tour.id);
+                                setLoadingOfCart(false);
+                            }, 2000);
+                        }}/>
+                    </Tooltip>}
+
                 </div>
             </CardActions>
             <LineCustom size={'90%'}/>

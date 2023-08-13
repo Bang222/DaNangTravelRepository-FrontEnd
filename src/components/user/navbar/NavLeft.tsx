@@ -24,7 +24,7 @@ interface navBarLeftInterface {
 
 const NavLeft: FC<NavLeftProps> = ({}) => {
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
-        {name:'Account Seller', href:'#',icon: <StoreSharpIcon sx={{color:'white'}}/>},
+        {name:'Account Seller', href:'/seller',icon: <StoreSharpIcon sx={{color:'white'}}/>},
         {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>},
         {name:'Used Tours', href:'#',icon: <FlightLandIcon sx={{color:'white'}}/>},
         // {name:'Account Seller', href:''},

@@ -18,7 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import LoginIcon from "@mui/icons-material/Login";
 import {Tooltip} from "@mui/material";
-import ModalCommentOfTour from "@/components/modal/ModalCommentOfTour";
+import ModalCommentOfTour from "@/components/modal/user/ModalCommentOfTour";
 
 
 interface ExpandMoreProps extends IconButtonProps {

@@ -14,7 +14,7 @@ import WhereToVoteOutlinedIcon from '@mui/icons-material/WhereToVoteOutlined';
 import LineCustom from "@/components/ui/LineCustom";
 import TourOutlinedIcon from '@mui/icons-material/TourOutlined';
 import LargeHeading from "@/components/ui/LargeHeading";
-import AccompaniedService from "@/components/AccompaniedService";
+import AccompaniedService from "@/components/ui/AccompaniedService";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import {Tabs} from '@mui/base/Tabs';
@@ -182,10 +182,12 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
                                     <div className="h-4">
                                     </div>
                                     <div className={'flex justify-end lg:mr-5'}>
-                                        <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 w-[40%] rounded-full">
-                                            <Link href={`/booking/${tourId}`}>Booking</Link>
-                                        </button>
+                                        <Link className={'w-[40%]'} href={`/booking/${tourId}`}>
+                                            <button
+                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 w-full rounded-full">
+                                                Booking
+                                            </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </Card>
@@ -205,20 +207,28 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
                             >
                                 <section className={'m-3'}>
                                     <div className={'w-fit mb-3'}>
-                                        <Paragraph size={'md'} className={'font-bold mb-2'}>{dataTour?.store.name}</Paragraph>
+                                        <Paragraph size={'md'}
+                                                   className={'font-bold mb-2'}>{dataTour?.store.name}</Paragraph>
                                         <LineCustom size={'100%'}/>
                                     </div>
                                     <div className={'flex items-center'}>
-                                        <div className={'bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center rounded-full'} style={{width:'40px', height:'40px'}}>
-                                            <FavoriteIcon sx={{color:'red'}}/>
+                                        <div
+                                            className={'bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center rounded-full'}
+                                            style={{width: '40px', height: '40px'}}>
+                                            <FavoriteIcon sx={{color: 'red'}}/>
                                         </div>
-                                        <Paragraph className={'ml-4'}>Have <b>{dataTour?.upVote.length} Love</b> this tour</Paragraph>
+                                        <Paragraph className={'ml-4'}>Have <b>{dataTour?.upVote.length} Love</b> this
+                                            tour</Paragraph>
                                     </div>
                                     <div className={'flex items-center my-2'}>
-                                        <div className={'bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center rounded-full'} style={{width:'40px', height:'40px'}}>
-                                            <MessageOutlinedIcon sx={{color:'white'}}/>
+                                        <div
+                                            className={'bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center rounded-full'}
+                                            style={{width: '40px', height: '40px'}}>
+                                            <MessageOutlinedIcon sx={{color: 'white'}}/>
                                         </div>
-                                        <Paragraph className={'ml-4'}>Have <b>{dataTour?.comments.length} comments</b> this tour</Paragraph>
+                                        <Paragraph
+                                            className={'ml-4'}>Have <b>{dataTour?.comments.length} comments</b> this
+                                            tour</Paragraph>
                                     </div>
                                 </section>
                             </Card>
