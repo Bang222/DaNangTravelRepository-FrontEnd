@@ -66,6 +66,8 @@ export interface props {
 
 const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const user = useSelector((state) => state.auth.value?.user)
+    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const userId = useSelector((state) => state.auth.value?.user.id)
     const [commentsError, setCommentsError] = useState<string>("");
     const [commentsSuccess, setCommentsSuccess] = useState("")
     const [open, setOpen] = React.useState(false);
@@ -81,7 +83,16 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
             setCommentsSuccess('');
         },
     })
-    const {mutate: mutateComment, data: dataComment} = useMutation(postCommentsOfTour, {
+    const {mutate: mutateComment, data: dataComment} = useMutation(
+        async (commentData:CommentsDTO) => {
+            try {
+                const res = await postCommentsOfTour(commentData,userId,accessToken)
+                return res
+            }catch(error){
+                throw error;
+            }
+        },
+        {
         onSuccess: (dataComment) => {
             props.setCommentData([...props.commentData,dataComment])
         },
@@ -193,7 +204,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         {isLoading ? <Paragraph>Loading...</Paragraph> : <>
                             {props.commentData && props.commentData?.map((comment: CommentTourDTO) => {
                                 return (
-                                    <section className={'flex pt-2 pb-2'} key={comment.id}>
+                                    <section className={'flex pt-2 pb-2 items-center'} key={comment.id}>
                                         <CommentOfTour
                                             user ={comment.user}
                                             tourId={comment.tourId}

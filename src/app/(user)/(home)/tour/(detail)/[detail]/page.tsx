@@ -132,11 +132,11 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
                                                 style: 'currency',
                                                 currency: 'VND'
                                             })}</b>/Per</Paragraph>
-                                            <Paragraph> End Day<b>: {formattedEndDate}</b></Paragraph>
+                                            <Paragraph> Start Day<b>: {formattedStartDate}</b></Paragraph>
                                         </div>
                                         <div>
                                             <Paragraph>Address<b>: {dataTour?.address}</b></Paragraph>
-                                            <Paragraph> Start Day<b>: {formattedStartDate}</b></Paragraph>
+                                            <Paragraph> End Day<b>: {formattedEndDate}</b></Paragraph>
                                         </div>
                                     </div>
                                     <div className="h-5"></div>
@@ -168,7 +168,7 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
                                                     <StyledTabPanel key={item.id} value={index}>
                                                         <Paragraph className={'font-bold lg:text-center w-full'}
                                                                    style={{fontSize: '25px'}}>
-                                                            Đi phà cho tránh tắc đường Title
+                                                            {item.title}
                                                         </Paragraph>
                                                         {item.description}
                                                     </StyledTabPanel>
@@ -217,7 +217,7 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
                                             style={{width: '40px', height: '40px'}}>
                                             <FavoriteIcon sx={{color: 'red'}}/>
                                         </div>
-                                        <Paragraph className={'ml-4'}>Have <b>{dataTour?.upVote.length} Love</b> this
+                                        <Paragraph className={'ml-4'}>Have <b>{dataTour?.upVote.length - 1} Love</b> this
                                             tour</Paragraph>
                                     </div>
                                     <div className={'flex items-center my-2'}>

@@ -19,6 +19,7 @@ import {useSelector} from "react-redux";
 import {CartDTO} from "@/types";
 import Link from "next/link";
 
+// navbar component
 interface CartProps {
     toggleCart: () => void;
     accessToken: string;
@@ -74,7 +75,6 @@ const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,car
     React.useEffect(() => {
         if (isSuccessGetOfCartDeleteAValueOfCart) {
             const data = cart?.filter((item) => item.tourId !== dataCartDelete?.tourId)
-            console.log(data)
             setCart(data);
         }
     }, [cart, dataCartDelete?.tourId, isSuccessGetOfCartDeleteAValueOfCart]);

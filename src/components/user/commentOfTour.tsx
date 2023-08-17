@@ -8,15 +8,15 @@ import {useSelector} from "react-redux";
 
 interface CommentOfTourProps {
     user: {
-        profilePicture:string
-        firstName:string;
+        profilePicture: string
+        firstName: string;
         lastName: string;
     }
-    id:string
-    content :string
+    id: string
+    content: string
 }
 
-//bang
+// ModalComments
 
 const CommentOfTour: FC<CommentOfTourProps> = ({...comment}) => {
     return (
@@ -29,10 +29,12 @@ const CommentOfTour: FC<CommentOfTourProps> = ({...comment}) => {
                     </Avatar>
                 }
             ></CardHeader>
-            <div className={'bg-zinc-300 p-2 rounded-[10px]'}>
-                <Paragraph
-                    className={'font-bold m-0 text-[10px]'}> {comment.user.firstName} {comment.user.lastName} </Paragraph>
-                <Paragraph className={'text-[8px]'}> {comment.content}</Paragraph>
+            <div className={'bg-zinc-300 p-2 h-fit rounded-[10px]'}>
+                <div>
+                    <Paragraph
+                        className={'font-bold m-0 text-[10px]'}> {comment.user.firstName} {comment.user.lastName} </Paragraph>
+                    <Paragraph className={'text-[8px]'}> {comment.content}</Paragraph>
+                </div>
             </div>
         </>
     );

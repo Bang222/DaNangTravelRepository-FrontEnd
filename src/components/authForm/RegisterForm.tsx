@@ -65,7 +65,7 @@ const RegisterForm: (props) => JSX.Element = () => {
                 address: values.address,
                 sex: values.sex,
             };
-            console.log(RegisterDTO)
+            // console.log(RegisterDTO)
             mutate(RegisterDTO)
         },
     });

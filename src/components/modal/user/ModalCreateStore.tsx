@@ -66,7 +66,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
         }, {
             onSuccess: () => {
                 // setIsSuccesses(true)
-                return setDataStore(dataCreateStore)
+                setDataStore(dataCreateStore)
             },
             onError: (error) => {
                 setErrorData('Can not Create Please Try to Another Account')
@@ -105,7 +105,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
     }, [isSuccess])
     return (
         <div>
-            <button onClick={handleOpen}>Create Store</button>
+            <button className=" mb-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 w-fit rounded-full" onClick={handleOpen}>Create Store</button>
             <Modal
                 sx={{left: '5%', right: '5%'}}
                 open={openModal}
@@ -126,26 +126,26 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
                     <LineCustom size={'100%'}/>
                     <Typography id="modal-modal-description" sx={{mt: 2}}>
                         <form className={'pb-5'} onSubmit={formik.handleSubmit}>
-                            <label className={'font-bold text-gray-500'}>Name Store</label>
+                            <label className={'font-bold text-black'}>Name Store</label>
                             <div className="pt-[8px] pb-[24px] text-black">
                                 <input type='text'
                                        placeholder='name'
                                        name='name'
                                        id="name"
-                                       className={'w-full h-[36px] p-1 rounded-[4px] border-solid border-1 border-gray-400 focus:border-blue-500'}
+                                       className={'w-full h-[36px] px-3 rounded-[4px] border-solid border-1 border-gray-400 focus:border-blue-500'}
                                        required
                                        value={formik.values.name}
                                        onChange={formik.handleChange}
                                 />
                                 <Paragraph status={'error'}>{formik.errors.name}</Paragraph>
                             </div>
-                            <label className={'font-bold text-gray-500'}>Slogan</label>
+                            <label className={'font-bold text-black'}>Slogan</label>
                             <div className="pt-[8px] pb-[24px] text-black">
                                 <input type='text'
                                        placeholder='slogan'
                                        name='slogan'
                                        id="slogan"
-                                       className={'w-full h-[36px] p-1 rounded-[4px] border-solid border-1 border-gray-400 focus:border-blue-500'}
+                                       className={'w-full h-[36px] px-3 rounded-[4px] border-solid border-1 border-gray-400 focus:border-blue-500'}
                                        required
                                        value={formik.values.slogan}
                                        onChange={formik.handleChange}

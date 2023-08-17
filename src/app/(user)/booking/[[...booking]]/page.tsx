@@ -64,35 +64,6 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
     const [dataBooking, setDataBooking] = React.useState()
     const [errorBooking, setErrorDataBooking] = React.useState<string>(null)
-    const [isSuccesses, setIsSuccesses] = React.useState<boolean>()
-    const [isLoadingOfBooking, setLoadingOfBooking] = useState(false);
-
-    const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
-        async () => {
-            try {
-                const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
-                return res;
-            } catch (error) {
-                throw error;
-            }
-        }, {
-            onSuccess: () => {
-                setIsSuccesses(true)
-            },
-            onError: (error) => {
-                setErrorDataBooking('Not Enough Slot')
-                toast.error("Sorry, Tour it's full slot")
-            },
-        });
-    const {mutate, isLoading, data} = useMutation(getTourById, {
-        onSuccess: (data) => {
-            return setDataTour(data)
-        },
-        onError: (error) => {
-            setTourError(error.message);
-            toast.error("Can not found Tour")
-        },
-    });
     const [adultCount, setAdultCount] = React.useState<number>(1)
     const [childCount, setChildCount] = React.useState<number>(0)
     const [toddlerCount, setToddlerCount] = React.useState<number>(0)
@@ -111,6 +82,33 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [toddlers, setToddlers] = React.useState<Passenger[]>([])
     const [infants, setInfants] = React.useState<Passenger[]>([])
     const router = useRouter()
+
+    const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
+        async () => {
+            try {
+                const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
+                return res;
+            } catch (error) {
+                throw error;
+            }
+        }, {
+            onSuccess: () => {
+                setErrorDataBooking('')
+            },
+            onError: (error) => {
+                setErrorDataBooking('Not Enough Slot')
+                toast.error("Sorry, Tour it's full slot")
+            },
+        });
+    const {mutate, isLoading, data} = useMutation(getTourById, {
+        onSuccess: (data) => {
+            return setDataTour(data)
+        },
+        onError: (error) => {
+            setTourError(error.message);
+            toast.error("Can not found Tour")
+        },
+    });
 
     const handleClick = e => {
         if (!(email && firstName && fullName && address && phone).trim()) {
@@ -387,7 +385,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     }, [])
 
     useEffect(() => {
-            if (isSuccesses) {
+            if (isSuccess) {
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
                 setToddlers([])
@@ -405,7 +403,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 // router.push('/payment')
             }
         }
-        , [isSuccesses])
+        , [isSuccess])
     return (
         <>
             {!params ? router.push('/notfound') : <section className={'font-poppins bg-neutral-400'}>
@@ -873,18 +871,20 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                             <div className={'w-full lg:w-[60%] flex justify-center pt-3'}>
                                 <CardActions
                                     sx={{display: 'flex', justifyContent: 'center', width: {xs: '97%', lg: '50%'}}}>
-                                    {isLoadingOfBooking ? (
+                                    {isLoadingBooking ? (
                                         <div className={''}>
                                             <CircularProgress color="secondary" size={16}/>
                                         </div>
                                     ) : <Button variant="solid" color="primary"
-                                                onClick={(e) => {
-                                                    setLoadingOfBooking(true);
-                                                    setTimeout(() => {
-                                                        handleClick(e.target.value)
-                                                        setLoadingOfBooking(false);
-                                                    }, 2000);
-                                                }
+                                                onClick={(e) =>
+                                                    // {
+                                                    // setLoadingOfBooking(true);
+                                                    // setTimeout(() => {
+                                                    handleClick(e.target.value)
+                                                    //         setLoadingOfBooking(false);
+                                                    //     }, 2000);
+                                                    // }
+                                                    // }
                                                 }
                                     >
                                         Payment

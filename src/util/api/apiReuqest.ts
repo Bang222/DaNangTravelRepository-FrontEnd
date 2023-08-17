@@ -14,7 +14,7 @@ import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";
 import {useQuery} from "@tanstack/react-query";
 import {getCookie} from "@/util/api/cookies";
-import {CreateStoreDTO, informationStoreDTO} from "@/types/seller";
+import {CreateStoreDTO, informationStoreDTO, TourOfStore} from "@/types/seller";
 
 export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
@@ -49,12 +49,12 @@ export const useGetAllTourApi = () => {
         throw new Error(e)
     }
 }
-export const upVoteTourApi = async (tourId: string) => {
+export const upVoteTourApi = async (tourId: string,accessToken: string) => {
     try {
         const userId = localStorage.getItem('userId');
         const res = await axios.post('http://localhost:4000/api/tour/upvote', {tourId: tourId}, {
             headers: {
-                Authorization: `bearer ${getCookie('token')}`,
+                Authorization: `bearer ${getCookie('token') ? getCookie('token') : accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -79,10 +79,10 @@ export const getCommentsOfTour = async (tourId: string) => {
         throw new Error('sorry can not find comments');
     }
 }
-export const postCommentsOfTour = async (commentDTO: CommentsDTO) => {
+export const postCommentsOfTour = async (commentDTO: CommentsDTO,userIdStore:string, accessToken:string) => {
     try {
         const userId = localStorage.getItem('userId');
-        const token = getCookie('token')
+        const token = getCookie('token') ? getCookie('token') : accessToken
         const res = await axios.post('http://localhost:4000/api/tour/create/comment', commentDTO, {
             headers: {Authorization: `Bearer ${token}`,
             "x-client-id": userId
@@ -223,6 +223,40 @@ export const deleteAllValueCartAPI = async (accessToken: string, userId:string) 
         return data
     } catch (err) {
         throw new Error('Tour is null');
+    }
+}
+export const getTourOfStore = async (accessToken: string, userId:string) => {
+    try {
+        const res = await axios.get(`http://localhost:4000/api/store/list-tour` ,{
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as TourOfStore[]
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const createTourAPI = async (accessToken: string, userId:string,formData:any) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/tour/create` ,
+            formData
+            ,{
+            headers: {Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Error');
     }
 }
 

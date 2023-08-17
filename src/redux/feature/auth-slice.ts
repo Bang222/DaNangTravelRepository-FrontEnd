@@ -22,6 +22,14 @@ type AuthState = {
         createdTime: Date;
         profilePicture: string;
         role: string;
+        store: {
+            id: string,
+            name:string,
+            slogan:string,
+            imgUrl:string,
+            isActive:boolean,
+            userId:string,
+        }
     };
 }
 const initialState = {
@@ -44,6 +52,14 @@ const initialState = {
             createdTime: '',
             profilePicture: '',
             role: '',
+            store: {
+                id: '',
+                name:'',
+                slogan:'',
+                imgUrl:'',
+                isActive:'',
+                userId:'',
+            }
         },
     } as AuthState
 } as InitialState

@@ -48,11 +48,7 @@ const Page: NextPage<PageProps> = ({}) => {
                         DaNang Traval for your business. With a business account on DaNang Traval, you can run, manage
                         and grow your business holistically.</Paragraph>
                     <div className={'flex w-full justify-center'}>
-                    <button
-                        className=" mb-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 w-fit rounded-full">
-                        {/*<Link href={`/booking/${tourId}`}>Booking</Link>*/}
                         <ModalCreateStore />
-                    </button>
                     </div>
                 </div>
             </div>

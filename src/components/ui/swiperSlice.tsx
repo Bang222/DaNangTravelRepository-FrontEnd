@@ -49,7 +49,7 @@ const Slice:FC<SlideProps> = (props) => {
                     (
                         <SwiperSlide key={index}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img className={'w-full object-cover'} src={item} alt={'err'} loading={'lazy'}
+                            <img className={'w-full h-[200px] lg:h-[500px] sm:h-[350px] object-cover'} src={item} alt={'err'} loading={'lazy'}
                             />
                         </SwiperSlide>
                     )
@@ -76,7 +76,7 @@ const Slice:FC<SlideProps> = (props) => {
                         // eslint-disable-next-line react/jsx-key
                         <SwiperSlide key = {index} className={'opacity-40'}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img className={'h-full w-full object-fill'} src={item} alt={'err'} loading={'lazy'}
+                            <img className={'lg:h-[100px] h-[50px] sm:h-[75px] w-full object-fill'} src={item} alt={'err'} loading={'lazy'}
                             />
                         </SwiperSlide>
                     )

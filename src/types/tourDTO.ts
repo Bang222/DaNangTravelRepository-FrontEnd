@@ -66,6 +66,7 @@ export interface TourDetailInterface {
     description: string;
     price: number;
     quantity: number;
+    baseQuantity:number;
     imageUrl: string[];
     lastRegisterDate: Date;
     address: string;
@@ -93,6 +94,7 @@ export interface TourDetailInterface {
     schedules: [
         {
             id: string;
+            title:string;
             day: string;
             imgUrl: string;
             description: string;

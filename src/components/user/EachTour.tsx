@@ -59,26 +59,34 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const [previewImage, setPreviewImage] = useState<string[]>(tour.imageUrl)
 
     const queryClient = useQueryClient();
-    const {mutate, data} = useMutation(upVoteTourApi, {
-        onSuccess: (data) => {
-            // setTotalVote(dataVote?.total);
-            // setVoteStatus(dataVote?.status);
-            return setUpvote(upvote + data.total)
-        },
-        onError: (error) => {
-            toast.warn("Please Don\'t spam wait after 60s", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-            setErr(error.message);
-        },
-    });
+    const {mutate, data} = useMutation(
+        async (tourId: string) => {
+            try {
+                const res = upVoteTourApi(tourId, accessToken)
+                return res
+            } catch (e) {
+                throw e
+            }
+        }, {
+            onSuccess: (data) => {
+                // setTotalVote(dataVote?.total);
+                // setVoteStatus(dataVote?.status);
+                return setUpvote(upvote + data.total)
+            },
+            onError: (error) => {
+                toast.warn("Please Don\'t spam wait after 60s", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                setErr(error.message);
+            },
+        });
     const {mutate: mutateCart, data: dataCart} = useMutation(
         async (tourId: string) => {
             try {
@@ -103,7 +111,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 )
             },
             onError: (error) => {
-                toast.error('Error Please Contact the Shop')
+                toast.warn('Tour existed in Tour Cart')
             },
         });
     const handleAddToCart = (tourId: string) => {
@@ -156,18 +164,21 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 title={tour.store.name}
                 subheader={formatCreateAt}
             />
-
             <CardContent>
                 <section className={'mb-4'}>
                     <Slice previewImage={previewImage}/>
                 </section>
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
-                        <Paragraph size={'sm'}>Name: <b>{tour.name}</b></Paragraph>
-                        <Paragraph size={'sm'}>Price: <b>{formatPrice}/<b className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
-                        <Paragraph size={'sm'}>Address: <b>{tour.address}</b></Paragraph>
-                        <Paragraph size={'sm'}>Day Start: <b>{formattedStartDate}</b> <Paragraph size={'sm'}>
-                            Total: <b>{differenceInDays}</b> <span className={'text-[10px] lg:text-[12px]'}>Days</span>  <b>{differenceInDays - 1} </b> <span className={'text-[10px] lg:text-[12px]'}>Night</span></Paragraph></Paragraph>
+                        <Paragraph size={'sm'}>Name: <b className={'text-[14px]'}>{tour.name}</b></Paragraph>
+                        <Paragraph size={'sm'}>Price: <b className={'text-[14px]'}>{formatPrice}/<b
+                            className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
+                        <Paragraph size={'sm'}>Address: <b className={'text-[14px]'}>{tour.address}</b></Paragraph>
+                        <Paragraph size={'sm'}>Day Start: <b className={'text-[14px]'}>{formattedStartDate}</b>
+                            <Paragraph size={'sm'}>
+                                Total: <b>{differenceInDays}</b> <span
+                                className={'text-[10px] lg:text-[12px]'}>Days</span> <b>{differenceInDays - 1} </b>
+                                <span className={'text-[10px] lg:text-[12px]'}>Night</span></Paragraph></Paragraph>
                     </div>
                     <div className={'grid lg:flex items-end justify-around pb-[10px]'}>
                         <button
@@ -230,7 +241,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                             setTimeout(() => {
                                 handleAddToCart(tour.id);
                                 setLoadingOfCart(false);
-                            }, 2000);
+                            }, 1000);
                         }}/>
                     </Tooltip>}
 
