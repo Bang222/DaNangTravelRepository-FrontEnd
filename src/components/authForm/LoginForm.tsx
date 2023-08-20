@@ -24,7 +24,6 @@ const LoginForm: () => JSX.Element = () => {
         onSuccess: (userData) => {
             const token = userData.token.access
             setCookie('token', token)
-            console.log(token)
             dispatch(logIn(userData));
             router.push('/');
             },
@@ -64,7 +63,7 @@ const LoginForm: () => JSX.Element = () => {
     return (
         <section className="flex items-center justify-center h-screen">
             <div
-                className="bg-neutral-500 sm:w-[420px] sm:h-min-[450px] w-[350px] flex justify-center rounded-md">
+                className="bg-neutral-500 w-[93vw] sm:w-[420px] sm:h-min-[450px] w-[350px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <LargeHeading size="sm">LOG IN</LargeHeading>

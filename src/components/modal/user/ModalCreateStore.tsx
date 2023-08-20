@@ -13,6 +13,8 @@ import {useMutation} from "@tanstack/react-query";
 import {createStoreAPI} from "@/util/api/apiReuqest";
 import {useRouter} from "next/navigation";
 import {CircularProgress} from "@mui/material";
+import PolicyCreateStore from "@/components/seller/PolicyCreateStore";
+import {toast} from "react-toastify";
 
 interface ModalCreateStoreProps {
 }
@@ -65,7 +67,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
             }
         }, {
             onSuccess: () => {
-                // setIsSuccesses(true)
+                toast.success('Please Login Again')
                 setDataStore(dataCreateStore)
             },
             onError: (error) => {
@@ -80,7 +82,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
         },
         validationSchema: Yup.object({
             name: Yup.string()
-                .max(50, "Maximum 20 characters")
+                .max(50, "Maximum 50 characters")
                 .min(6, "Minimum 6 characters")
                 .required("Please Input Name Store"),
             slogan: Yup.string()
@@ -152,12 +154,14 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
                                 />
                                 <Paragraph status={'error'}>{formik.errors.slogan}</Paragraph>
                             </div>
-                            <button
-                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
-                                type={"submit"}
-                            >
-                                Register Store
-                            </button>
+                            <PolicyCreateStore handleSubmit={formik.handleSubmit} formErrors={formik.errors} />
+
+                            {/*<button*/}
+                            {/*    className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"*/}
+                            {/*    type={"submit"}*/}
+                            {/*>*/}
+                            {/*    Register Store*/}
+                            {/*</button>*/}
                             {errorData ? <Paragraph status={'error'}>{errorData}</Paragraph> : ''}
                         </form>
                     </Typography>

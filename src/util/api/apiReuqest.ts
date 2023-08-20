@@ -1,11 +1,11 @@
 import {
     BookingDTO, CartDTO,
-    CommentsDTO,
+    CommentsDTO, createExperienceCommentDTO,
     LoginDTO,
     RegisterDTO,
     TourDetailInterface,
     TourIdEndToken,
-    UserDTO,
+    UserDTO, userExperience,
     UserRequestDTO,
     voteDTO
 } from "@/types";
@@ -49,7 +49,7 @@ export const useGetAllTourApi = () => {
         throw new Error(e)
     }
 }
-export const upVoteTourApi = async (tourId: string,accessToken: string) => {
+export const upVoteTourApi = async (tourId: string, accessToken: string) => {
     try {
         const userId = localStorage.getItem('userId');
         const res = await axios.post('http://localhost:4000/api/tour/upvote', {tourId: tourId}, {
@@ -79,13 +79,14 @@ export const getCommentsOfTour = async (tourId: string) => {
         throw new Error('sorry can not find comments');
     }
 }
-export const postCommentsOfTour = async (commentDTO: CommentsDTO,userIdStore:string, accessToken:string) => {
+export const postCommentsOfTour = async (commentDTO: CommentsDTO, userIdStore: string, accessToken: string) => {
     try {
         const userId = localStorage.getItem('userId');
         const token = getCookie('token') ? getCookie('token') : accessToken
         const res = await axios.post('http://localhost:4000/api/tour/create/comment', commentDTO, {
-            headers: {Authorization: `Bearer ${token}`,
-            "x-client-id": userId
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "x-client-id": userId
             }
         })
         if (!res.data) {
@@ -115,7 +116,8 @@ export const getTourById = async (tourIdEndToken: TourIdEndToken) => {
     try {
         const userId = localStorage.getItem('userId');
         const res = await axios.post('http://localhost:4000/api/tour-by-id', {tourId: tourIdEndToken.tourId}, {
-            headers: {Authorization: `Bearer ${tourIdEndToken.token}`,
+            headers: {
+                Authorization: `Bearer ${tourIdEndToken.token}`,
                 "x-client-id": userId
             }
         })
@@ -128,10 +130,11 @@ export const getTourById = async (tourIdEndToken: TourIdEndToken) => {
         throw new Error('sorry can not find comments');
     }
 }
-export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, userId:string,tourId: string) => {
+export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, userId: string, tourId: string) => {
     try {
         const res = await axios.post(`http://localhost:4000/api/booking/${tourId}`, bookingDTO, {
-            headers: {Authorization: `Bearer ${accessToken}`,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -145,10 +148,11 @@ export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, us
     }
 }
 
-export const createStoreAPI = async (createStoreDTO:CreateStoreDTO, accessToken: string, userId:string) => {
+export const createStoreAPI = async (createStoreDTO: CreateStoreDTO, accessToken: string, userId: string) => {
     try {
         const res = await axios.post(`http://localhost:4000/api/store/create`, createStoreDTO, {
-            headers: {Authorization: `Bearer ${accessToken}`,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -161,10 +165,11 @@ export const createStoreAPI = async (createStoreDTO:CreateStoreDTO, accessToken:
         throw new Error('sorry can not find comments');
     }
 }
-export const addToCartAPI = async (tourId:string, accessToken: string, userId:string) => {
+export const addToCartAPI = async (tourId: string, accessToken: string, userId: string) => {
     try {
         const res = await axios.post(`http://localhost:4000/api/cart`, {tourId: tourId}, {
-            headers: {Authorization: `Bearer ${accessToken}`,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -177,10 +182,11 @@ export const addToCartAPI = async (tourId:string, accessToken: string, userId:st
         throw new Error('sorry can not found cart');
     }
 }
-export const getToCartAPI = async (accessToken: string, userId:string) => {
+export const getToCartAPI = async (accessToken: string, userId: string) => {
     try {
-        const res = await axios.get(`http://localhost:4000/api/get-cart`,{
-            headers: {Authorization: `Bearer ${accessToken}`,
+        const res = await axios.get(`http://localhost:4000/api/get-cart`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -193,10 +199,11 @@ export const getToCartAPI = async (accessToken: string, userId:string) => {
         throw new Error('sorry can not found cart');
     }
 }
-export const deleteOneValueCartByTourIdOfUserIdAPI = async (tourId:string, accessToken: string, userId:string) => {
+export const deleteOneValueCartByTourIdOfUserIdAPI = async (tourId: string, accessToken: string, userId: string) => {
     try {
         const res = await axios.post(`http://localhost:4000/api/delete-cart-by-id`, {tourId: tourId}, {
-            headers: {Authorization: `Bearer ${accessToken}`,
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -209,10 +216,11 @@ export const deleteOneValueCartByTourIdOfUserIdAPI = async (tourId:string, acces
         throw new Error('sorry can not found cart');
     }
 }
-export const deleteAllValueCartAPI = async (accessToken: string, userId:string) => {
+export const deleteAllValueCartAPI = async (accessToken: string, userId: string) => {
     try {
-        const res = await axios.post(`http://localhost:4000/api/delete-all-cart` ,{},{
-            headers: {Authorization: `Bearer ${accessToken}`,
+        const res = await axios.post(`http://localhost:4000/api/delete-all-cart`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -225,10 +233,11 @@ export const deleteAllValueCartAPI = async (accessToken: string, userId:string) 
         throw new Error('Tour is null');
     }
 }
-export const getTourOfStore = async (accessToken: string, userId:string) => {
+export const getTourOfStore = async (accessToken: string, userId: string) => {
     try {
-        const res = await axios.get(`http://localhost:4000/api/store/list-tour` ,{
-            headers: {Authorization: `Bearer ${accessToken}`,
+        const res = await axios.get(`http://localhost:4000/api/store/list-tour`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
             }
         })
@@ -241,15 +250,16 @@ export const getTourOfStore = async (accessToken: string, userId:string) => {
         throw new Error('Error');
     }
 }
-export const createTourAPI = async (accessToken: string, userId:string,formData:any) => {
+export const createTourAPI = async (accessToken: string, userId: string, formData: any) => {
     try {
-        const res = await axios.post(`http://localhost:4000/api/tour/create` ,
+        const res = await axios.post(`http://localhost:4000/api/tour/create`,
             formData
-            ,{
-            headers: {Authorization: `Bearer ${accessToken}`,
-                "x-client-id": userId
-            }
-        })
+            , {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            })
         if (!res.data) {
             throw new Error("can not found");
         }
@@ -260,3 +270,77 @@ export const createTourAPI = async (accessToken: string, userId:string,formData:
     }
 }
 
+export const deleteTourAPI = async (accessToken: string, userId: string, tourId: string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/tour/delete`,
+            {tourId: tourId}
+            , {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const getAllFeedsPost = async () => {
+    try {
+        const res = await axios.get(`http://localhost:4000/api/experience/all`)
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as userExperience[]
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const createCommentPost = async (accessToken: string, userId: string, experienceId: string, content: string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/experience/create/comment`, {
+                experienceId: experienceId,
+                content: content
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            }
+        )
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as createExperienceCommentDTO
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const createUpExperienceVoteAPI = async (accessToken: string, userId: string, experienceId: string) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/experience/upvote`, {
+                experienceId: experienceId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            }
+        )
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as number
+    } catch (err) {
+        throw new Error('Error');
+    }
+}

@@ -45,12 +45,12 @@ const NavbarChild:NextPage = () => {
                     selectionFollowsFocus={false}
                 >
                     <Link href="/" passHref>
-                        <Tab icon={<HomeIcon />} sx={{fontSize:'12px'}} label="Home" textColor="white" onClick={() => handleChangeIndex(0)}/>
+                        <Tab icon={<MoodIcon />} sx={{fontSize:'12px'}} label="Experience" textColor="white" onClick={() => handleChangeIndex(0)}/>
                     </Link>
                     <Link href="/tour" passHref>
                         <Tab label="Tour" icon={<TourIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(1)}/>
                     </Link>
-                    <Link href="/experience" passHref>
+                    <Link href="/" passHref>
                         <Tab label="Experience" icon={<MoodIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>
                     </Link>
                 </Tabs>

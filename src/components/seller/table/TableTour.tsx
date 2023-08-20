@@ -4,8 +4,13 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
 import {useSelector} from "react-redux";
-import {getTourOfStore} from "@/util/api/apiReuqest";
-import {useQuery} from "@tanstack/react-query";
+import {deleteTourAPI, getTourOfStore} from "@/util/api/apiReuqest";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {toast} from "react-toastify";
+import MakeSureDeleteTour from "@/components/seller/MakeSureDeleteTour";
+import {router} from "next/client";
+import {Router} from "next/router";
+import {useRouter} from "next/navigation";
 
 interface TableTourProps {
 }
@@ -15,6 +20,7 @@ interface TableTourProps {
 const TableTour: FC<TableTourProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
+    const router = useRouter()
     const {
         data: getTourOfStoreData,
         isLoading: isLoadingGetTourOfStore,
@@ -23,12 +29,37 @@ const TableTour: FC<TableTourProps> = ({}) => {
     } = useQuery(['TourOfStore', userId], () =>
         getTourOfStore(accessToken, userId)
     );
+    const queryClient = useQueryClient();
+    const {mutate:mutateDeleteTourByID,isSuccess:isSuccessDeleteTour,isError:isErrorDeleteTour} = useMutation(
+        async (tourId:string) => {
+            try{
+                const res = deleteTourAPI(accessToken,userId,tourId)
+            }catch(e) {
+                throw new Error(e)
+            }
+        },{
+            onSuccess() {
+                queryClient.invalidateQueries(['TourOfStore', userId]);
+                toast.success('Delete Success')
+
+            },
+            onError(error){
+                toast.error(error.message)
+            }
+        }
+    )
+
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
     }
-    console.log(getTourOfStoreData)
+    const handleDelete = (tourId:string) => {
+        mutateDeleteTourByID(tourId)
+    }
+    const handleDetail = (tourId:string) => {
+        router.push(`/tour/${tourId}`)
+    }
     return (
         <table
             className="table table-cell w-[89vw] lg:w-[80vw] w-full text-gray-400 border-separate space-y-6 text-sm">
@@ -89,12 +120,13 @@ const TableTour: FC<TableTourProps> = ({}) => {
                                         item.status === 'available'
                                             ? 'bg-green-500 text-white'
                                             : item.status === 'TRAVELED'
-                                                ? 'bg-red-500 text-white'
+                                                ? 'bg-black-500 text-white'
                                                 : item.status === 'full slot'
                                                     ? 'bg-yellow-500 text-white'
                                                     : item.status === 'out of date register' ?
                                                         'bg-pink-600 text-white'
-                                                        : item.status === 'traveling' ? 'bg-blue-500 text-white' : ''
+                                                        : item.status === 'traveling' ? 'bg-blue-500 text-white' :
+                                                            item.status === 'delete' ?'bg-red-500 text-white': ''
                                     } py-1 px-2 rounded-full`}
                                     >{item.status} </span>
 
@@ -113,10 +145,21 @@ const TableTour: FC<TableTourProps> = ({}) => {
                                     <td className="whitespace-nowrap px-2 py-1">{item.comments.length === 0 ? '' : item.comments.length} {item.comments.length === 0 ? 'null' : item.comments.length === 1 ? 'comment' : 'comments'} </td>
                                     <td className="whitespace-nowrap px-2 py-1 cursor-pointer">
                                         {item.status !== 'TRAVELED' ?
-                                            <span className='ml-2'><EditNoteIcon sx={{color: '#B2B200'}}/></span> :
-                                            <span> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>}
-                                        <span className='ml-2'><RemoveRedEyeIcon sx={{color: 'green'}}/></span>
-                                        <span className='ml-2'><DeleteIcon sx={{color: 'red'}}/></span>
+                                            <span className='ml-2'>
+                                                <EditNoteIcon sx={{color: '#B2B200'}}/>
+                                            </span> :
+                                            <span className={'cursor-default'}>
+                                                &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            </span>
+                                        }
+                                        <span className='ml-2' onClick={() => handleDetail(item.id)}>
+                                            <RemoveRedEyeIcon sx={{color: 'green'}}/>
+                                        </span>
+                                        {item.status !== 'delete' && item.baseQuantity === item.quantity?
+                                        <span className='ml-2'>
+                                          <MakeSureDeleteTour handleDelete ={handleDelete} tourId ={item.id}/>
+                                        </span>
+                                            : <span className={'cursor-default'}> &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>}
                                     </td>
                                 </tr>
                             )

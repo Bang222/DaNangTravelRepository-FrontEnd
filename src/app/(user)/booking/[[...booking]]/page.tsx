@@ -57,7 +57,7 @@ interface Passenger {
 }
 
 const Booking: NextPage<BookingProps> = ({params}) => {
-    const tourId = params.booking[0]
+    const tourId = params.booking?.[0]
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const [tourError, setTourError] = useState("");
@@ -100,13 +100,12 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 toast.error("Sorry, Tour it's full slot")
             },
         });
-    const {mutate, isLoading, data} = useMutation(getTourById, {
+    const {mutate, isLoading, data,} = useMutation(getTourById, {
         onSuccess: (data) => {
             return setDataTour(data)
         },
         onError: (error) => {
-            setTourError(error.message);
-            toast.error("Can not found Tour")
+            router.push('/not-found')
         },
     });
 
@@ -374,9 +373,6 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const infantPrice = InputInfantPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const totalPrice = InputTotalPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     useEffect(() => {
-        if (!tourId) {
-            router.push('not-found')
-        }
         const data: TourIdEndToken = {
             tourId: tourId,
             token: accessToken,
@@ -406,7 +402,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         , [isSuccess])
     return (
         <>
-            {!params ? router.push('/notfound') : <section className={'font-poppins bg-neutral-400'}>
+            {!tourId && !dataTour ? router.push('/not-found') : <section className={'font-poppins bg-neutral-400'}>
                 <Box sx={{paddingY: '48px', fontFamily: 'font-poppins'}}>
                     <Container fixed>
                         <div

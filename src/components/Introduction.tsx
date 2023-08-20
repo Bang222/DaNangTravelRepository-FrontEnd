@@ -12,14 +12,14 @@ interface IntroductionProps {
 const Introduction: FC<IntroductionProps> = ({}) => {
     const {data, isLoading, isFetching, error} = useGetWeather()
     const currentDay = new Date(Date.now());
-    const dateOptions = {
+    const dateOptions: Intl.DateTimeFormatOptions = {
         weekday: 'long',    // 'long' or 'short' for day of the week (e.g., Monday or Mon)
         month: 'long',      // 'long', 'short', or 'numeric' for month (e.g., January or Jan)
         day: 'numeric',     // 'numeric', or '2-digit' for day of the month (e.g., 1 or 01)
         year: 'numeric'     // 'numeric', or '2-digit' for year (e.g., 2023 or 23)
     };
 
-    const timeOptions = {
+    const timeOptions: Intl.DateTimeFormatOptions = {
         hour: 'numeric',    // 'numeric', or '2-digit' for hour (e.g., 1 or 01)
         minute: 'numeric'   // 'numeric', or '2-digit' for minute (e.g., 2 or 02)
     };

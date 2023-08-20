@@ -29,7 +29,7 @@ interface CartProps {
     cart:CartDTO[]
 }
 
-//bang
+//navbar
 
 const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,cart,isLoadingOfCart}) => {
 

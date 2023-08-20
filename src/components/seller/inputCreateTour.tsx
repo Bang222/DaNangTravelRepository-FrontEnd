@@ -307,6 +307,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
             </div>
             <Label>Schedule</Label>
             {totalDay > 0 ? [...Array(totalDay)]?.map((item, index) => {
+                // const uniqueKey = `day_${index}_${Math.random()}`;
                 return (
                     <div className={'nh:grid nh:grid-cols-2 nh:gap-2.5'} key={index}>
                         <div className={'nh:col-span-1'}>

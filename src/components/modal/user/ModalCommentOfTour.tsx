@@ -18,7 +18,7 @@ import Paragraph from "@/components/ui/Paragraph";
 import CardActions from "@mui/material/CardActions";
 import ClearIcon from '@mui/icons-material/Clear';
 import {Tooltip} from "@mui/material";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {getCommentsOfTour, postCommentsOfTour} from "@/util/api/apiReuqest";
 import {useEffect, useMemo, useState} from "react";
 import SendIcon from '@mui/icons-material/Send';
@@ -73,6 +73,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    // const queryClient = useQueryClient()
     const {mutate, isLoading, data } = useMutation(getCommentsOfTour, {
         onSuccess: (data) => {
             setCommentsError('')
@@ -95,6 +96,8 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
         {
         onSuccess: (dataComment) => {
             props.setCommentData([...props.commentData,dataComment])
+            // queryClient.invalidateQueries(['All-Tour'])
+
         },
         onError: (error) => {
             setCommentError(error.message);
@@ -129,7 +132,9 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const formattedCreateAt = createdAt.toLocaleDateString('es-uk',options)
     return (
         <div className=''>
+            <Tooltip title="comment" placement="top" sx={{color: 'black'}}>
             <CustomButton onClick={handleOpen}><CommentIcon/></CustomButton>
+            </Tooltip>
             <Modal
                 sx={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
                 disableEnforceFocus={true}

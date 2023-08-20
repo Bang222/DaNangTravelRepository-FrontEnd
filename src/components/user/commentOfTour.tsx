@@ -29,12 +29,12 @@ const CommentOfTour: FC<CommentOfTourProps> = ({...comment}) => {
                     </Avatar>
                 }
             ></CardHeader>
-            <div className={'bg-zinc-300 p-2 h-fit rounded-[10px]'}>
+            <div className={'bg-zinc-300 p-2 rounded-[10px] w-[500px] w-full overflow-auto'}>
                 <div>
-                    <Paragraph
-                        className={'font-bold m-0 text-[10px]'}> {comment.user.firstName} {comment.user.lastName} </Paragraph>
-                    <Paragraph className={'text-[8px]'}> {comment.content}</Paragraph>
+                    <span
+                        className={'font-bold m-0'}> {comment.user.firstName} {comment.user.lastName} </span>
                 </div>
+                <div className={''}><span className={'text-[13px] nh:text-[18px] break-words'}> {comment.content}</span></div>
             </div>
         </>
     );

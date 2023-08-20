@@ -201,15 +201,20 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                     {(data?.status ? data?.status.includes(tour.userId) :
                         tour?.upVote.includes(tour.userId))
                         ?
-                        <IconButton aria-label="add to favorites" sx={{color: 'red'}}
-                                    onClick={() => handleClickUpvote(tour.id)}
-                        >
-                            <FavoriteIcon/>
-                        </IconButton>
-                        : <IconButton aria-label="add to favorites" sx={{color: 'black'}}
-                                      onClick={() => handleClickUpvote(tour.id)}>
-                            <FavoriteIcon/>
-                        </IconButton>
+                        <Tooltip title="like" placement="top" sx={{color: 'black'}}>
+                            <IconButton aria-label="add to favorites" sx={{color: 'red'}}
+                                        onClick={() => handleClickUpvote(tour.id)}
+                            >
+                                <FavoriteIcon/>
+                            </IconButton>
+                        </Tooltip>
+                        :
+                        <Tooltip title="like" placement="top" sx={{color: 'black'}}>
+                            <IconButton aria-label="add to favorites" sx={{color: 'black'}}
+                                        onClick={() => handleClickUpvote(tour.id)}>
+                                <FavoriteIcon/>
+                            </IconButton>
+                        </Tooltip>
                     }
                     <Typography>{upvote - 1}</Typography>
                     <Typography>
