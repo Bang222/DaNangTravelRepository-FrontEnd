@@ -137,7 +137,7 @@ const PrimarySearchAppBar: React.FC = () => {
                             component="div"
                             sx={{display: {xs: 'none',sm: 'flex',md: 'flex'}}}
                         >
-                            <Link href={'/'}>DaNang Travel</Link>
+                            <Link href={'#'}>DaNang Travel</Link>
                         </Typography>
                         <Search className={'rounded-[30px]'}>
                             <SearchIconWrapper>

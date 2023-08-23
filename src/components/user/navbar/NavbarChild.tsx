@@ -50,9 +50,9 @@ const NavbarChild:NextPage = () => {
                     <Link href="/tour" passHref>
                         <Tab label="Tour" icon={<TourIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(1)}/>
                     </Link>
-                    <Link href="/" passHref>
-                        <Tab label="Experience" icon={<MoodIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>
-                    </Link>
+                    {/*<Link href="/" passHref>*/}
+                    {/*    <Tab label="Experience" icon={<MoodIcon />} sx={{fontSize:'12px'}} textColor="white" onClick={() => handleChangeIndex(2)}/>*/}
+                    {/*</Link>*/}
                 </Tabs>
 
             </AppBar>

@@ -344,3 +344,35 @@ export const createUpExperienceVoteAPI = async (accessToken: string, userId: str
         throw new Error('Error');
     }
 }
+export const createExperience = async (accessToken: string, userId: string,formData:any) => {
+    try {
+        const res = await axios.post(`http://localhost:4000/api/experience/create`,formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            }
+        )
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+
+export const loginWithGoogle = async (accessToken: string) => {
+    try {
+        const res = await axios.post('http://localhost:4000/api/auth/login/google', {accessToken: accessToken})
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Error');
+    }
+}

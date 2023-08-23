@@ -22,7 +22,7 @@ const CommentOfTour: FC<CommentOfTourProps> = ({...comment}) => {
     return (
         <>
             <CardHeader
-                sx={{paddingRight: 0, paddingLeft: 0}}
+                sx={{paddingRight: 0, paddingLeft: 0,alignItems:'start'}}
                 avatar={
                     <Avatar sx={{bgcolor: red[500]}} alt={comment.user.firstName}
                             src={comment.user.profilePicture} aria-label="recipe">
@@ -34,7 +34,7 @@ const CommentOfTour: FC<CommentOfTourProps> = ({...comment}) => {
                     <span
                         className={'font-bold m-0'}> {comment.user.firstName} {comment.user.lastName} </span>
                 </div>
-                <div className={''}><span className={'text-[13px] nh:text-[18px] break-words'}> {comment.content}</span></div>
+                <div className={''}><span className={'text-[12px] nh:text-[15px] break-words'}> {comment.content}</span></div>
             </div>
         </>
     );

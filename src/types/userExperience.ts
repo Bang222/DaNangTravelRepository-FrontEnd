@@ -26,6 +26,7 @@ export interface userExperience{
     status:string
     imgUrl:string
     userId:string
+    title:string
     comments: commentDTO[]
     user: userDTO
 }

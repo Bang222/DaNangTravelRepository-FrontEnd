@@ -520,7 +520,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                     <Grid container rowSpacing={1}
                                                           columnSpacing={{xs: 1, sm: 2, md: 3}}>
                                                         <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Adult</Label>
+                                                            <Label className={'font-bold'}>Adult <span className={'opacity-50 text-[12px]'}>(more than 18 Age)</span></Label>
                                                             <div className={'flex'}>
                                                                 <button className={'w-fit pl-2'}
                                                                         onClick={() => handleClickCount('decrease', 'adultCount')}>
@@ -540,7 +540,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                             </div>
                                                         </Grid>
                                                         <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Child</Label>
+                                                            <Label className={'font-bold'}>Child<span className={'opacity-50 text-[12px]'}>(11-18) Age</span></Label>
                                                             <div className={'flex'}>
                                                                 <button className={'w-fit pl-2'}
                                                                         onClick={() => handleClickCount('decrease', 'childCount')}>
@@ -558,7 +558,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                     <Grid container rowSpacing={1}
                                                           columnSpacing={{xs: 1, sm: 2, md: 3}}>
                                                         <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Toddler</Label>
+                                                            <Label className={'font-bold'}>Toddler<span className={'opacity-50 text-[12px]'}>(1-11)Age</span></Label>
                                                             <div
                                                                 className={'flex justify-center items-center text-center'}>
                                                                 <button className={'w-fit pl-2'}
@@ -577,7 +577,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                             </div>
                                                         </Grid>
                                                         <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Infant</Label>
+                                                            <Label className={'font-bold'}>Infant<span className={'opacity-50 text-[12px]'}>(less 1 Age)</span></Label>
                                                             <div className={'flex'}>
                                                                 <button className={'w-fit pl-2'}
                                                                         onClick={() => handleClickCount('decrease', 'infantCout')}>

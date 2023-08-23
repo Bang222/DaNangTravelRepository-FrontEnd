@@ -8,11 +8,16 @@ import Paragraph from "@/components/ui/Paragraph";
 import LargeHeading from "@/components/ui/LargeHeading";
 import Link from "next/link";
 import {useMutation} from "@tanstack/react-query";
-import {loginAPI} from "@/util/api/apiReuqest";
+import {bookingAPI, loginAPI, loginWithGoogle} from "@/util/api/apiReuqest";
 import {setCookie} from "@/util/api/cookies";
 import {logIn} from '@/redux/feature/auth-slice'
 import {useDispatch} from 'react-redux'
 import {AppDispatch} from "@/redux/store";
+// import {signIn, useSession} from "next-auth/react";
+import GoogleIcon from '@mui/icons-material/Google';
+import {useGoogleLogin} from '@react-oauth/google';
+import axios from "axios";
+import {toast} from "react-toastify";
 
 const LoginForm: () => JSX.Element = () => {
     const router = useRouter()
@@ -20,13 +25,49 @@ const LoginForm: () => JSX.Element = () => {
     const [loginError, setLoginError] = useState("");
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
 
-    const { mutate, isLoading,data:userData } = useMutation(loginAPI, {
+    // const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
+    //     async () => {
+    //         try {
+    //             const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
+    //             return res;
+    //         } catch (error) {
+    //             throw error;
+    //         }
+    //     }
+    const {mutate:google, isLoading:googleLoading, data: googleData} = useMutation(
+        async (accessToken:string) => {
+            try {
+                const res = loginWithGoogle(accessToken)
+                return res
+            } catch(e){
+                throw new Error(e)
+            }
+        }, {
+            onSuccess: (googleData) => {
+                const token = googleData.token.access
+                setCookie('token', token)
+                dispatch(logIn(googleData));
+                router.push('/');
+            },
+            onError: (error) => {
+                setLoginError('Register Your Account');
+            },
+        }
+    )
+    const login = useGoogleLogin({
+        onSuccess: async tokenResponse => {
+            const accessToken = tokenResponse.access_token;
+            google(accessToken)
+        },
+        onError: (error) => toast.error('can not login Google')
+    });
+    const {mutate, isLoading, data: userData} = useMutation(loginAPI, {
         onSuccess: (userData) => {
             const token = userData.token.access
             setCookie('token', token)
             dispatch(logIn(userData));
             router.push('/');
-            },
+        },
         onError: (error) => {
             setLoginError(error.message);
         },
@@ -69,7 +110,7 @@ const LoginForm: () => JSX.Element = () => {
                         <LargeHeading size="sm">LOG IN</LargeHeading>
                     </div>
                     <form className={'pb-5'} onSubmit={formik.handleSubmit}>
-                        <label  className={'font-bold'}>Email</label>
+                        <label className={'font-bold'}>Email</label>
                         <div className="pt-[8px] pb-[24px] text-black">
                             <input type='text'
                                    placeholder='email'
@@ -129,14 +170,26 @@ const LoginForm: () => JSX.Element = () => {
                         >
                             {isLoading ? "Logging in..." : "Login"}
                         </button>
-                        {loginError && <Paragraph status={"error"} className={'text-center'} >{loginError}</Paragraph>}
+                        {loginError && <Paragraph status={"error"} className={'text-center'}>{loginError}</Paragraph>}
                     </form>
                     <div className={'w-full flex justify-center p-1'}>
-                        <a href="@/components/authForm/LoginForm#" className="text-blue-200 max-md:text-[12px]">Forgot password</a>
+                        <a href="@/components/authForm/LoginForm#" className="text-blue-200 max-md:text-[12px]">Forgot
+                            password</a>
+                    </div>
+                    <div className={'w-full flex justify-center p-1'}>
+                        <div class="bg-white rounded-lg shadow-lg">
+                            <button onClick={() => login()}
+                                className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
+                                <span class="material-icons rounded-full bg-white mr-2"><GoogleIcon sx={{color:'blue'}}/></span>
+                                <span>Login with Google</span>
+                            </button>
+                        </div>
                     </div>
                     <div className={'w-full flex justify-center p-1'}>
                         <Paragraph>Do you have a account? </Paragraph>
-                        <Link href="/register" className={'flex items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register here</Link>
+                        <Link href="/register"
+                              className={'flex items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}>Register
+                            here</Link>
                     </div>
                 </div>
             </div>

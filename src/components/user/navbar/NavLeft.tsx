@@ -23,14 +23,14 @@ interface navBarLeftInterface {
 //bang
 
 const NavLeft: FC<NavLeftProps> = ({}) => {
+    const user = useSelector((state) => state.auth.value?.user)
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
-        {name:'Account Seller', href:'/seller',icon: <StoreSharpIcon sx={{color:'white'}}/>},
+        {name: user.role === 'user' ? 'Become Business' :'Account Seller', href:'/seller',icon: <StoreSharpIcon sx={{color:'white'}}/>},
         {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>},
         {name:'Used Tours', href:'#',icon: <FlightLandIcon sx={{color:'white'}}/>},
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
         ])
-    const user = useSelector((state) => state.auth.value?.user)
     const isAuth = useSelector((state) => state.auth.value?.isAuth)
     return isAuth ? (
         <Card

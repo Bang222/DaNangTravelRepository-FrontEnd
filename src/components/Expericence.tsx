@@ -23,12 +23,12 @@ import {useSelector} from "react-redux";
 import {
     createCommentPost,
     createUpExperienceVoteAPI,
-    createUpVoteAPI,
     getAllFeedsPost,
     getToCartAPI
 } from "@/util/api/apiReuqest";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import ModalCommentExpericence from "@/components/modal/user/ModalCommentExpericence";
+import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 import {toast} from "react-toastify";
 
 
@@ -51,19 +51,28 @@ export default function Experience() {
     const user = useSelector((state) => state.auth.value?.user)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const [isUpvoting, setIsUpvoting] = React.useState(false);
-    const [cooldown, setCooldown] = React.useState(false);
-    // const[upvoteEx,setUpVoteEx] = React.useState()
+    // const [isUpvoting, setIsUpvoting] = React.useState(false);
+    // const [cooldown, setCooldown] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
     const queryClient = useQueryClient()
     const {
         data: dataExperience,
         isLoading: isLoadingExperience,
         isError: isErrorExperience,
-        isSuccess: isSuccessExperience
+        isSuccess: isSuccessExperience,
+        error: experienceError
     } = useQuery(['experienceExperience', userId], () =>
         getAllFeedsPost()
     );
+   React.useEffect(()=>{
+       if (isErrorExperience) {
+           if (experienceError?.status === 429) {
+               toast.error('Too many requests. Please wait and try again later.');
+           } else {
+               toast.error('An error occurred while fetching experiences.');
+           }
+       }
+   },[experienceError, isErrorExperience])
     const {mutate: mutateUpVote, isLoading: isLoadingUpVote,data:dataUpVote, status, isSuccess} = useMutation(
         async (experienceId:string) => {
             try {
@@ -75,11 +84,11 @@ export default function Experience() {
         },{
             onSuccess(dataUpVote){
                 queryClient.invalidateQueries(['experienceExperience', userId]);
-                setIsUpvoting(false);
-                setCooldown(true);
-                setTimeout(() => {
-                    setCooldown(false);
-                }, 1000);
+                // setIsUpvoting(false);
+                // setCooldown(true);
+                // setTimeout(() => {
+                //     setCooldown(false);
+                // }, 1000);
             },
             onError(err){
                 toast.error(err)
@@ -92,10 +101,10 @@ export default function Experience() {
         setExpanded(!expanded);
     };
     const handleSubmitUpvote = (experienceId) => {
-        if (!isUpvoting && !cooldown) {
-            setIsUpvoting(true);
-            mutateUpVote(experienceId);
-        }
+        // if (!isUpvoting && !cooldown) {
+        //     setIsUpvoting(true);
+        //     mutateUpVote(experienceId);
+        // }
         mutateUpVote(experienceId)
     };
     const options: Intl.DateTimeFormatOptions = {
@@ -124,9 +133,12 @@ export default function Experience() {
                                     : ''
                             }
                             title={`${item.user.firstName} ${item.user.lastName}`}
-                            subheader={formatCreateAt}
+                            subheader={<div>{formatCreateAt} <PublicSharpIcon sx={{fontSize:'14px'}}/></div>}
                         />
                         <CardContent>
+                            <Typography variant="body1" color="text.primary">
+                               {item.title}
+                            </Typography>
                             <Typography variant="body2" color="text.secondary">
                                 {item.content}
                             </Typography>
@@ -136,6 +148,7 @@ export default function Experience() {
                             height="194"
                             image={item.imgUrl}
                             alt={item.user.firstName}
+                            sx={{height:'400px',width:'100%'}}
                         />
                         <CardActions>
                             <span className={'text-[18px]'}>{item.upVote.length - 1}</span>

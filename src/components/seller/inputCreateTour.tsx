@@ -48,6 +48,8 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         }, {
             onSuccess: () => {
                 toast.success('Create Success')
+                formik.resetForm()
+                setPreviewImage([])
             },
             onError: (error) => {
                 toast.error('Create error', error)
@@ -72,7 +74,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
             ]
         },
         validationSchema: Yup.object().shape({
-            name: Yup.string().required('Please Input name'),
+            name: Yup.string().required('Please Input name').max(40,'can not out of 40 words'),
             description: Yup.string().required('Please Input description'),
             price: Yup.number().required('Please Input Price').min(1, 'Price must be greater than 0'),
             baseQuantity: Yup.number().required('Please Input Quantity').min(1, 'Quantity must be greater than 0'),
@@ -147,7 +149,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         <form onSubmit={formik.handleSubmit}>
             <div className={'nh:grid nh:grid-cols-2 nh:gap-2.5'}>
                 <div className={'nh:col-span-1'}>
-                    <Label>Tour Name</Label>
+                    <Label>Tour Name <span className={'opacity-50 text-[12px]'}>(max/40words)</span></Label>
                     <div className="pt-[4px] pb-[8px] text-black">
                         <input type='text'
                                placeholder='Tour Name'
@@ -423,7 +425,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                         :
                         <div className={'flex h-[30vh] items-center justify-center '}>
                             <div className="text-gray-400 text-center">
-                                <Paragraph> The First Picture Will Represent Your Tour</Paragraph>
+                                <Paragraph> The First Picture Will Represent Your Tour can not out of 10 images</Paragraph>
                                 <Paragraph status={'error'}> Image Can not null</Paragraph>
                             </div>
                         </div>
