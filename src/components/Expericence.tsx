@@ -121,7 +121,7 @@ export default function Experience() {
                     <Card sx={{maxWidth: '100%', marginY: '24px'}} key={item.id}>
                         <CardHeader
                             avatar={
-                                <Avatar sx={{bgcolor: red[500]}} aria-label="recipe" src={item.user.profilePicture}>
+                                <Avatar sx={{bgcolor: red[500]}} aria-label="recipe" src={item.user.profilePicture} alt={'avatar'}>
                                 </Avatar>
                             }
 

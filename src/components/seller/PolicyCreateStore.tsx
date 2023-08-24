@@ -96,7 +96,6 @@ const PolicyCreateStore: FC<PolicyCreateStoreProps> = ({handleSubmit, formErrors
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-
                 </DialogActions>
                 <div className={'flex justify-around'}>
                     <input

@@ -26,8 +26,6 @@ const NavbarChild:NextPage = () => {
         setValue(index);
     };
 
-
-
     return (
         <Box
             sx={{

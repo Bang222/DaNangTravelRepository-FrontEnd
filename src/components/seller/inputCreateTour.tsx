@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import Label from "@/components/ui/Label";
 import Paragraph from "@/components/ui/Paragraph";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {bookingAPI, createTourAPI} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
 import {useSelector} from "react-redux";
@@ -36,6 +36,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
     const [previewImage, setPreviewImage] = React.useState<>([])
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
+    const queryClient = useQueryClient()
 
     const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour, isSuccess: isSuccessCreateTour} = useMutation(
         async (formData: any) => {
@@ -50,6 +51,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                 toast.success('Create Success')
                 formik.resetForm()
                 setPreviewImage([])
+                queryClient.invalidateQueries(['TourOfStore', userId]);
             },
             onError: (error) => {
                 toast.error('Create error', error)

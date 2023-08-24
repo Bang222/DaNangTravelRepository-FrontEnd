@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
 import * as React from "react";
 import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import Link from "next/link";
 import HomeIcon from "@mui/icons-material/Home";
 import Paragraph from "@/components/ui/Paragraph";
@@ -30,6 +31,7 @@ import Avatar from '@mui/material/Avatar';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import TourManager from "@/components/seller/tourManager";
+import BillManager from "@/components/seller/BillManager";
 
 const drawerWidth = 240;
 
@@ -53,8 +55,8 @@ const Page: NextPage<PageProps> = (props: PageProps) => {
     const {window} = props;
     const [selectedComponent, setSelectedComponent] = React.useState('Tour'); // Default selected component
 
+
     const HomeContent = () => <div>Home Component Content</div>;
-    const TourContent = () => <div>Tour Component Content</div>;
     const MailContent = () => <div>Mail Component Content</div>;
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -81,6 +83,13 @@ const Page: NextPage<PageProps> = (props: PageProps) => {
                 icon: <AirplanemodeActiveIcon sx={{color: 'black'}}/>,
                 onClick: () => handleMenuItemClick('Tour'),
                 active: selectedComponent === 'Tour',
+            },
+            {
+                id: 3,
+                title: 'Bill',
+                icon: <LocalAtmIcon sx={{color: 'black'}}/>,
+                onClick: () => handleMenuItemClick('Bill'),
+                active: selectedComponent === 'Bill',
             },
         ]
     )
@@ -168,18 +177,19 @@ const Page: NextPage<PageProps> = (props: PageProps) => {
                             <div>
                                 {selectedComponent === 'Home' && 'Home '}
                                 {selectedComponent === 'Tour' && 'Tour '}
-                                {selectedComponent === 'Mail' && <MailContent/>}
+                                {selectedComponent === 'Bill' && 'Bill'}
                             </div>
                             <div className={'flex mr-6'}>
                                 <div className={'ml-3 cursor-pointer hover:text-gray-950'}>
-                                    <Avatar  sx={{ backgroundColor: 'red' }} alt="store" src={user.store.imgUrl} />
+                                    <Avatar sx={{backgroundColor: 'red'}} alt="store" src={user.store.imgUrl}/>
                                 </div>
                                 <div className={'ml-3 flex items-center'}>
-                                    <Paragraph className={'cursor-default mb-0 '} size={'sm'}>{user.store.name}</Paragraph>
+                                    <Paragraph className={'cursor-default mb-0 '}
+                                               size={'sm'}>{user.store.name}</Paragraph>
                                 </div>
                                 <div className={'ml-6 cursor-pointer hover:text-gray-950'}>
                                     <Tooltip title="Log out">
-                                    <LogoutIcon/>
+                                        <LogoutIcon/>
                                     </Tooltip>
                                 </div>
                             </div>
@@ -227,7 +237,7 @@ const Page: NextPage<PageProps> = (props: PageProps) => {
                 <div>
                     {selectedComponent === 'Home' && <HomeContent/>}
                     {selectedComponent === 'Tour' && <TourManager/>}
-                    {selectedComponent === 'Mail' && <MailContent/>}
+                    {selectedComponent === 'Bill' && <BillManager/>}
                 </div>
             </Box>
         </Box>

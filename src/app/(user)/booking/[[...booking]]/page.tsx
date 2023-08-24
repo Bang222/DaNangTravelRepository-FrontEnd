@@ -33,7 +33,7 @@ import Paragraph from "@/components/ui/Paragraph";
 import {useRouter} from "next/navigation";
 import LineCustom from "@/components/ui/LineCustom";
 import './styleBooking.css';
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {bookingAPI, getTourById, RegisterApi} from "@/util/api/apiReuqest";
 import {useEffect, useState} from "react";
 import {BookingDTO, TourDetailInterface, TourIdEndToken} from "@/types";
@@ -82,6 +82,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [toddlers, setToddlers] = React.useState<Passenger[]>([])
     const [infants, setInfants] = React.useState<Passenger[]>([])
     const router = useRouter()
+    const query = useQueryClient()
 
     const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
         async () => {
@@ -93,6 +94,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             }
         }, {
             onSuccess: () => {
+                query.invalidateQueries(['TourOfStore', userId]);
                 setErrorDataBooking('')
             },
             onError: (error) => {

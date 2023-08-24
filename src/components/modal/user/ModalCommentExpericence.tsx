@@ -68,7 +68,7 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
     const [open, setOpen] = React.useState(false);
     const user = useSelector<userDTO>((state) => state.auth.value?.user)
     const userId = useSelector((state) => state.auth.value?.user.id)
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const accessToken = useSelector((state) => state.auth.value?.token?.access)
     const [content,setContent] = React.useState<string>()
     const queryClient = useQueryClient()
     const {mutate: mutateComment, isLoading: isLoadingComment, status, isSuccess} = useMutation(
