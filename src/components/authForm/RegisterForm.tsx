@@ -21,13 +21,14 @@ const RegisterForm: (props) => JSX.Element = () => {
     const router = useRouter()
 
 
-    const {mutate, isLoading} = useMutation(RegisterApi, {
-        onSuccess: () => {
+    const {mutate, isLoading,data} = useMutation(RegisterApi, {
+        onSuccess: (data) => {
+            if(data.message) return setRegisterError(data.message)
             setRegisterSuccess('Confirm your email')
             setRegisterError('')
         },
         onError: (error) => {
-            setRegisterError(error.message);
+            setRegisterError('server');
             setRegisterSuccess('');
         },
     });
@@ -65,7 +66,6 @@ const RegisterForm: (props) => JSX.Element = () => {
                 address: values.address,
                 sex: values.sex,
             };
-            // console.log(RegisterDTO)
             mutate(RegisterDTO)
         },
     });
@@ -77,19 +77,19 @@ const RegisterForm: (props) => JSX.Element = () => {
             <div
                 className="bg-neutral-500 sm:w-[500px] sm:h-min[700px] max-sm:w-max-[400px] max-sm:h-max-[650px] flex justify-center rounded-md">
                 <div className={'pl-7 pr-7 pt-5 pb-3 w-full'}>
-                    <div className={'pb-5 text-center font-bold'}>
-                        <LargeHeading size="sm" className={'text-center'}>Register</LargeHeading>
-                    </div>
+                    {/*<div className={'pb-5 text-center font-bold'}>*/}
+                    {/*    <LargeHeading size="sm" className={'text-center'}>Register</LargeHeading>*/}
+                    {/*</div>*/}
                     <form className={'pb-2'} onSubmit={formik.handleSubmit}>
                         <div className={'grid grid-cols-2 gap-2.5'}>
                             <div>
                                 <Label>First Name</Label>
-                                <div className="pt-[4px] pb-[8px] text-black">
+                                <div className="pt-[4px] pb-[4px] text-black">
                                     <input type='text'
                                            placeholder='firstName'
                                            name='firstName'
                                            id="firstName"
-                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                           className={'w-full p-1 h-[32px]  rounded-[8px] '}
                                            required
                                            value={formik.values.firstName}
                                            onChange={formik.handleChange}
@@ -99,12 +99,12 @@ const RegisterForm: (props) => JSX.Element = () => {
                             </div>
                             <div>
                                 <Label>Last Name</Label>
-                                <div className="pt-[4px] pb-[8px] text-black">
+                                <div className="pt-[4px] pb-[4px] text-black">
                                     <input type='text'
                                            placeholder='lastName'
                                            name='lastName'
                                            id="lastName"
-                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                           className={'w-full p-1 h-[32px]  rounded-[8px] '}
                                            required
                                            value={formik.values.lastName}
                                            onChange={formik.handleChange}
@@ -116,12 +116,12 @@ const RegisterForm: (props) => JSX.Element = () => {
                         <div className={'grid grid-cols-4 gap-2.5'}>
                             <div className={'col-span-3'}>
                                 <Label>Address</Label>
-                                <div className="pt-[4px] pb-[8px] text-black">
+                                <div className="pt-[4px] pb-[4px] text-black">
                                     <input type='text'
                                            placeholder='City'
                                            name='address'
                                            id="address"
-                                           className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                           className={'w-full p-1 h-[32px] rounded-[8px] '}
                                            required
                                            value={formik.values.address}
                                            onChange={formik.handleChange}
@@ -143,12 +143,12 @@ const RegisterForm: (props) => JSX.Element = () => {
                             </div>
                         </div>
                         <Label>Email</Label>
-                        <div className="pt-[4px] pb-[8px] text-black">
+                        <div className="pt-[4px] pb-[4px] text-black">
                             <input type='text'
                                    placeholder='email'
                                    name='email'
                                    id="email"
-                                   className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                   className={'w-full p-1 h-[32px]  rounded-[8px] '}
                                    required
                                    value={formik.values.email}
                                    onChange={formik.handleChange}
@@ -156,12 +156,12 @@ const RegisterForm: (props) => JSX.Element = () => {
                             <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.email}</p>
                         </div>
                         <Label>Password</Label>
-                        <div className="pt-[4px] pb-[8px] text-black">
+                        <div className="pt-[4px] pb-[4px] text-black">
                             <input type='password'
                                    placeholder='Password'
                                    name='password'
                                    id="password"
-                                   className={'w-full h-[32px] p-1 rounded-[4px] '}
+                                   className={'w-full p-1 h-[32px]  rounded-[8px] '}
                                    required
                                    value={formik.values.password}
                                    onChange={formik.handleChange}
@@ -176,7 +176,7 @@ const RegisterForm: (props) => JSX.Element = () => {
                                            placeholder='confirmPassword'
                                            name='confirmPassword'
                                            color={'black'}
-                                           className={'w-full h-[32px] p-1 rounded-[4px] text-black '}
+                                           className={'w-full p-1 h-[32px]  rounded-[8px] text-black '}
                                            required
                                            value={formik.values.confirmPassword}
                                            onChange={formik.handleChange}
@@ -211,7 +211,7 @@ const RegisterForm: (props) => JSX.Element = () => {
                         </div>
                         {isLoading ?
                             <button
-                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-zinc-700 rounded-xl flex justify-center shadow-md cursor-progress p-1 pt-[5px] pb-[5px] w-full"
+                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-zinc-700 rounded-xl flex justify-center shadow-md cursor-progress  pt-[5px] pb-[5px] w-full"
                                 disabled
                                 type={"submit"}
                             >
@@ -219,14 +219,14 @@ const RegisterForm: (props) => JSX.Element = () => {
                             </button>
                             :
                             <button
-                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                                className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer  pt-[5px] pb-[5px] w-full"
                                 type={"submit"}
                             >
                                 Register
                             </button>
                         }
                     </form>
-                    <div className={'w-full flex justify-center p-1'}>
+                    <div className={'w-full flex justify-center '}>
                         <Paragraph>You got a account?</Paragraph>
                         <Link to={'/login'} className={'flex justify-center items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}
                               href={"/login"}>Login here</Link>

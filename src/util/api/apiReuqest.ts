@@ -19,32 +19,26 @@ import {CreateStoreDTO, informationStoreDTO, TourOfStore} from "@/types/seller";
 export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
         const res = await axios.post('http://localhost:4000/api/auth/login', loginDTO)
-        if (!res.data) {
-            throw new Error("can not find user");
-        }
         const data = res.data;
         return data
     } catch (err) {
-        throw new Error('Login Failed');
+        return err;
     }
 }
 export const RegisterApi = async (registerDTO: RegisterDTO) => {
     try {
-        return await axios.post('http://localhost:4000/api/auth/register', registerDTO)
+        const res =  await axios.post('http://localhost:4000/api/auth/register', registerDTO)
+        const data =res.data
+        return data
     } catch (e) {
         throw new Error('Email Registered')
     }
 }
-export const useGetAllTourApi = () => {
+export const GetAllTourApi = async (currentPage:number) => {
     try {
-        return useQuery<TourDTO[], Error>({
-            queryKey: ['All-Tour'],
-            queryFn: async () => {
-                const data = await axios.get('http://localhost:4000/api/tour/all')
-                return data.data as TourDTO[]
-            },
-            cacheTime: 5000
-        })
+        console.log(currentPage)
+        const res = await axios.get(`http://localhost:4000/api/tour/all/page=${currentPage}`)
+        return res.data as TourDTO[]
     } catch (e) {
         throw new Error(e)
     }
@@ -64,7 +58,7 @@ export const upVoteTourApi = async (tourId: string, accessToken: string) => {
         const data = res.data;
         return data as voteDTO
     } catch (err) {
-        throw new Error('Email or password wrong');
+       throw err
     }
 }
 export const getCommentsOfTour = async (tourId: string) => {
@@ -301,6 +295,18 @@ export const getAllFeedsPost = async () => {
         throw new Error('Error');
     }
 }
+export const getAllFeedsPostPage = async (currentPage: number)=> {
+    try {
+        const res = await axios.get(`http://localhost:4000/api/experience/page=${currentPage}`)
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as userExperience[]
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
 export const createCommentPost = async (accessToken: string, userId: string, experienceId: string, content: string) => {
     try {
         const res = await axios.post(`http://localhost:4000/api/experience/create/comment`, {
@@ -339,7 +345,7 @@ export const createUpExperienceVoteAPI = async (accessToken: string, userId: str
             throw new Error("can not found");
         }
         const data = res.data;
-        return data as number
+        return data as voteDTO
     } catch (err) {
         throw new Error('Error');
     }

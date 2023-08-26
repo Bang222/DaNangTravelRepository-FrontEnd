@@ -45,7 +45,7 @@ interface TourDetailProps {
     endDate: Date;
     startDate: Date;
 }
-
+//tour Component
 const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const token = useSelector<any>((state) => state.auth.value?.token)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
@@ -69,21 +69,21 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             }
         }, {
             onSuccess: (data) => {
-                // setTotalVote(dataVote?.total);
-                // setVoteStatus(dataVote?.status);
-                return setUpvote(upvote + data.total)
+                setUpvote(upvote + data.total)
             },
             onError: (error) => {
-                toast.warn("Please Don\'t spam wait after 60s", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                });
+                if(error?.response?.data?.status === 429) {
+                    toast.warn("Please Don\'t spam wait after 60s", {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
+                }
                 setErr(error.message);
             },
         });

@@ -24,16 +24,6 @@ const LoginForm: () => JSX.Element = () => {
     const dispatch = useDispatch<AppDispatch>();
     const [loginError, setLoginError] = useState("");
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
-
-    // const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
-    //     async () => {
-    //         try {
-    //             const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
-    //             return res;
-    //         } catch (error) {
-    //             throw error;
-    //         }
-    //     }
     const {mutate:google, isLoading:googleLoading, data: googleData} = useMutation(
         async (accessToken:string) => {
             try {
@@ -63,13 +53,14 @@ const LoginForm: () => JSX.Element = () => {
     });
     const {mutate, isLoading, data: userData} = useMutation(loginAPI, {
         onSuccess: (userData) => {
+            if(userData.error) return setLoginError(userData.error)
             const token = userData.token.access
             setCookie('token', token)
             dispatch(logIn(userData));
             router.push('/');
         },
         onError: (error) => {
-            setLoginError(error.message);
+            // setLoginError(error.message);
         },
     });
 

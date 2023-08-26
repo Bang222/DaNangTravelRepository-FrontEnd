@@ -36,10 +36,10 @@ const BillManager: FC<BillManagerProps> = ({}) => {
 
     return (
         <section className={'w-full p-3 bg-white'}>
-            <div className="overflow-auto max-h-[80vh]">
+            <div className="overflow-auto max-h-[70vh]">
                 <table className="table-auto w-full border border-solid">
                     <thead>
-                    <tr className={'text-left border border-solid bg-black text-white'}>
+                    <tr className={'text-left border border-solid bg-black text-white text-[12px]'}>
                         <th className={'border border-solid p-1'}>TourId</th>
                         <th className={'border border-solid p-1'}>Tour Name</th>
                         <th className={'border border-solid p-1'}>Created</th>
@@ -60,14 +60,20 @@ const BillManager: FC<BillManagerProps> = ({}) => {
                         const formatPrice = Money.toLocaleString('vi-VN', optionVND)
                         return (
                             <tbody key={item.id}>
-                            <tr className={'text-left border border-solid text-[14px]'}>
+                            <tr className={'text-left border border-solid text-[10px]'}>
                                 <td className={'border border-solid p-1'}>{item.id}</td>
                                 <td className={'border border-solid p-1'}>{item.name} </td>
                                 <td className={'border border-solid p-1'}>{formatCreateAt} </td>
                                 <td className={'border border-solid p-1'}>{totalParticular}</td>
                                 <td className={'border border-solid p-1'}>{formatPrice}</td>
-                                <td className={'border border-solid p-1'}><ModalDetailOrder
-                                    orderDetails={data?.flatMap((item) => item.orderDetails)}/></td>
+                                {item.orderDetails.length > 0 ?
+                                    <td className={'border border-solid p-1'}><ModalDetailOrder
+                                        orderDetails={item.orderDetails}/></td>
+                                    : <td className={'border border-solid p-1 cursor-default'}>
+                                        null
+                                    </td>
+                                }
+
                             </tr>
                             </tbody>
                         )

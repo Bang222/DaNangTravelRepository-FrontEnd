@@ -81,7 +81,7 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
             }
         },{
             onSuccess(){
-                queryClient.invalidateQueries(['experienceExperience', userId]);
+                queryClient.invalidateQueries(['experienceExperiencePage', userId]);
                 setContent('')
             },
             onError(){

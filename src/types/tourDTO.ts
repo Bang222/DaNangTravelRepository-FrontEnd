@@ -1,3 +1,15 @@
+import {userDTO} from "@/types/userExperience";
+
+interface CommentGetAllTour {
+    id: string;
+    experienceId: string;
+    tourId: string;
+    content: string;
+    createdAt: Date;
+    userId: string
+    user: userDTO
+}
+
 export interface TourDTO {
     id: string;
     name: string;
@@ -14,20 +26,7 @@ export interface TourDTO {
     upVote: string[];
     createdAt: Date;
     status: string;
-    comments: [
-        {
-            id: string;
-            experienceId?: string;
-            tourId?: string;
-            content: string;
-            createdAt: Date;
-            user: {
-                lastName: string;
-                firstName: string;
-                profilePicture: string;
-            }
-        }
-    ]
+    comments: CommentGetAllTour[]
     store: {
         id: string;
         name: string;
@@ -66,7 +65,7 @@ export interface TourDetailInterface {
     description: string;
     price: number;
     quantity: number;
-    baseQuantity:number;
+    baseQuantity: number;
     imageUrl: string[];
     lastRegisterDate: Date;
     address: string;
@@ -94,7 +93,7 @@ export interface TourDetailInterface {
     schedules: [
         {
             id: string;
-            title:string;
+            title: string;
             day: string;
             imgUrl: string;
             description: string;
@@ -102,6 +101,7 @@ export interface TourDetailInterface {
 
     ]
 }
+
 export interface BookingDTO {
     email: string;
     firstName: string;
@@ -119,12 +119,13 @@ export interface BookingDTO {
         dayOfBirth?: number;
     }
 }
+
 export interface CartDTO {
-    id:string
-    isActive:boolean
-    CreateAt:Date
-    userId:string
-    tourId:string
+    id: string
+    isActive: boolean
+    CreateAt: Date
+    userId: string
+    tourId: string
     tour: {
         id: string;
         name: string;

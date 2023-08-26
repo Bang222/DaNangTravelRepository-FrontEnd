@@ -84,7 +84,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const router = useRouter()
     const query = useQueryClient()
 
-    const {mutate: mutateBooking, isLoading: isLoadingBooking, status, isSuccess} = useMutation(
+    const {mutate: mutateBooking, isLoading: isLoadingBooking,data:dataBookingTour, status, isSuccess} = useMutation(
         async () => {
             try {
                 const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
@@ -93,7 +93,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 throw error;
             }
         }, {
-            onSuccess: () => {
+            onSuccess: (dataBookingTour) => {
+                if(dataBookingTour.message) return toast.error(dataBookingTour.message)
                 query.invalidateQueries(['TourOfStore', userId]);
                 setErrorDataBooking('')
             },
@@ -375,7 +376,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const infantPrice = InputInfantPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const totalPrice = InputTotalPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     useEffect(() => {
-        const data: TourIdEndToken = {
+        const data: TourIdEndToken  = {
             tourId: tourId,
             token: accessToken,
         }
@@ -383,7 +384,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     }, [])
 
     useEffect(() => {
-            if (isSuccess) {
+            if (!dataBookingTour?.message && isSuccess) {
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
                 setToddlers([])
@@ -595,7 +596,6 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                         </Grid>
                                                     </Grid>
                                                 </div>
-
                                             </FormControl>
                                         </CardContent>
                                     </Card>
@@ -618,7 +618,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                         <Divider inset="none"/>
                                         <CardContent sx={{width: '100%'}}>
                                             {[...Array(adultCount)].map((item, index) => (
-                                                <FormControl key={item}>
+                                                <FormControl key={index}>
                                                     <Label className={'font-bold pb-0'}>Information
                                                         Adult {index + 1} </Label>
                                                     <Input placeholder={'Name'} sx={{outline: 'none', width: '100%'}}
@@ -774,6 +774,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                 <Paragraph size={'sx'}>Departure Day:</Paragraph>
                                                 <Paragraph size={'sx'}>End date</Paragraph>
                                                 <Paragraph size={'sx'}>Passenger:</Paragraph>
+                                                <Paragraph size={'sx'}>The remaining amount:</Paragraph>
                                             </div>
                                             <div className={'col-span-1'}>
                                                 <Paragraph className={'font-bold'}
@@ -785,6 +786,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                 <Paragraph className={'font-bold'} size={'sx'}>{formatEnd}</Paragraph>
                                                 <Paragraph className={'font-bold'}
                                                            size={'sx'}>{adultCount} Adult, {childCount ? `${childCount} Child,` : ''} {toddlerCount > 0 ? `${toddlerCount} Toddler,` : ''} {infantCout > 0 ? ` ${infantCout} Infant` : ''}</Paragraph>
+                                                <Paragraph className={'font-bold'} size={'sx'}>{data?.quantity}</Paragraph>
                                             </div>
                                         </div>
                                     </CardContent>
