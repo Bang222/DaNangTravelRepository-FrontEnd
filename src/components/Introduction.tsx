@@ -31,8 +31,8 @@ const Introduction: FC<IntroductionProps> = ({}) => {
         <>
             {
                 isLoading ? <div>Loading... </div> :
-                    <section className={'mt-[60px] flex justify-center text-white overflow-hidden'}>
-                        <div className={'lg:w-[300px] bg-zinc-700 w-6/6 p-5 rounded-md overflow-hidden'}>
+                    <section className={'flex justify-center text-white'}>
+                        <div className={'lg:w-[300px] bg-zinc-700 w-6/6 p-5 rounded-md'}>
                             <div>
                                 <h2 className={'font-bold pb-4 text-[20px]'}>Da Nang,VN</h2>
                                 <Paragraph size={'sx'}>{formattedCurrentDay}</Paragraph>

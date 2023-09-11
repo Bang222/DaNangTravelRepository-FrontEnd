@@ -3,18 +3,19 @@ import * as React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import Paragraph from "@/components/ui/Paragraph";
 import LineCustom from "@/components/ui/LineCustom";
 import {CreateStoreDTO, informationStoreDTO} from "@/types/seller";
 import {useMutation} from "@tanstack/react-query";
-import {createStoreAPI} from "@/util/api/apiReuqest";
+import {createAxios, createStoreAPI} from "@/util/api/apiReuqest";
 import {useRouter} from "next/navigation";
 import {CircularProgress} from "@mui/material";
 import PolicyCreateStore from "@/components/seller/PolicyCreateStore";
 import {toast} from "react-toastify";
+import {AppDispatch} from "@/redux/store";
 
 interface ModalCreateStoreProps {
 }
@@ -44,6 +45,11 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
     const [openModal, setOpenModal] = React.useState(false);
     const handleOpen = () => setOpenModal(true);
     const handleClose = () => setOpenModal(false);
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const user = useSelector((state) => state.auth.value?.user)
     const router = useRouter()
 
@@ -60,7 +66,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
     } = useMutation(
         async (createStore: CreateStoreDTO) => {
             try {
-                const res = await createStoreAPI(createStore, accessToken, userId)
+                const res = await createStoreAPI(createStore, accessToken, userId, axiosJWT)
                 return res;
             } catch (error) {
                 throw error;
@@ -155,13 +161,6 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
                                 <Paragraph status={'error'}>{formik.errors.slogan}</Paragraph>
                             </div>
                             <PolicyCreateStore handleSubmit={formik.handleSubmit} formErrors={formik.errors} />
-
-                            {/*<button*/}
-                            {/*    className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"*/}
-                            {/*    type={"submit"}*/}
-                            {/*>*/}
-                            {/*    Register Store*/}
-                            {/*</button>*/}
                             {errorData ? <Paragraph status={'error'}>{errorData}</Paragraph> : ''}
                         </form>
                     </Typography>

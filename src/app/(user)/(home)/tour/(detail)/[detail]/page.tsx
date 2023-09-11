@@ -3,9 +3,9 @@
 import {NextPage} from "next";
 import * as React from "react";
 import {useMutation} from "@tanstack/react-query";
-import {getTourById, loginAPI} from "@/util/api/apiReuqest";
+import {createAxios, getTourById, loginAPI} from "@/util/api/apiReuqest";
 import {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {TourDetailInterface, TourIdEndToken} from "@/types";
 import {Card, CircularProgress, Typography} from "@mui/material";
 import Slice from "@/components/ui/swiperSlice";
@@ -25,6 +25,7 @@ import {Tab, tabClasses} from '@mui/base/Tab';
 import {styled} from "@mui/system";
 import Link from "next/link";
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import {AppDispatch} from "@/redux/store";
 
 
 interface TourDetailProps {
@@ -36,11 +37,20 @@ interface TourDetailProps {
 //bang
 
 const Page: NextPage<TourDetailProps> = ({params}) => {
-    const tourId = params.detail
+    const tourId = params?.detail
+
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const [tourError, setTourError] = useState("");
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
-    const {mutate, isLoading, data} = useMutation(getTourById, {
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
+    const {mutate, isLoading, data} = useMutation( async(TourIdAndToken: TourIdEndToken)=>{
+        const res = await getTourById(TourIdAndToken,axiosJWT)
+        return res
+    }, {
         onSuccess: (data) => {
             return setDataTour(data)
         },
@@ -49,7 +59,7 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
         },
     });
     useEffect(() => {
-        const data: TourIdEndToken = {
+        const data: TourIdEndToken= {
             tourId: tourId,
             token: accessToken,
         }

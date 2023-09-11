@@ -11,7 +11,7 @@ const TableDetailBill: FC<TableDetailBillProps> = ({orderDetail}) => {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
-    }
+    }   
     let order = orderDetail.order
     const createAt = new Date(order?.createdAt)
     const formattedOrderDay = createAt.toLocaleDateString('es-uk',options)

@@ -7,9 +7,9 @@ import Introduction from "@/components/Introduction";
 export default async function Home() {
     return (
         <>
-            <section className={'pt-7 lg:grid lg:grid-cols-4 lg:gap-3 container mx-auto px-auto'}>
+            <section className={'pt-7 lg:grid lg:grid-cols-4 lg:gap-3 container mx-auto px-3.5'}>
                 <section className="hidden mt-[65px] lg:block">
-                    <div className={'fixed w-[20%] left-[2%]'}>
+                    <div className="sticky top-[10%]">
                         <NavLeft/>
                     </div>
                 </section>
@@ -17,8 +17,10 @@ export default async function Home() {
                     <CreateExperience/>
                     <Experience/>
                 </div>
-                <section className={'hidden lg:block fixed lg:right-[2%]'}>
-                    <Introduction/>
+                <section className={'hidden lg:block relative mt-[65px] '}>
+                    <div className="sticky top-[10%]">
+                        <Introduction/>
+                    </div>
                 </section>
             </section>
         </>

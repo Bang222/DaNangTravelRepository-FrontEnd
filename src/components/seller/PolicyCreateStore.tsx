@@ -90,9 +90,34 @@ const PolicyCreateStore: FC<PolicyCreateStoreProps> = ({handleSubmit, formErrors
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <Typography gutterBottom>
-                        Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                        dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                        consectetur ac, vestibulum at eros.
+                        User Commitment to DaNang,Traval and our User community when using DaNang,Traval's services
+                        To ensure that using DaNang,Traval's services is useful and convenient as desired and to promote the development of the goal of connecting the online travel and online shopping community effectively, Users need to perform the following steps: following commitments:
+
+                        3.1 Make sure you have the right to use DaNang,Traval's services
+                        DaNang,Traval's User Community is safer and more responsible when:
+
+                        Users use their real name on legal documents to register to use the service.
+                        Users provide their own correct information.
+                        Each User uses only one of his or her own account using the timeline for personal purposes.
+                        Users do not share their account password or give others access to their DaNang,Traval account or transfer the account to others without our consent.
+                        DaNang,Traval aims to provide services to everyone, Users please ensure that Users do not fall into the following cases:
+
+                        The User is under 13 years old and does not have a legal representative (or is of another age according to current laws in the User's country regarding the use of online information services).
+                        The user is convicted by a court of a sex-related crime.
+                        The user has had their account disabled in the past for violating our terms or policies.
+                        In accordance with relevant applicable laws, Users are prohibited from using our products, services or software.
+                        3.2 Shared content and allowed actions on DaNang,Traval
+                        Users are encouraged to share their personal experiences and other important content on DaNang,Traval without violating the privacy of others and the interconnectedness of the User community on DaNang,Traval. Therefore, the User needs to ensure the following:
+
+                        Users do not use DaNang,Traval's services to make or share any content that is identified as:
+                        Violation of these Terms of Service, Community Standards and other Terms and Policies applicable when Users register to use DaNang,Traval's services.
+                        An act that violates the provisions of applicable laws, acts that cause confusion, deception or discrimination.
+                        Acts that cause harm or infringe upon the rights and interests of others.
+                        Users may not upload viruses or malicious code or otherwise attempt to disable, overburden or otherwise affect DaNang,Traval's service provision.
+                        Users may not use automated means or any other means to access other Users' data without our consent.
+                        If we determine that a User has performed any activity that violates the stated content, we will take preventive measures such as deleting content, restricting account access, and disabling the account if necessary. If a User repeatedly infringes the intellectual property rights of others, we may also disable the User's account.
+
+                        To ensure a safe connection and information security for the User community, encourage Users to report violating content or behavior that Users believe violates their rights or violates terms and policies. us so that we can take measures to check and handle it in a timely manner.
                     </Typography>
                 </DialogContent>
                 <DialogActions>

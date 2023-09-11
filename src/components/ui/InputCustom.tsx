@@ -9,12 +9,13 @@ interface InputCustomProps {
     value: any
     id: any
     type:string
+    disabled?:boolean
 
 }
 
 //bang
 
-const InputCustom: FC<InputCustomProps> = ({name,setData, data, value, id,type }) => {
+const InputCustom: FC<InputCustomProps> = ({name,setData,disabled, data, value, id,type }) => {
     return (
         <Input
             required={true}
@@ -22,6 +23,7 @@ const InputCustom: FC<InputCustomProps> = ({name,setData, data, value, id,type }
             data={data}
             id={id}
             type={type}
+            disabled={disabled ?? false}
             placeholder={`${name}`}
             onChange={(e) => setData ? setData(e.target.value) : ''}
         />

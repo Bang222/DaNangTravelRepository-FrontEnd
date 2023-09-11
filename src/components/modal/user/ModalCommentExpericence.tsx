@@ -15,10 +15,11 @@ import SendIcon from '@mui/icons-material/Send';
 import {FC} from "react";
 import {commentDTO, userDTO} from "@/types";
 import CommentOfTour from "@/components/user/commentOfTour";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {createCommentPost} from "@/util/api/apiReuqest";
+import {createAxios, createCommentPost} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
+import {AppDispatch} from "@/redux/store";
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
     '& .MuiDialogContent-root': {
@@ -66,6 +67,11 @@ interface ModalPostProps {
 //Component/Experience
 const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) => {
     const [open, setOpen] = React.useState(false);
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const user = useSelector<userDTO>((state) => state.auth.value?.user)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const accessToken = useSelector((state) => state.auth.value?.token?.access)
@@ -74,7 +80,7 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
     const {mutate: mutateComment, isLoading: isLoadingComment, status, isSuccess} = useMutation(
         async (content:string) => {
             try {
-                const res = await createCommentPost(accessToken, userId, experienceId, content)
+                const res = await createCommentPost(accessToken, userId, experienceId, content, axiosJWT)
                 return res
             } catch(e){
                 throw new Error(e)

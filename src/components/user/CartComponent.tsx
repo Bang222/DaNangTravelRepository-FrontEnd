@@ -9,15 +9,16 @@ import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 import DoDisturbSharpIcon from '@mui/icons-material/DoDisturbSharp';
 import {
     addToCartAPI,
-    bookingAPI,
+    bookingAPI, createAxios,
     deleteAllValueCartAPI,
     deleteOneValueCartByTourIdOfUserIdAPI,
     getToCartAPI
 } from "@/util/api/apiReuqest";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {CartDTO} from "@/types";
 import Link from "next/link";
+import {AppDispatch} from "@/redux/store";
 
 // navbar component
 interface CartProps {
@@ -32,11 +33,13 @@ interface CartProps {
 //navbar
 
 const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,cart,isLoadingOfCart}) => {
-
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
     const {mutate: mutateDeleteAValueOfCart,data:dataCartDelete, isLoading: isLoadingDeleteAValueOfCart, status, isSuccessGetOfCart:isSuccessGetOfCartDeleteAValueOfCart} = useMutation(
         async (tourId:string) => {
             try {
-                const res = await deleteOneValueCartByTourIdOfUserIdAPI(tourId, accessToken, userId,)
+                const res = await deleteOneValueCartByTourIdOfUserIdAPI(tourId, accessToken, userId,axiosJWT)
                 return res;
             } catch (error) {
                 throw error;
@@ -54,7 +57,7 @@ const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,car
     const { mutate:mutateDeleteAll,isLoading:isLoadingDeleteAll, isError:isErrorDeleteAll, isSuccessGetOfCart:isSuccessGetOfCartDeleteAll} = useMutation(
         async () => {
             try {
-                const res = await deleteAllValueCartAPI(accessToken, userId)
+                const res = await deleteAllValueCartAPI(accessToken, userId,axiosJWT)
                 return res;
             } catch (error) {
                 throw error;

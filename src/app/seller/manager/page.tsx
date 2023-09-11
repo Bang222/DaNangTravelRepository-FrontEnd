@@ -181,11 +181,11 @@ const Page: NextPage<PageProps> = (props: PageProps) => {
                             </div>
                             <div className={'flex mr-6'}>
                                 <div className={'ml-3 cursor-pointer hover:text-gray-950'}>
-                                    <Avatar sx={{backgroundColor: 'red'}} alt="store" src={user.store.imgUrl}/>
+                                    <Avatar sx={{backgroundColor: 'red'}} alt="store" src={user?.store?.imgUrl}/>
                                 </div>
                                 <div className={'ml-3 flex items-center'}>
                                     <Paragraph className={'cursor-default mb-0 '}
-                                               size={'sm'}>{user.store.name}</Paragraph>
+                                               size={'sm'}>{user?.store?.name}</Paragraph>
                                 </div>
                                 <div className={'ml-6 cursor-pointer hover:text-gray-950'}>
                                     <Tooltip title="Log out">

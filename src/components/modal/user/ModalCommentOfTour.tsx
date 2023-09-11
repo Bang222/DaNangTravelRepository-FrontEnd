@@ -19,14 +19,16 @@ import CardActions from "@mui/material/CardActions";
 import ClearIcon from '@mui/icons-material/Clear';
 import {Tooltip} from "@mui/material";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {getCommentsOfTour, postCommentsOfTour} from "@/util/api/apiReuqest";
+import {createAxios, getCommentsOfTour, postCommentsOfTour} from "@/util/api/apiReuqest";
 import {useEffect, useMemo, useState} from "react";
 import SendIcon from '@mui/icons-material/Send';
 import {CommentsDTO, CommentTourDTO} from "@/types";
 import CommentOfTour from "@/components/user/commentOfTour";
 import {useUserDetailAPI} from "@/util/api/auth";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Slice from "@/components/ui/swiperSlice";
+import {AppDispatch} from "@/redux/store";
+import {toast} from "react-toastify";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -74,7 +76,18 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     // const queryClient = useQueryClient()
-    const {mutate, isLoading, data } = useMutation(getCommentsOfTour, {
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
+    const {mutate, isLoading, data } = useMutation(async (tourId:string)=>{
+        try {
+            const res = await getCommentsOfTour(tourId, axiosJWT)
+            return res
+        } catch(e){
+            toast.error('can not comment')
+        }
+    }, {
         onSuccess: (data) => {
             setCommentsError('')
             props.setCommentData(data)
@@ -84,10 +97,11 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
             setCommentsSuccess('');
         },
     })
+
     const {mutate: mutateComment, data: dataComment} = useMutation(
         async (commentData:CommentsDTO) => {
             try {
-                const res = await postCommentsOfTour(commentData,userId,accessToken)
+                const res = await postCommentsOfTour(commentData,userId,accessToken,axiosJWT)
                 return res
             }catch(error){
                 throw error;

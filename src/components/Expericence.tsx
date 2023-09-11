@@ -50,7 +50,6 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
         duration: theme.transitions.duration.shortest,
     }),
 }));
-
 export default function Experience() {
     const userId = useSelector((state) => state.auth.value?.user.id)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
@@ -66,7 +65,7 @@ export default function Experience() {
         data: dataExperiencePages,
         isLoading: isLoadingExperience,
         isError: isErrorExperience,
-        isSuccess: isSuccessExperience,
+        hasNextPage:hasNextPageExperience,
         isFetchingNextPage: isFetchingNextPageExperience,
         fetchNextPage: fetchNextPageExperience,
         error: experienceError
@@ -80,13 +79,17 @@ export default function Experience() {
                 }
             },
         {
-            getNextPageParam: (_, pages) => {
-                return pages.length + 1
+            getNextPageParam: (data, pages) => {
+                if (data.length > 2) {
+                    return pages.length + 1;
+                } else {
+                   return undefined
+                }
             },
+
             cacheTime: 5000,
         }
     );
-    const totalPagesFetched = dataExperiencePages?.pages.length ?? 0;
     const lastExperienceRef = useRef<HTMLElement>(null)
     const {ref, entry} = useIntersection({
         root: lastExperienceRef.current,
@@ -96,7 +99,7 @@ export default function Experience() {
         if(entry?.isIntersecting) fetchNextPageExperience()
     },[entry])
 
-    const dataExperience:userExperience[] = dataExperiencePages?.pages.flatMap((page) => page)
+    const dataExperience= dataExperiencePages?.pages.flatMap((page) => page)
 
     React.useEffect(() => {
         if (isErrorExperience) {
@@ -117,8 +120,11 @@ export default function Experience() {
     }
     return isLoadingExperience ? <div>Loading...</div> : (
         <>
-            {dataExperience?.map((item, index) => {
-                if(index === dataExperience.length - 1) return <div key={item.id} ref={ref}></div>
+            {
+                dataExperience?.map((item, index) => {
+                    if (index === dataExperience.length - 1) {
+                        return <div key={item.id} ref={ref}></div>
+                    }
                     const createAt = new Date()
                     const formatCreateAt = createAt.toLocaleDateString('es-uk', options)
                     const words = item?.content
@@ -135,7 +141,7 @@ export default function Experience() {
                                 }
 
                                 action={
-                                    userId === item.userId ?
+                                    userId === item?.userId ?
                                         <IconButton aria-label="settings">
                                             <MoreVertIcon/>
                                         </IconButton>
@@ -185,13 +191,11 @@ export default function Experience() {
                         </Card>
                     )
                 })}
-            <button
-                disabled={isFetchingNextPageExperience || totalPagesFetched >= 3} // Disable if pages fetched >= 3
-            >
+            <button onClick={()=> fetchNextPageExperience()} disabled={isFetchingNextPageExperience} className={'flex justify-center w-full'}>
               {isFetchingNextPageExperience ? (
                   <CircularProgress color="secondary" />
               ) : (
-                  totalPagesFetched < 3 ? 'Load More' : 'No More Data'
+                 hasNextPageExperience ? 'load more' : 'No More Data'
               )}
           </button>
         </>

@@ -10,17 +10,19 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({}) => {
     return (
-        <section className={'pt-2 lg:grid lg:grid-cols-5 lg:gap-3 container mx-auto'}>
-            <section className="hidden mt-[65px] lg:block">
-             <div className={'fixed w-[20%] left-[2%]'}>
+        <section className={'pt-2 lg:grid lg:grid-cols-4 lg:gap-3 container mx-auto px-5'}>
+            <section className="hidden mt-[65px] lg:block relative">
+                <div className="sticky top-[10%]">
                 <NavLeft/>
              </div>
             </section>
-            <div className={'lg:col-span-3 col-span-4 w-6/6 p-3.5'}>
+            <div className={'lg:col-span-2 col-span-4 w-6/6 p-3.5'}>
                 <TourComponent/>
             </div>
-            <section className={'hidden lg:block fixed lg:right-[2%]'}>
+            <section className={'hidden lg:block relative mt-[65px] '}>
+                <div className="sticky top-[10%]">
                 <Introduction/>
+                </div>
             </section>
         </section>
     );

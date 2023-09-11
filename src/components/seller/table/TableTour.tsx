@@ -3,8 +3,8 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
-import {useSelector} from "react-redux";
-import {deleteTourAPI, getTourOfStore} from "@/util/api/apiReuqest";
+import {useDispatch, useSelector} from "react-redux";
+import {createAxios, deleteTourAPI, getTourOfStore} from "@/util/api/apiReuqest";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {toast} from "react-toastify";
 import MakeSureDeleteTour from "@/components/seller/MakeSureDeleteTour";
@@ -12,6 +12,7 @@ import {router} from "next/client";
 import {Router} from "next/router";
 import {useRouter} from "next/navigation";
 import ModalOfPassenger from "@/components/modal/seller/ModalOfPassenger";
+import {AppDispatch} from "@/redux/store";
 
 interface TableTourProps {
 }
@@ -21,6 +22,11 @@ interface TableTourProps {
 const TableTour: FC<TableTourProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const router = useRouter()
     const {
         data: getTourOfStoreData,
@@ -28,13 +34,13 @@ const TableTour: FC<TableTourProps> = ({}) => {
         isError: isErrorGetTourOfStore,
         isSuccess: isSuccessGetTourOfStore
     } = useQuery(['TourOfStore', userId], () =>
-        getTourOfStore(accessToken, userId)
+        getTourOfStore(accessToken, userId,axiosJWT)
     );
     const queryClient = useQueryClient();
     const {mutate:mutateDeleteTourByID,isSuccess:isSuccessDeleteTour,isError:isErrorDeleteTour} = useMutation(
         async (tourId:string) => {
             try{
-                const res = deleteTourAPI(accessToken,userId,tourId)
+                const res = deleteTourAPI(accessToken,userId,tourId,axiosJWT)
             }catch(e) {
                 throw new Error(e)
             }
@@ -122,7 +128,7 @@ const TableTour: FC<TableTourProps> = ({}) => {
                                         item.status === 'available'
                                             ? 'bg-green-500 text-white'
                                             : item.status === 'TRAVELED'
-                                                ? 'bg-black-500 text-white'
+                                                ? 'bg-black text-white'
                                                 : item.status === 'full slot'
                                                     ? 'bg-yellow-500 text-white'
                                                     : item.status === 'out of date register' ?

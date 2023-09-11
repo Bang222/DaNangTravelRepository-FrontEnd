@@ -44,14 +44,18 @@ export default function TourComponent() {
     // };
 
     const {data, fetchNextPage, isFetchingNextPage, isLoading, isSuccess} = useInfiniteQuery(
-        ['All-Tour'],
+        ['All-Tour',userId],
         async ({pageParam = 1}) => {
             const res = await GetAllTourApi(pageParam);
             return res
         },
         {
-            getNextPageParam: (_, pages) => {
-                    return pages.length + 1
+            getNextPageParam: (data, pages) => {
+                if (data.length > 2) {
+                    return pages.length + 1;
+                } else {
+                    return undefined
+                }
             },
             cacheTime: 5000,
         }
@@ -60,7 +64,7 @@ export default function TourComponent() {
     const lastPostRef = useRef<HTMLElement>(null)
     const {ref, entry} = useIntersection({
         root: lastPostRef.current,
-        threshold:1
+        threshold:0
     })
     useEffect(()=>{
             if(entry?.isIntersecting) fetchNextPage()
@@ -75,7 +79,7 @@ export default function TourComponent() {
             ) : (
                 <div>
                     {_tour?.map((tour: TourDTO,i) => {
-                        if(i === _tour.length - 1) return <div key={tour.id} ref={ref}></div>
+                        if(i=== _tour.length -1) return <div key={tour.id} ref={ref}></div>
                         return(
                             <Card
                                 sx={{

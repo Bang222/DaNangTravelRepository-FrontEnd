@@ -34,13 +34,16 @@ import {useRouter} from "next/navigation";
 import LineCustom from "@/components/ui/LineCustom";
 import './styleBooking.css';
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {bookingAPI, getTourById, RegisterApi} from "@/util/api/apiReuqest";
+import {bookingAPI, createAxios, getTourById, RegisterApi} from "@/util/api/apiReuqest";
 import {useEffect, useState} from "react";
 import {BookingDTO, TourDetailInterface, TourIdEndToken} from "@/types";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import AccompaniedService from "@/components/ui/AccompaniedService";
 import LargeHeading from "@/components/ui/LargeHeading";
 import {toast} from "react-toastify";
+import {PayPalButton} from "react-paypal-button-v2";
+import PaymentButton from "@/components/PaymentButton";
+import {AppDispatch} from "@/redux/store";
 
 
 interface BookingProps {
@@ -60,10 +63,15 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const tourId = params.booking?.[0]
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
+    const [openModal, setOpenModal] = React.useState(false);
+
     const [tourError, setTourError] = useState("");
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
     const [dataBooking, setDataBooking] = React.useState()
     const [errorBooking, setErrorDataBooking] = React.useState<string>(null)
+    const [errorBookingBaking, setErrorDataBaking] = React.useState<string>(null)
+    const [Payment, setPayment] = React.useState<boolean>(false)
+
     const [adultCount, setAdultCount] = React.useState<number>(1)
     const [childCount, setChildCount] = React.useState<number>(0)
     const [toddlerCount, setToddlerCount] = React.useState<number>(0)
@@ -84,17 +92,21 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const router = useRouter()
     const query = useQueryClient()
 
-    const {mutate: mutateBooking, isLoading: isLoadingBooking,data:dataBookingTour, status, isSuccess} = useMutation(
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
+    const {mutate: mutateBooking, isLoading: isLoadingBooking, data: dataBookingTour, status, isSuccess} = useMutation(
         async () => {
             try {
-                const res = await bookingAPI(dataBooking, accessToken, userId, tourId)
+                const res = await bookingAPI(dataBooking, accessToken, userId, tourId,axiosJWT)
                 return res;
             } catch (error) {
                 throw error;
             }
         }, {
             onSuccess: (dataBookingTour) => {
-                if(dataBookingTour.message) return toast.error(dataBookingTour.message)
+                if (dataBookingTour.message) return toast.error(dataBookingTour.message)
                 query.invalidateQueries(['TourOfStore', userId]);
                 setErrorDataBooking('')
             },
@@ -103,7 +115,14 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 toast.error("Sorry, Tour it's full slot")
             },
         });
-    const {mutate, isLoading, data,} = useMutation(getTourById, {
+    const {mutate, isLoading, data,} = useMutation( async (dataGet: TourIdEndToken)=> {
+        try{
+            const res = await getTourById(dataGet,axiosJWT)
+            return res
+        } catch(e){
+            throw new Error(e)
+        }
+    }, {
         onSuccess: (data) => {
             return setDataTour(data)
         },
@@ -111,12 +130,11 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             router.push('/not-found')
         },
     });
-
-    const handleClick = e => {
+    const handleClick = () => {
         if (!(email && firstName && fullName && address && phone).trim()) {
             return setErrorMessage('Can not null information');
         }
-
+        setErrorMessage('')
         const validatedDataOfAdult = adults.map(item => {
             const newItem = {...item};
             if (!newItem.name) {
@@ -221,8 +239,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             adultPassengers: adultCount,
             passenger: passenger,
         }
+        setPayment(true)
         setDataBooking(configData)
-        mutateBooking()
     }
     const handleClickCount = (action: 'increase' | 'decrease', type: 'adultCount' | 'childCount' | 'toddlerCount' | 'infantCout') => {
         if (type === 'infantCout') {
@@ -376,7 +394,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const infantPrice = InputInfantPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const totalPrice = InputTotalPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     useEffect(() => {
-        const data: TourIdEndToken  = {
+        const data: TourIdEndToken = {
             tourId: tourId,
             token: accessToken,
         }
@@ -441,61 +459,128 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                 gap: 1.5,
                                             }}
                                         >
-                                            <FormControl>
-                                                <Label>Email</Label>
-                                                <InputCustom
-                                                    name={'Email'}
-                                                    id={email}
-                                                    data={email}
-                                                    value={email}
-                                                    type={'text'}
-                                                    setData={setEmail}
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <Label>First Name</Label>
-                                                <InputCustom
-                                                    name={'First Name'}
-                                                    id={firstName}
-                                                    data={firstName}
-                                                    value={firstName}
-                                                    type={'text'}
-                                                    setData={setFirstName}
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <Label>Full Name</Label>
-                                                <InputCustom
-                                                    name={'Full Name'}
-                                                    id={fullName}
-                                                    data={fullName}
-                                                    value={fullName}
-                                                    type={'text'}
-                                                    setData={setFullName}
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <Label>Address</Label>
-                                                <InputCustom
-                                                    name={'Address'}
-                                                    id={address}
-                                                    data={address}
-                                                    value={address}
-                                                    type={'text'}
-                                                    setData={setAddress}
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <Label>Phone</Label>
-                                                <InputCustom
-                                                    name={'Phone'}
-                                                    id={phone}
-                                                    data={phone}
-                                                    value={phone}
-                                                    type={'text'}
-                                                    setData={setPhone}
-                                                />
-                                            </FormControl>
+                                            {Payment ? <>
+                                                    <FormControl>
+                                                        <Label>Email</Label>
+                                                        <InputCustom
+                                                            name={'Email'}
+                                                            id={email}
+                                                            data={email}
+                                                            value={email}
+                                                            type={'text'}
+                                                            setData={setEmail}
+                                                            disabled={true}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>First Name</Label>
+                                                        <InputCustom
+                                                            name={'First Name'}
+                                                            id={firstName}
+                                                            data={firstName}
+                                                            value={firstName}
+                                                            type={'text'}
+                                                            setData={setFirstName}
+                                                            disabled={true}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Full Name</Label>
+                                                        <InputCustom
+                                                            name={'Full Name'}
+                                                            id={fullName}
+                                                            data={fullName}
+                                                            value={fullName}
+                                                            type={'text'}
+                                                            setData={setFullName}
+                                                            disabled={true}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Address</Label>
+                                                        <InputCustom
+                                                            name={'Address'}
+                                                            id={address}
+                                                            data={address}
+                                                            value={address}
+                                                            type={'text'}
+                                                            setData={setAddress}
+                                                            disabled={true}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Phone</Label>
+                                                        <InputCustom
+                                                            name={'Phone'}
+                                                            id={phone}
+                                                            data={phone}
+                                                            value={phone}
+                                                            type={'text'}
+                                                            setData={setPhone}
+                                                            disabled={true}
+                                                        />
+                                                    </FormControl>
+                                                </>
+                                                :
+                                                <>
+                                                    <FormControl>
+                                                        <Label>Email</Label>
+                                                        <InputCustom
+                                                            name={'Email'}
+                                                            id={email}
+                                                            data={email}
+                                                            value={email}
+                                                            type={'text'}
+                                                            setData={setEmail}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>First Name</Label>
+                                                        <InputCustom
+                                                            name={'First Name'}
+                                                            id={firstName}
+                                                            data={firstName}
+                                                            value={firstName}
+                                                            type={'text'}
+                                                            setData={setFirstName}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Full Name</Label>
+                                                        <InputCustom
+                                                            name={'Full Name'}
+                                                            id={fullName}
+                                                            data={fullName}
+                                                            value={fullName}
+                                                            type={'text'}
+                                                            setData={setFullName}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Address</Label>
+                                                        <InputCustom
+                                                            name={'Address'}
+                                                            id={address}
+                                                            data={address}
+                                                            value={address}
+                                                            type={'text'}
+                                                            setData={setAddress}
+                                                        />
+                                                    </FormControl>
+                                                    <FormControl>
+                                                        <Label>Phone</Label>
+                                                        <InputCustom
+                                                            name={'Phone'}
+                                                            id={phone}
+                                                            data={phone}
+                                                            value={phone}
+                                                            type={'text'}
+                                                            setData={setPhone}
+                                                        />
+                                                    </FormControl>
+                                                </>
+                                            }
+
                                         </CardContent>
                                         {errorMessage ? <Paragraph
                                             className={'text-red-600 font-bold pt-4'}>{errorMessage}</Paragraph> : ''}
@@ -518,85 +603,185 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                         </Typography>
                                         <Divider inset="none"/>
                                         <CardContent>
-                                            <FormControl>
-                                                <div className={'nh:flex nh:w-full'}>
-                                                    <Grid container rowSpacing={1}
-                                                          columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                                                        <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Adult <span className={'opacity-50 text-[12px]'}>(more than 18 Age)</span></Label>
-                                                            <div className={'flex'}>
-                                                                <button className={'w-fit pl-2'}
-                                                                        onClick={() => handleClickCount('decrease', 'adultCount')}>
-                                                                    <RemoveCircleIcon/></button>
-                                                                <InputCustom
-                                                                    data={adultCount}
-                                                                    value={adultCount}
-                                                                    id={adultCount}
-                                                                    name={'number'}
-                                                                    type={'number'}
-                                                                    sx={{outline: 'none'}}
+                                            {!Payment ?
+                                                <FormControl>
+                                                    <div className={'nh:flex nh:w-full'}>
+                                                        <Grid container rowSpacing={1}
+                                                              columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Adult <span
+                                                                    className={'opacity-50 text-[12px]'}>(more than 18 Age)</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button className={'w-fit pl-2'}
+                                                                            onClick={() => handleClickCount('decrease', 'adultCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom
+                                                                        data={adultCount}
+                                                                        value={adultCount}
+                                                                        id={adultCount}
+                                                                        name={'number'}
+                                                                        type={'number'}
+                                                                        sx={{outline: 'none'}}
+                                                                    />
+                                                                    <button className={'w-fit pr-2'}
+                                                                            onClick={() => handleClickCount('increase', 'adultCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Child<span
+                                                                    className={'opacity-50 text-[12px]'}>(11-18) Age</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button className={'w-fit pl-2'}
+                                                                            onClick={() => handleClickCount('decrease', 'childCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom data={childCount} value={childCount}
+                                                                                 id={childCount} type={'number'}
+                                                                                 name={'number'}
+                                                                                 sx={{
+                                                                                     outline: 'none',
+                                                                                     paddingX: '4px'
+                                                                                 }}/>
+                                                                    <button className={'w-fit pr-2'}
+                                                                            onClick={() => handleClickCount('increase', 'childCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                        </Grid>
+                                                        <Grid container rowSpacing={1}
+                                                              columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Toddler<span
+                                                                    className={'opacity-50 text-[12px]'}>(1-11)Age</span></Label>
+                                                                <div
+                                                                    className={'flex justify-center items-center text-center'}>
+                                                                    <button className={'w-fit pl-2'}
+                                                                            onClick={() => handleClickCount('decrease', 'toddlerCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom
+                                                                        id={toddlerCount}
+                                                                        type={'number'}
+                                                                        name={'number'}
+                                                                        value={toddlerCount}
+                                                                        data={toddlerCount}
+                                                                    />
+                                                                    <button className={'w-fit pr-2'}
+                                                                            onClick={() => handleClickCount('increase', 'toddlerCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Infant<span
+                                                                    className={'opacity-50 text-[12px]'}>(less 1 Age)</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button className={'w-fit pl-2'}
+                                                                            onClick={() => handleClickCount('decrease', 'infantCout')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom sx={{outline: 'none'}}
+                                                                                 id={'infantCout'}
+                                                                                 value={infantCout} data={infantCout}
+                                                                                 type={'number'}
+                                                                                 name={'number'}/>
+                                                                    <button className={'w-fit pr-2'}
+                                                                            onClick={() => handleClickCount('increase', 'infantCout')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </div>
+                                                </FormControl>
+                                                :
+                                                <FormControl>
+                                                    <div className={'nh:flex nh:w-full'}>
+                                                        <Grid container rowSpacing={1}
+                                                              columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Adult <span
+                                                                    className={'opacity-50 text-[12px]'}>(more than 18 Age)</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button disabled={true} className={'w-fit pl-2'}
+                                                                            onClick={() => handleClickCount('decrease', 'adultCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom
+                                                                        data={adultCount}
+                                                                        value={adultCount}
+                                                                        id={adultCount}
+                                                                        name={'number'}
+                                                                        type={'number'}
+                                                                        sx={{outline: 'none'}}
+                                                                        disabled={true}
+                                                                    />
+                                                                    <button className={'w-fit pr-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('increase', 'adultCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Child<span
+                                                                    className={'opacity-50 text-[12px]'}>(11-18) Age</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button className={'w-fit pl-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('decrease', 'childCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom data={childCount} value={childCount}
+                                                                                 id={childCount} type={'number'}
+                                                                                 name={'number'}
+                                                                                 sx={{outline: 'none', paddingX: '4px'}}
+                                                                                 disabled={true}
+                                                                    />
+                                                                    <button className={'w-fit pr-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('increase', 'childCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                        </Grid>
+                                                        <Grid container rowSpacing={1}
+                                                              columnSpacing={{xs: 1, sm: 2, md: 3}}>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Toddler<span
+                                                                    className={'opacity-50 text-[12px]'}>(1-11)Age</span></Label>
+                                                                <div
+                                                                    className={'flex justify-center items-center text-center'}>
+                                                                    <button className={'w-fit pl-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('decrease', 'toddlerCount')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom
+                                                                        id={toddlerCount}
+                                                                        type={'number'}
+                                                                        name={'number'}
+                                                                        value={toddlerCount}
+                                                                        data={toddlerCount}
+                                                                        disabled={true}
+                                                                    />
+                                                                    <button className={'w-fit pr-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('increase', 'toddlerCount')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
+                                                            <Grid item xs={6}>
+                                                                <Label className={'font-bold'}>Infant<span
+                                                                    className={'opacity-50 text-[12px]'}>(less 1 Age)</span></Label>
+                                                                <div className={'flex'}>
+                                                                    <button className={'w-fit pl-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('decrease', 'infantCout')}>
+                                                                        <RemoveCircleIcon/></button>
+                                                                    <InputCustom sx={{outline: 'none'}}
+                                                                                 id={'infantCout'}
+                                                                                 value={infantCout} data={infantCout}
+                                                                                 type={'number'}
+                                                                                 name={'number'}
+                                                                                 disabled={true}
 
-                                                                />
-                                                                <button className={'w-fit pr-2'}
-                                                                        onClick={() => handleClickCount('increase', 'adultCount')}>
-                                                                    <AddCircleIcon/></button>
-                                                            </div>
+                                                                    />
+                                                                    <button className={'w-fit pr-2'} disabled={true}
+                                                                            onClick={() => handleClickCount('increase', 'infantCout')}>
+                                                                        <AddCircleIcon/></button>
+                                                                </div>
+                                                            </Grid>
                                                         </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Child<span className={'opacity-50 text-[12px]'}>(11-18) Age</span></Label>
-                                                            <div className={'flex'}>
-                                                                <button className={'w-fit pl-2'}
-                                                                        onClick={() => handleClickCount('decrease', 'childCount')}>
-                                                                    <RemoveCircleIcon/></button>
-                                                                <InputCustom data={childCount} value={childCount}
-                                                                             id={childCount} type={'number'}
-                                                                             name={'number'}
-                                                                             sx={{outline: 'none', paddingX: '4px'}}/>
-                                                                <button className={'w-fit pr-2'}
-                                                                        onClick={() => handleClickCount('increase', 'childCount')}>
-                                                                    <AddCircleIcon/></button>
-                                                            </div>
-                                                        </Grid>
-                                                    </Grid>
-                                                    <Grid container rowSpacing={1}
-                                                          columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                                                        <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Toddler<span className={'opacity-50 text-[12px]'}>(1-11)Age</span></Label>
-                                                            <div
-                                                                className={'flex justify-center items-center text-center'}>
-                                                                <button className={'w-fit pl-2'}
-                                                                        onClick={() => handleClickCount('decrease', 'toddlerCount')}>
-                                                                    <RemoveCircleIcon/></button>
-                                                                <InputCustom
-                                                                    id={toddlerCount}
-                                                                    type={'number'}
-                                                                    name={'number'}
-                                                                    value={toddlerCount}
-                                                                    data={toddlerCount}
-                                                                />
-                                                                <button className={'w-fit pr-2'}
-                                                                        onClick={() => handleClickCount('increase', 'toddlerCount')}>
-                                                                    <AddCircleIcon/></button>
-                                                            </div>
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Label className={'font-bold'}>Infant<span className={'opacity-50 text-[12px]'}>(less 1 Age)</span></Label>
-                                                            <div className={'flex'}>
-                                                                <button className={'w-fit pl-2'}
-                                                                        onClick={() => handleClickCount('decrease', 'infantCout')}>
-                                                                    <RemoveCircleIcon/></button>
-                                                                <InputCustom sx={{outline: 'none'}} id={'infantCout'}
-                                                                             value={infantCout} data={infantCout}
-                                                                             type={'number'}
-                                                                             name={'number'}/>
-                                                                <button className={'w-fit pr-2'}
-                                                                        onClick={() => handleClickCount('increase', 'infantCout')}>
-                                                                    <AddCircleIcon/></button>
-                                                            </div>
-                                                        </Grid>
-                                                    </Grid>
-                                                </div>
-                                            </FormControl>
+                                                    </div>
+                                                </FormControl>
+                                            }
                                         </CardContent>
                                     </Card>
                                 </Grid>
@@ -616,127 +801,278 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                             Information Passenger
                                         </Typography>
                                         <Divider inset="none"/>
-                                        <CardContent sx={{width: '100%'}}>
-                                            {[...Array(adultCount)].map((item, index) => (
-                                                <FormControl key={index}>
-                                                    <Label className={'font-bold pb-0'}>Information
-                                                        Adult {index + 1} </Label>
-                                                    <Input placeholder={'Name'} sx={{outline: 'none', width: '100%'}}
-                                                           data={adults[index]?.name || ''}
-                                                           value={adults[index]?.name || ''}
-                                                           type={"text"}
-                                                           onChange={(e) => handleInformationChange('adult', index, "name", e.target.value)}
-                                                    />
-                                                    <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
-                                                           data={adults[index]?.dayOfBirth || ''}
-                                                           value={adults[index]?.dayOfBirth || ''}
-                                                           type={"number"}
-                                                           onChange={(e) => handleInformationChange('adult', index, "dayOfBirth", e.target.value)}
-                                                    />
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="demo-radio-buttons-group-label"
-                                                        name="radio-buttons-group"
-                                                        value={adults[index]?.sex}
-                                                        onChange={(e) => handleInformationChange('adult', index, "sex", e.target.value)}
-                                                    >
-                                                        <FormControlLabel value="Men" control={<Radio/>} label="Male"/>
-                                                        <FormControlLabel value="Women" control={<Radio/>}
-                                                                          label="Female"/>
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            ))}
-                                            {[...Array(childCount)].map((item, index) => (
-                                                <FormControl key={item}>
-                                                    <Label className={'font-bold pb-0'}>Information
-                                                        children {index + 1} </Label>
-                                                    <Input placeholder={'Name'} sx={{outline: 'none', width: '100%'}}
-                                                           data={children[index]?.name}
-                                                           value={children[index]?.name}
-                                                           onChange={(e) => handleInformationChange('child', index, "name", e.target.value)}
-                                                    />
-                                                    <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
-                                                           data={children[index]?.dayOfBirth || ''}
-                                                           value={children[index]?.dayOfBirth || ''}
-                                                           type={"number"}
-                                                           onChange={(e) => handleInformationChange('child', index, "dayOfBirth", e.target.value)}
-                                                    />
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="demo-radio-buttons-group-label"
-                                                        name="radio-buttons-group"
-                                                        value={children[index]?.sex}
-                                                        onChange={(e) => handleInformationChange('child', index, "sex", e.target.value)}
-                                                    >
-                                                        <FormControlLabel value="Men" control={<Radio/>} label="Male"/>
-                                                        <FormControlLabel value="Women" control={<Radio/>}
-                                                                          label="Female"/>
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            ))}
-                                            {[...Array(toddlerCount)].map((item, index) => (
-                                                <FormControl key={item}>
-                                                    <Label className={'font-bold pb-0'}>Information
-                                                        toddler {index + 1} </Label>
-                                                    <Input placeholder={'Name'} sx={{outline: 'none', width: '100%'}}
-                                                           data={toddlers[index]?.name}
-                                                           value={toddlers[index]?.name}
-                                                           onChange={(e) => handleInformationChange('toddler', index, "name", e.target.value)}
-                                                    />
-                                                    <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
-                                                           data={toddlers[index]?.dayOfBirth || ''}
-                                                           value={toddlers[index]?.dayOfBirth || ''}
-                                                           type={"number"}
-                                                           onChange={(e) => handleInformationChange('toddler', index, "dayOfBirth", e.target.value)}
-                                                    />
-                                                    <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
-                                                               id="demo-radio-buttons-group-label">Gender</FormLabel>
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="demo-radio-buttons-group-label"
-                                                        name="radio-buttons-group"
-                                                        value={toddlers[index]?.sex}
-                                                        onChange={(e) => handleInformationChange('toddler', index, "sex", e.target.value)}
-                                                    >
-                                                        <FormControlLabel value="Men" control={<Radio/>} label="Male"/>
-                                                        <FormControlLabel value="Women" control={<Radio/>}
-                                                                          label="Female"/>
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            ))}
-                                            {[...Array(infantCout)].map((item, index) => (
-                                                <FormControl key={item}>
-                                                    <Label className={'font-bold pb-0'}>Information
-                                                        Infant {index + 1} </Label>
-                                                    <Input placeholder={'Name'} sx={{outline: 'none', width: '100%'}}
-                                                           data={infants[index]?.name}
-                                                           value={infants[index]?.name}
-                                                           onChange={(e) => handleInformationChange('infants', index, "name", e.target.value)}
-                                                    />
-                                                    <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
-                                                           data={infants[index]?.dayOfBirth || ''}
-                                                           value={infants[index]?.dayOfBirth || ''}
-                                                           type={"number"}
-                                                           onChange={(e) => handleInformationChange('infants', index, "dayOfBirth", e.target.value)}
-                                                    />
-                                                    <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
-                                                               id="demo-radio-buttons-group-label">Gender</FormLabel>
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="demo-radio-buttons-group-label"
-                                                        name="radio-buttons-group"
-                                                        value={infants[index]?.sex}
-                                                        onChange={(e) => handleInformationChange('infants', index, "sex", e.target.value)}
-                                                    >
-                                                        <FormControlLabel value="Men" control={<Radio/>} label="Male"/>
-                                                        <FormControlLabel value="Women" control={<Radio/>}
-                                                                          label="Female"/>
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            ))}
-                                            <Paragraph
-                                                className={'text-red-600 font-bold pt-2'}>{passengerError}</Paragraph>
-                                        </CardContent>
+                                        {!Payment ?
+                                            <CardContent sx={{width: '100%'}}>
+                                                {[...Array(adultCount)].map((item, index) => (
+                                                    <FormControl key={index}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            Adult {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={adults[index]?.name || ''}
+                                                               value={adults[index]?.name || ''}
+                                                               type={"text"}
+                                                               onChange={(e) => handleInformationChange('adult', index, "name", e.target.value)}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={adults[index]?.dayOfBirth || ''}
+                                                               value={adults[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('adult', index, "dayOfBirth", e.target.value)}
+                                                        />
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={adults[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('adult', index, "sex", e.target.value)}
+                                                        >
+                                                            <FormControlLabel value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(childCount)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            children {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={children[index]?.name}
+                                                               value={children[index]?.name}
+                                                               onChange={(e) => handleInformationChange('child', index, "name", e.target.value)}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={children[index]?.dayOfBirth || ''}
+                                                               value={children[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('child', index, "dayOfBirth", e.target.value)}
+                                                        />
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={children[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('child', index, "sex", e.target.value)}
+                                                        >
+                                                            <FormControlLabel value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(toddlerCount)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            toddler {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={toddlers[index]?.name}
+                                                               value={toddlers[index]?.name}
+                                                               onChange={(e) => handleInformationChange('toddler', index, "name", e.target.value)}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={toddlers[index]?.dayOfBirth || ''}
+                                                               value={toddlers[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('toddler', index, "dayOfBirth", e.target.value)}
+                                                        />
+                                                        <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
+                                                                   id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={toddlers[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('toddler', index, "sex", e.target.value)}
+                                                        >
+                                                            <FormControlLabel value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(infantCout)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            Infant {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={infants[index]?.name}
+                                                               value={infants[index]?.name}
+                                                               onChange={(e) => handleInformationChange('infants', index, "name", e.target.value)}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={infants[index]?.dayOfBirth || ''}
+                                                               value={infants[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('infants', index, "dayOfBirth", e.target.value)}
+                                                        />
+                                                        <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
+                                                                   id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={infants[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('infants', index, "sex", e.target.value)}
+                                                        >
+                                                            <FormControlLabel value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                <Paragraph
+                                                    className={'text-red-600 font-bold pt-2'}>{passengerError}</Paragraph>
+                                            </CardContent>
+                                            :
+                                            <CardContent sx={{width: '100%'}}>
+                                                {[...Array(adultCount)].map((item, index) => (
+                                                    <FormControl key={index}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            Adult {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={adults[index]?.name || ''}
+                                                               value={adults[index]?.name || ''}
+                                                               type={"text"}
+                                                               onChange={(e) => handleInformationChange('adult', index, "name", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={adults[index]?.dayOfBirth || ''}
+                                                               value={adults[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('adult', index, "dayOfBirth", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={adults[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('adult', index, "sex", e.target.value)}
+                                                            disabled={true}
+                                                        >
+                                                            <FormControlLabel disabled={true} value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel disabled={true} value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(childCount)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            children {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={children[index]?.name}
+                                                               value={children[index]?.name}
+                                                               onChange={(e) => handleInformationChange('child', index, "name", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={children[index]?.dayOfBirth || ''}
+                                                               value={children[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('child', index, "dayOfBirth", e.target.value)}
+                                                               disabled={true}/>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={children[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('child', index, "sex", e.target.value)}
+                                                            disabled={true}
+                                                        >
+                                                            <FormControlLabel disabled={true} value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel disabled={true} value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(toddlerCount)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            toddler {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={toddlers[index]?.name}
+                                                               value={toddlers[index]?.name}
+                                                               onChange={(e) => handleInformationChange('toddler', index, "name", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={toddlers[index]?.dayOfBirth || ''}
+                                                               value={toddlers[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('toddler', index, "dayOfBirth", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
+                                                                   id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={toddlers[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('toddler', index, "sex", e.target.value)}
+                                                            disabled={true}
+                                                        >
+                                                            <FormControlLabel disabled={true} value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel disabled={true} value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                {[...Array(infantCout)].map((item, index) => (
+                                                    <FormControl key={item}>
+                                                        <Label className={'font-bold pb-0'}>Information
+                                                            Infant {index + 1} </Label>
+                                                        <Input placeholder={'Name'}
+                                                               sx={{outline: 'none', width: '100%'}}
+                                                               data={infants[index]?.name}
+                                                               value={infants[index]?.name}
+                                                               onChange={(e) => handleInformationChange('infants', index, "name", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <Input placeholder={'Age'} sx={{outline: 'none', width: '100%'}}
+                                                               data={infants[index]?.dayOfBirth || ''}
+                                                               value={infants[index]?.dayOfBirth || ''}
+                                                               type={"number"}
+                                                               onChange={(e) => handleInformationChange('infants', index, "dayOfBirth", e.target.value)}
+                                                               disabled={true}
+                                                        />
+                                                        <FormLabel sx={{paddingTop: '12px', fontWeight: 'bold'}}
+                                                                   id="demo-radio-buttons-group-label">Gender</FormLabel>
+                                                        <RadioGroup
+                                                            row
+                                                            aria-labelledby="demo-radio-buttons-group-label"
+                                                            name="radio-buttons-group"
+                                                            value={infants[index]?.sex}
+                                                            onChange={(e) => handleInformationChange('infants', index, "sex", e.target.value)}
+                                                            disabled={true}
+                                                        >
+                                                            <FormControlLabel disabled={true} value="Men" control={<Radio/>}
+                                                                              label="Male"/>
+                                                            <FormControlLabel disabled={true} value="Women" control={<Radio/>}
+                                                                              label="Female"/>
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                ))}
+                                                <Paragraph
+                                                    className={'text-red-600 font-bold pt-2'}>{passengerError}</Paragraph>
+                                            </CardContent>
+                                        }
                                     </Card>
                                 </Grid>
                             </Grid>
@@ -786,7 +1122,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                 <Paragraph className={'font-bold'} size={'sx'}>{formatEnd}</Paragraph>
                                                 <Paragraph className={'font-bold'}
                                                            size={'sx'}>{adultCount} Adult, {childCount ? `${childCount} Child,` : ''} {toddlerCount > 0 ? `${toddlerCount} Toddler,` : ''} {infantCout > 0 ? ` ${infantCout} Infant` : ''}</Paragraph>
-                                                <Paragraph className={'font-bold'} size={'sx'}>{data?.quantity}</Paragraph>
+                                                <Paragraph className={'font-bold'}
+                                                           size={'sx'}>{data?.quantity}</Paragraph>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -867,31 +1204,37 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                         </div>
                                     </CardContent>
                                 </Card>
+                                <div className={'w-full flex justify-center pt-3'}>
+                                    <CardActions
+                                        sx={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                                        {isLoadingBooking ? (
+                                                <div className={''}>
+                                                    <CircularProgress color="secondary" size={16}/>
+                                                </div>
+                                            ) :
+                                            <> {!Payment ?
+                                                <div className={'w-full'}>
+                                                    <Button variant="solid" color="primary"
+                                                            fullWidth={true}
+                                                            onClick={() =>
+                                                                handleClick()
+                                                            }
+                                                    >Confirm Data
+                                                    </Button>
+                                                </div>
+                                                :
+                                                <PaymentButton accessToken={accessToken} userId={userId} setOpenModal={setOpenModal} openModal={openModal}
+                                                               InputTotalPrice={InputAdultPrice}
+                                                               setPayment={setPayment}
+                                                               mutateBooking={mutateBooking}
+                                                />
+                                            }
+                                            </>
+
+                                        }
+                                    </CardActions>
+                                </div>
                             </Grid>
-                            <div className={'w-full lg:w-[60%] flex justify-center pt-3'}>
-                                <CardActions
-                                    sx={{display: 'flex', justifyContent: 'center', width: {xs: '97%', lg: '50%'}}}>
-                                    {isLoadingBooking ? (
-                                        <div className={''}>
-                                            <CircularProgress color="secondary" size={16}/>
-                                        </div>
-                                    ) : <Button variant="solid" color="primary"
-                                                onClick={(e) =>
-                                                    // {
-                                                    // setLoadingOfBooking(true);
-                                                    // setTimeout(() => {
-                                                    handleClick(e.target.value)
-                                                    //         setLoadingOfBooking(false);
-                                                    //     }, 2000);
-                                                    // }
-                                                    // }
-                                                }
-                                    >
-                                        Payment
-                                    </Button>
-                                    }
-                                </CardActions>
-                            </div>
                         </Grid>
                     </Container>
                     {!errorBooking ?

@@ -16,13 +16,14 @@ import ModalCommentOfTour from "@/components/modal/user/ModalCommentOfTour";
 import * as React from "react";
 import {CommentTourDTO, TourDTO} from "@/types";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {addToCartAPI, bookingAPI, upVoteTourApi} from "@/util/api/apiReuqest";
-import {useSelector} from "react-redux";
+import {addToCartAPI, bookingAPI, createAxios, upVoteTourApi} from "@/util/api/apiReuqest";
+import {useDispatch, useSelector} from "react-redux";
 import Slice from "@/components/ui/swiperSlice";
 import Link from "next/link";
 import LineCustom from "@/components/ui/LineCustom";
 import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 import {toast} from "react-toastify";
+import {AppDispatch} from "@/redux/store";
 
 
 interface TourDetailProps {
@@ -47,10 +48,14 @@ interface TourDetailProps {
 }
 //tour Component
 const EachTour: FC<TourDetailProps> = ({...tour}) => {
+    const [isLoadingOfCart, setLoadingOfCart] = useState<boolean>(false);
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
     const token = useSelector<any>((state) => state.auth.value?.token)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
-    const [isLoadingOfCart, setLoadingOfCart] = useState(false);
 
     const user = useSelector((state) => state.auth.value?.user)
     const {err, setErr} = React.useState<string>('')
@@ -62,7 +67,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const {mutate, data} = useMutation(
         async (tourId: string) => {
             try {
-                const res = upVoteTourApi(tourId, accessToken)
+                const res = upVoteTourApi(tourId, accessToken,axiosJWT,userId)
                 return res
             } catch (e) {
                 throw e
@@ -90,7 +95,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const {mutate: mutateCart, data: dataCart} = useMutation(
         async (tourId: string) => {
             try {
-                const res = await addToCartAPI(tourId, accessToken, user.id)
+                const res = await addToCartAPI(tourId, accessToken, user.id, axiosJWT)
                 return res;
             } catch (error) {
                 throw error;
@@ -111,7 +116,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 )
             },
             onError: (error) => {
-                toast.warn('Tour existed in Tour Cart')
+                toast.warn('Can not Add',error)
             },
         });
     const handleAddToCart = (tourId: string) => {

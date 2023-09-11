@@ -4,8 +4,10 @@ import {Tooltip} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import * as React from "react";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {createUpExperienceVoteAPI} from "@/util/api/apiReuqest";
+import {createAxios, createUpExperienceVoteAPI} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "@/redux/store";
 
 interface UpvoteExperienceProps {
     accessToken:string
@@ -18,11 +20,16 @@ interface UpvoteExperienceProps {
 
 const UpvoteExperience: FC<UpvoteExperienceProps> = ({accessToken,userId,experienceId,experienceUpvote}) => {
     const [upvote, setUpvote] = useState<number>(experienceUpvote.length)
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const queryClient = useQueryClient()
     const {mutate: mutateUpVote, isLoading: isLoadingUpVote, data: dataUpVote, status, isSuccess} = useMutation(
         async (experienceId: string) => {
             try {
-                const res = await createUpExperienceVoteAPI(accessToken, userId, experienceId)
+                const res = await createUpExperienceVoteAPI(accessToken, userId, experienceId,axiosJWT)
                 return res
             } catch (e) {
                 throw new Error(e)

@@ -13,7 +13,6 @@ import {setCookie} from "@/util/api/cookies";
 import {logIn} from '@/redux/feature/auth-slice'
 import {useDispatch} from 'react-redux'
 import {AppDispatch} from "@/redux/store";
-// import {signIn, useSession} from "next-auth/react";
 import GoogleIcon from '@mui/icons-material/Google';
 import {useGoogleLogin} from '@react-oauth/google';
 import axios from "axios";

@@ -144,3 +144,7 @@ export interface CartDTO {
         status: string;
     }
 }
+export interface SendBackEndDTO {
+    accessToken: string;
+    userId: string;
+}

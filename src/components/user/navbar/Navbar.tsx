@@ -27,7 +27,7 @@ import {logOut} from "@/redux/feature/auth-slice";
 import {removeCookie} from "@/util/api/cookies";
 import CartComponent from "@/components/user/CartComponent";
 import {useQuery} from "@tanstack/react-query";
-import {getToCartAPI} from "@/util/api/apiReuqest";
+import {createAxios, getToCartAPI} from "@/util/api/apiReuqest";
 import {CartDTO} from "@/types";
 
 
@@ -77,12 +77,15 @@ const PrimarySearchAppBar: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter()
     const [showCart, setShowCart] = React.useState<boolean>(false);
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state) => state.auth.value?.token?.access)
+    const userId = useSelector((state) => state.auth.value?.user?.id)
     const [cart, setCart] = React.useState<CartDTO[]>();
 
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const {data: cartData, isLoading:isLoadingOfCart, isError:isErrorOfCart, isSuccess:isSuccessGetOfCart} = useQuery(['cart', userId], () =>
-        getToCartAPI(accessToken, userId)
+        getToCartAPI(accessToken, userId,axiosJWT)
     );
     React.useEffect(() => {
         if (isSuccessGetOfCart) {

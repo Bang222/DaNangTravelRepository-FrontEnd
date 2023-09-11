@@ -7,9 +7,9 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import Label from "@/components/ui/Label";
 import Paragraph from "@/components/ui/Paragraph";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {bookingAPI, createTourAPI} from "@/util/api/apiReuqest";
+import {bookingAPI, createAxios, createTourAPI} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {CircularProgress} from "@mui/material";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -23,6 +23,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import {Keyboard, Navigation, Pagination} from "swiper/modules";
+import {AppDispatch} from "@/redux/store";
 
 
 interface InputCreateTourProps {
@@ -34,6 +35,11 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
     const [totalDay, setTotalDay] = React.useState<number>(0)
     const [price, setPrice] = React.useState<number>(0)
     const [previewImage, setPreviewImage] = React.useState<>([])
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const queryClient = useQueryClient()
@@ -41,7 +47,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
     const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour, isSuccess: isSuccessCreateTour} = useMutation(
         async (formData: any) => {
             try {
-                const res = await createTourAPI(accessToken, userId, formData)
+                const res = await createTourAPI(accessToken, userId, formData, axiosJWT)
                 return res;
             } catch (error) {
                 throw error;
@@ -49,8 +55,8 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         }, {
             onSuccess: () => {
                 toast.success('Create Success')
-                formik.resetForm()
-                setPreviewImage([])
+                // formik.resetForm()
+                // setPreviewImage([])
                 queryClient.invalidateQueries(['TourOfStore', userId]);
             },
             onError: (error) => {

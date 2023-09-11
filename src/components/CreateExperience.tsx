@@ -11,15 +11,16 @@ import Avatar from "@mui/material/Avatar";
 import {red} from "@mui/material/colors";
 import IconButton from "@mui/material/IconButton";
 import PublicSharpIcon from "@mui/icons-material/PublicSharp";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {userDTO} from "@/types";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import Paragraph from "@/components/ui/Paragraph";
 import CloseIcon from '@mui/icons-material/Close';
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {createExperience} from "@/util/api/apiReuqest";
+import {createAxios, createExperience} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
+import {AppDispatch} from "@/redux/store";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -40,6 +41,11 @@ const CreateExperience: React.FC = () => {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux,dispatch)
+
     const user = useSelector<userDTO>((state) => state.auth.value?.user)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
@@ -49,14 +55,14 @@ const CreateExperience: React.FC = () => {
     const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour} = useMutation(
         async (data: any) => {
             try {
-                const res = await createExperience(accessToken, userId, data)
+                const res = await createExperience(accessToken, userId, data ,axiosJWT )
             } catch (e) {
                 throw new Error(e)
             }
         }, {
             onSuccess() {
                 handleClose();
-                queryClient.invalidateQueries(['experienceExperience', userId]);
+                queryClient.invalidateQueries(['experienceExperiencePage', userId]);
                 toast.success('OKEE')
                 formik.resetForm();
                 setPreviewImage(null)
