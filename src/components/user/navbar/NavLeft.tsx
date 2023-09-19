@@ -12,6 +12,7 @@ import StoreSharpIcon from '@mui/icons-material/StoreSharp';
 import LineCustom from "@/components/ui/LineCustom";
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
+import Introduction from "@/components/Introduction";
 
 interface NavLeftProps {
 }
@@ -52,8 +53,7 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                 title={`${user.firstName} ${user.lastName}`}
                 subheader={'Your Profile'}
             />
-            <LineCustom size={'100%'}/>
-            <CardContent>
+            <CardContent sx={{marginBottom:'36px'}}>
                 <ul className={'m-3'}>
                     {navBarLeft.map((item, index:number)=> {return(
                         <li key={index} className={'mb-2'}>
@@ -64,6 +64,10 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                         </li>
                     )})}
                 </ul>
+            </CardContent>
+            <LineCustom size={'100%'}/>
+            <CardContent>
+                <Introduction/>
             </CardContent>
         </Card>
     ): <div></div>;

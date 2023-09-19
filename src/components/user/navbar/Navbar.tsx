@@ -20,15 +20,16 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import NavbarChild from "@/components/user/navbar/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
-import {useRouter} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "@/redux/store";
 import {logOut} from "@/redux/feature/auth-slice";
 import {removeCookie} from "@/util/api/cookies";
 import CartComponent from "@/components/user/CartComponent";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {createAxios, getToCartAPI} from "@/util/api/apiReuqest";
 import {CartDTO} from "@/types";
+import { usePathname } from 'next/navigation'
 
 
 const Search = styled('div')(({theme}) => ({
@@ -74,12 +75,15 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 const PrimarySearchAppBar: React.FC = () => {
     const {isLoading, status} = useUserDetailAPI()
     const isAuth = useSelector((state) => state.auth.value?.isAuth)
+    const pathname = usePathname()
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter()
     const [showCart, setShowCart] = React.useState<boolean>(false);
     const accessToken = useSelector((state) => state.auth.value?.token?.access)
     const userId = useSelector((state) => state.auth.value?.user?.id)
     const [cart, setCart] = React.useState<CartDTO[]>();
+    const [search, setSearch] = React.useState<string>()
+    const queryClient = useQueryClient();
 
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
@@ -112,8 +116,22 @@ const PrimarySearchAppBar: React.FC = () => {
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
-
-
+    const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    };
+    const handleSearch = () => {
+        if (pathname === '/') {
+            if (typeof search === "string") {
+                localStorage.setItem('searchExperience', search)
+            }
+        }
+    };
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+            queryClient.fetchInfiniteQuery(['experienceExperiencePage', userId])
+        }
+    };
     return (
         <Box sx={{
             width: '100%',
@@ -142,7 +160,7 @@ const PrimarySearchAppBar: React.FC = () => {
                         >
                             <Link href={'#'}>DaNang Travel</Link>
                         </Typography>
-                        <Search className={'rounded-[30px]'}>
+                        {pathname === '/' ?  <Search className={'rounded-[30px]'}>
                             <SearchIconWrapper>
                                 <SearchIcon/>
                             </SearchIconWrapper>
@@ -150,8 +168,10 @@ const PrimarySearchAppBar: React.FC = () => {
                                 placeholder="Search…"
                                 inputProps={{'aria-label': 'search'}}
                                 className={'sm:w-[400px] lg:w-[250px]'}
+                                onChange={handleSearchInputChange}
+                                onKeyDown={(e) => handleKeyPress(e)}
                             />
-                        </Search>
+                        </Search> : ''}
                     </Box>
                     <div className={'hidden sf7:flex justify-between w-[35%]'}>
                         <NavbarChild/>

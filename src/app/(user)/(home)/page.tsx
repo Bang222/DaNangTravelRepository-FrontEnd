@@ -15,11 +15,10 @@ export default async function Home() {
                 </section>
                 <div className={'lg:col-span-2 col-span-4 w-6/6 p-3.5'}>
                     <CreateExperience/>
-                    <Experience/>
+                        <Experience/>
                 </div>
                 <section className={'hidden lg:block relative mt-[65px] '}>
                     <div className="sticky top-[10%]">
-                        <Introduction/>
                     </div>
                 </section>
             </section>

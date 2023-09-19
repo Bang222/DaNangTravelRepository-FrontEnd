@@ -169,17 +169,19 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 title={tour.store.name}
                 subheader={formatCreateAt}
             />
-            <CardContent>
+            <CardContent sx ={{padding:'0'}}>
                 <section className={'mb-4'}>
                     <Slice previewImage={previewImage}/>
                 </section>
+            </CardContent>
+            <CardContent sx ={{paddingY:'0',paddingX:'12px'}}>
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
-                        <Paragraph size={'sm'}>Name: <b className={'text-[14px]'}>{tour.name}</b></Paragraph>
-                        <Paragraph size={'sm'}>Price: <b className={'text-[14px]'}>{formatPrice}/<b
+                        <Paragraph size={'sm'}>Name: <b className={'text-[8px] sm:text-[12px]'}>{tour.name}</b></Paragraph>
+                        <Paragraph size={'sm'}>Price: <b className={'text-[8px] sm:text-[12px]'}>{formatPrice}/<b
                             className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
-                        <Paragraph size={'sm'}>Address: <b className={'text-[14px]'}>{tour.address}</b></Paragraph>
-                        <Paragraph size={'sm'}>Day Start: <b className={'text-[14px]'}>{formattedStartDate}</b>
+                        <Paragraph size={'sm'}>Address: <b className={'text-[8px] sm:text-[12px]'}>{tour.address}</b></Paragraph>
+                        <Paragraph size={'sm'}>Day Start: <b className={'text-[8px] sm:text-[12px]'}>{formattedStartDate}</b>
                             <Paragraph size={'sm'}>
                                 Total: <b>{differenceInDays}</b> <span
                                 className={'text-[10px] lg:text-[12px]'}>Days</span> <b>{differenceInDays - 1} </b>
@@ -201,7 +203,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             <div className={'w-full flex justify-center'}>
                 <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
             </div>
-            <CardActions sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+            <CardActions sx={{width: '100%', display: 'flex',paddingY:'0', justifyContent: 'space-between'}}>
                 <div className={'flex items-center'}>
                     {(data?.status ? data?.status.includes(tour.userId) :
                         tour?.upVote.includes(tour.userId))

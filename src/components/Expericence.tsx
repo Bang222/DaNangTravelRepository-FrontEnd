@@ -34,6 +34,7 @@ import {useEffect, useRef} from "react";
 import {useIntersection} from "@mantine/hooks";
 import {userExperience} from "@/types";
 import UpvoteExperience from "@/components/user/UpvoteExperience";
+import getStorage from "redux-persist/es/storage/getStorage";
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -65,41 +66,40 @@ export default function Experience() {
         data: dataExperiencePages,
         isLoading: isLoadingExperience,
         isError: isErrorExperience,
-        hasNextPage:hasNextPageExperience,
+        hasNextPage: hasNextPageExperience,
         isFetchingNextPage: isFetchingNextPageExperience,
         fetchNextPage: fetchNextPageExperience,
         error: experienceError
     } = useInfiniteQuery(['experienceExperiencePage', userId],
-            async ({pageParam = 1}) => {
-                try {
-                    const res = await getAllFeedsPostPage(pageParam)
-                    return res
-                } catch (e) {
-                    return e
-                }
-            },
+        async ({pageParam = 1}) => {
+            try {
+                const res = await getAllFeedsPostPage(pageParam, localStorage.getItem('searchExperience'))
+                return res
+            } catch (e) {
+                return e
+            }
+        },
         {
             getNextPageParam: (data, pages) => {
                 if (data.length > 2) {
                     return pages.length + 1;
                 } else {
-                   return undefined
+                    return undefined
                 }
             },
-
             cacheTime: 5000,
         }
     );
     const lastExperienceRef = useRef<HTMLElement>(null)
     const {ref, entry} = useIntersection({
         root: lastExperienceRef.current,
-        threshold:1
+        threshold: 1
     })
-    useEffect(()=>{
-        if(entry?.isIntersecting) fetchNextPageExperience()
-    },[entry])
+    useEffect(() => {
+        if (entry?.isIntersecting) fetchNextPageExperience()
+    }, [entry])
 
-    const dataExperience= dataExperiencePages?.pages.flatMap((page) => page)
+    const dataExperience = dataExperiencePages?.pages.flatMap((page) => page)
 
     React.useEffect(() => {
         if (isErrorExperience) {
@@ -118,87 +118,157 @@ export default function Experience() {
         month: 'numeric',
         day: 'numeric',
     }
-    return isLoadingExperience ? <div>Loading...</div> : (
-        <>
-            {
-                dataExperience?.map((item, index) => {
-                    if (index === dataExperience.length - 1) {
-                        return <div key={item.id} ref={ref}></div>
-                    }
-                    const createAt = new Date()
-                    const formatCreateAt = createAt.toLocaleDateString('es-uk', options)
-                    const words = item?.content
-                    const truncated = words?.slice(0, 300);
-                    const hasMore = words?.length > 300;
-                    const isExpanded = expandedItemId === item.id;
-                    return (
-                        <Card sx={{maxWidth: '100%', marginY: '24px'}} key={item.id}>
-                            <CardHeader
-                                avatar={
-                                    <Avatar sx={{bgcolor: red[500]}} aria-label="recipe" src={item.user.profilePicture}
-                                            alt={'avatar'}>
-                                    </Avatar>
-                                }
-
-                                action={
-                                    userId === item?.userId ?
-                                        <IconButton aria-label="settings">
-                                            <MoreVertIcon/>
-                                        </IconButton>
-                                        : ''
-                                }
-                                title={`${item.user.firstName} ${item.user.lastName}`}
-                                subheader={<div>{formatCreateAt} <PublicSharpIcon sx={{fontSize: '14px'}}/></div>}
-                            />
-                            <CardContent>
-                                <Typography variant="body1" color="text.primary">
-                                    {item.title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {isExpanded ? item.content : truncated}
-                                    {hasMore && (
-                                        <button onClick={() => toggleContent(item.id)}>
-                                            {isExpanded ? (
-                                                <span className={'text-blue-400'}>Collapse</span>
-                                            ) : (
-                                                <span>...<span className={'text-blue-400'}>See More</span></span>
+    return isLoadingExperience ? <div>Loading...</div> :
+        dataExperience || isErrorExperience.statusCode === 429 ? (
+            <>
+                {
+                    dataExperience?.map((item, index) => {
+                        const createAt = new Date()
+                        const formatCreateAt = createAt.toLocaleDateString('es-uk', options)
+                        const words = item?.content
+                        const truncated = words?.slice(0, 300);
+                        const hasMore = words?.length > 300;
+                        const isExpanded = expandedItemId === item.id;
+                        if (index === dataExperience.length - 1) {
+                            return <div key={item.id} ref={ref} className={'flex justify-center'}>
+                                <Card sx={{width: {xs: '100%', lg: '90%'}, marginY: '24px'}}>
+                                    <CardHeader
+                                        sx={{paddingY: '8px'}}
+                                        avatar={
+                                            <Avatar sx={{bgcolor: red[500]}} aria-label="recipe"
+                                                    src={item.user.profilePicture}
+                                                    alt={'avatar'}>
+                                            </Avatar>
+                                        }
+                                        action={
+                                            userId === item?.userId ?
+                                                <IconButton aria-label="settings">
+                                                    <MoreVertIcon/>
+                                                </IconButton>
+                                                : ''
+                                        }
+                                        title={`${item.user.firstName} ${item.user.lastName}`}
+                                        subheader={<div>{formatCreateAt} <PublicSharpIcon sx={{fontSize: '14px'}}/>
+                                        </div>}
+                                    />
+                                    <CardContent sx={{paddingY: "8px"}}>
+                                        <Typography variant="body1" color="text.primary">
+                                            {item.title}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {isExpanded ? item.content : truncated}
+                                            {hasMore && (
+                                                <button onClick={() => toggleContent(item.id)}>
+                                                    {isExpanded ? (
+                                                        <span className={'text-blue-400'}>Collapse</span>
+                                                    ) : (
+                                                        <span>...<span
+                                                            className={'text-blue-400'}>See More</span></span>
+                                                    )}
+                                                </button>
                                             )}
-                                        </button>
-                                    )}
-                                </Typography>
-                            </CardContent>
-                            <CardMedia
-                                component="img"
-                                height="194"
-                                image={item.imgUrl}
-                                alt={item.user.firstName}
-                                sx={{height: '400px', width: '100%'}}
-                            />
-                            <CardActions>
-                                <UpvoteExperience
-                                userId={userId}
-                                experienceId={item.id}
-                                 accessToken={accessToken}
-                                experienceUpvote={item.upVote}/>
-                                <Typography sx={{display: 'flex', alignItems: 'center'}}>
-                                    <span className={'text-[18px]'}>{item.comments.length}</span>
-                                    <Tooltip title="comment" placement="top" sx={{color: 'black', cursor: 'pointer'}}>
-                                        <ModalCommentExpericence
-                                            comments={item.comments} experienceId={item.id}/>
-                                    </Tooltip>
-                                </Typography>
-                            </CardActions>
-                        </Card>
-                    )
-                })}
-            <button onClick={()=> fetchNextPageExperience()} disabled={isFetchingNextPageExperience} className={'flex justify-center w-full'}>
-              {isFetchingNextPageExperience ? (
-                  <CircularProgress color="secondary" />
-              ) : (
-                 hasNextPageExperience ? 'load more' : 'No More Data'
-              )}
-          </button>
-        </>
-    );
+                                        </Typography>
+                                    </CardContent>
+                                    <CardMedia
+                                        component="img"
+                                        height="194"
+                                        image={item.imgUrl}
+                                        alt={item.user.firstName}
+                                        sx={{height: '350px', width: '100%'}}
+                                    />
+                                    <CardActions>
+                                        <UpvoteExperience
+                                            userId={userId}
+                                            experienceId={item.id}
+                                            accessToken={accessToken}
+                                            experienceUpvote={item.upVote}/>
+                                        <Typography sx={{display: 'flex', alignItems: 'center'}}>
+                                            <span className={'text-[18px]'}>{item.comments.length}</span>
+                                            <Tooltip title="comment" placement="top"
+                                                     sx={{color: 'black', cursor: 'pointer'}}>
+                                                <ModalCommentExpericence
+                                                    comments={item.comments} experienceId={item.id}/>
+                                            </Tooltip>
+                                        </Typography>
+                                    </CardActions>
+                                </Card>
+                            </div>
+                        }
+                        return (
+                            <div key={item.id} className={'flex justify-center'}>
+                                <Card sx={{width: {xs: '100%', lg: '90%'}, marginY: '24px'}}>
+                                    <CardHeader
+                                        sx={{paddingY: '8px'}}
+                                        avatar={
+                                            <Avatar sx={{bgcolor: red[500]}} aria-label="recipe"
+                                                    src={item.user.profilePicture}
+                                                    alt={'avatar'}>
+                                            </Avatar>
+                                        }
 
+                                        action={
+                                            userId === item?.userId ?
+                                                <IconButton aria-label="settings">
+                                                    <MoreVertIcon/>
+                                                </IconButton>
+                                                : ''
+                                        }
+                                        title={`${item.user.firstName} ${item.user.lastName}`}
+                                        subheader={<div>{formatCreateAt} <PublicSharpIcon sx={{fontSize: '14px'}}/>
+                                        </div>}
+                                    />
+                                    <CardContent sx={{paddingY: "8px"}}>
+                                        <Typography variant="body1" color="text.primary">
+                                            {item.title}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {isExpanded ? item.content : truncated}
+                                            {hasMore && (
+                                                <button onClick={() => toggleContent(item.id)}>
+                                                    {isExpanded ? (
+                                                        <span className={'text-blue-400'}>Collapse</span>
+                                                    ) : (
+                                                        <span>...<span
+                                                            className={'text-blue-400'}>See More</span></span>
+                                                    )}
+                                                </button>
+                                            )}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardMedia
+                                        component="img"
+                                        height="194"
+                                        image={item.imgUrl}
+                                        alt={item.user.firstName}
+                                        sx={{height: '350px', width: '100%'}}
+                                    />
+                                    <CardActions>
+                                        <UpvoteExperience
+                                            userId={userId}
+                                            experienceId={item.id}
+                                            accessToken={accessToken}
+                                            experienceUpvote={item.upVote}/>
+                                        <Typography sx={{display: 'flex', alignItems: 'center'}}>
+                                            <span className={'text-[18px]'}>{item.comments.length}</span>
+                                            <Tooltip title="comment" placement="top"
+                                                     sx={{color: 'black', cursor: 'pointer'}}>
+                                                <ModalCommentExpericence
+                                                    comments={item.comments} experienceId={item.id}/>
+                                            </Tooltip>
+                                        </Typography>
+                                    </CardActions>
+                                </Card>
+                            </div>
+                        )
+                    })}
+                <button onClick={() => fetchNextPageExperience()} disabled={isFetchingNextPageExperience}
+                        className={'flex justify-center w-full'}>
+                    {isFetchingNextPageExperience ? (
+                        <CircularProgress color="secondary"/>
+                    ) : (
+                        hasNextPageExperience ? 'load more' : 'No More Data'
+                    )}
+                </button>
+            </>
+        ) : <div>not found</div>
 }

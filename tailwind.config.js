@@ -30,6 +30,7 @@ module.exports = {
         'nh':'1000px',
         'lg': '1200px',
         'xl': '1280px',
+        'xxl':'1500px'
       },
     },
   },

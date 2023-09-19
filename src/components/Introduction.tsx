@@ -30,9 +30,9 @@ const Introduction: FC<IntroductionProps> = ({}) => {
     return (
         <>
             {
-                isLoading ? <div>Loading... </div> :
-                    <section className={'flex justify-center text-white'}>
-                        <div className={'lg:w-[300px] bg-zinc-700 w-6/6 p-5 rounded-md'}>
+                isLoading ? <div>Loading... </div> : <>
+                    {data ?  <section className={'flex justify-center text-white mt-4'}>
+                        <div className={'lg:w-[400px] bg-zinc-700 w-6/6 p-5 rounded-md'}>
                             <div>
                                 <h2 className={'font-bold pb-4 text-[20px]'}>Da Nang,VN</h2>
                                 <Paragraph size={'sx'}>{formattedCurrentDay}</Paragraph>
@@ -49,7 +49,9 @@ const Introduction: FC<IntroductionProps> = ({}) => {
                                 </div>
                             </div>
                         </div>
-                    </section>
+                    </section> : <div className={'flex'}></div>}
+                </>
+
             }
         </>
     );

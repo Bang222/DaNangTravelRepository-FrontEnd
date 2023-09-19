@@ -6,7 +6,6 @@ import ReduxProvider from "@/redux/Provider";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ProvidersWrapper from "@/components/authForm/ProvidersWrapper";
-import {GoogleOAuthProvider} from "@react-oauth/google";
 
 const inter = Inter({subsets: ['latin']})
 

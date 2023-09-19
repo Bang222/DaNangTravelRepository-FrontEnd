@@ -83,9 +83,21 @@ export const RegisterApi = async (registerDTO: RegisterDTO) => {
         throw new Error('Email Registered')
     }
 }
-export const GetAllTourApi = async (currentPage:number) => {
+export const GetAllTourApi = async (currentPage:number,name?:string,start?:string,minPrice?:number,maxPrice?:number,startDay?:Date,endDate?:Date) => {
+    // /search=?name=${name}&start=${start}&min=${minPrice}&max=${maxPrice}&start-day=${startDay}&end-day=${endDate}
+    console.log(name)
+    const queryParams = new URLSearchParams({
+        name: name || '',
+        start: start || '',
+        min: Number(minPrice) || 1  ,
+        max: Number(maxPrice) || 999999999,
+        'start-day': startDay ? startDay : '',
+        'end-day': endDate ? endDate : '',
+    });
     try {
-        const res = await axios.get(`http://localhost:4000/api/tour/all/page=${currentPage}`)
+        const res = await axios.get(
+            `http://localhost:4000/api/tour/page=${currentPage}/search=?${queryParams}`
+        )
         return res.data as TourDTO[]
     } catch (e) {
         throw new Error(e)
@@ -344,9 +356,10 @@ export const getAllFeedsPost = async () => {
         throw new Error('Error');
     }
 }
-export const getAllFeedsPostPage = async (currentPage: number)=> {
+export const getAllFeedsPostPage = async (currentPage: number,title?:string)=> {
     try {
-        const res = await axios.get(`http://localhost:4000/api/experience/page=${currentPage}`)
+
+        const res = await axios.get(`http://localhost:4000/api/experience/page=${currentPage}/search=?title=${title ? title :''}`)
         if (!res.data) {
             throw new Error("can not found");
         }

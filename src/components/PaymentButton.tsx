@@ -2,7 +2,6 @@ import {FC} from 'react';
 import * as React from "react";
 import Button from '@mui/joy/Button';
 import {FUNDING, PayPalButtons, PayPalScriptProvider} from "@paypal/react-paypal-js";
-import {FUNDING_SOURCE} from "@paypal/paypal-js/types/components/funding-eligibility";
 
 interface PaymentButtonProps {
     InputTotalPrice: number

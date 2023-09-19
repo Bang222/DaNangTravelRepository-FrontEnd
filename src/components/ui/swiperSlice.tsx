@@ -49,7 +49,7 @@ const Slice:FC<SlideProps> = (props) => {
                     (
                         <SwiperSlide key={index}>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img className={'w-full h-[200px] lg:h-[500px] sm:h-[350px] object-cover'} src={item} alt={'err'} loading={'lazy'}
+                            <img className={'w-full h-[200px] sm:h-[300px] xxl:h-[400px] object-cover'} src={item} alt={'err'} loading={'lazy'}
                             />
                         </SwiperSlide>
                     )
@@ -61,27 +61,27 @@ const Slice:FC<SlideProps> = (props) => {
                     <KeyboardArrowLeftIcon sx={{color:'black'  ,opacity:'1'}}/>
                 </div>
             </Swiper>
-            <Swiper
-                className={'mySwiper'}
-                onSwiper={setThumbsSwiper}
-                // loop={true}
-                spaceBetween={10}
-                slidesPerView={4}
-                freeMode={true}
-                pagination={{ clickable: true }}
-                watchSlidesProgress={true}
-                modules={[FreeMode, Navigation, Thumbs]}
-            >
-                {previewImage && previewImage?.map((item, index) => (
-                        // eslint-disable-next-line react/jsx-key
-                        <SwiperSlide key = {index} className={'opacity-40'}>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img className={'lg:h-[100px] h-[50px] sm:h-[75px] w-full object-fill'} src={item} alt={'err'} loading={'lazy'}
-                            />
-                        </SwiperSlide>
-                    )
-                )}
-            </Swiper>
+            {/*<Swiper*/}
+            {/*    className={'mySwiper'}*/}
+            {/*    onSwiper={setThumbsSwiper}*/}
+            {/*    // loop={true}*/}
+            {/*    spaceBetween={10}*/}
+            {/*    slidesPerView={4}*/}
+            {/*    freeMode={true}*/}
+            {/*    pagination={{ clickable: true }}*/}
+            {/*    watchSlidesProgress={true}*/}
+            {/*    modules={[FreeMode, Navigation, Thumbs]}*/}
+            {/*>*/}
+            {/*    {previewImage && previewImage?.map((item, index) => (*/}
+            {/*            // eslint-disable-next-line react/jsx-key*/}
+            {/*            <SwiperSlide key = {index} className={'opacity-40'}>*/}
+            {/*                /!* eslint-disable-next-line @next/next/no-img-element *!/*/}
+            {/*                <img className={'xxl:h-[100px] h-[50px] sm:h-[75px] w-full object-fill'} src={item} alt={'err'} loading={'lazy'}*/}
+            {/*                />*/}
+            {/*            </SwiperSlide>*/}
+            {/*        )*/}
+            {/*    )}*/}
+            {/*</Swiper>*/}
         </div>
     );
 }
