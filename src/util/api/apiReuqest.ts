@@ -13,7 +13,15 @@ import {endPointAPI} from "../../../constants";
 import {TourDTO} from "@/types/tourDTO";
 import {useQuery} from "@tanstack/react-query";
 import {getCookie, setCookie} from "@/util/api/cookies";
-import {CreateStoreDTO, informationStoreDTO, TourOfStore} from "@/types/seller";
+import {
+    BillDTO,
+    BillTotalDTO,
+    BillTotalPagesDTO,
+    CreateStoreDTO, DataDashBoardDTO, DataDashBoardEachMonthDTO,
+    dataTourOfStore,
+    informationStoreDTO,
+    TourOfStore
+} from "@/types/seller";
 // import {createAxios} from '@/createInstance'
 import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
@@ -50,8 +58,10 @@ export const createAxios = (dataRedux,dispatch) => {
                     dispatch(logIn(data))
                     setCookie('token',data.token.access)
                 } catch (error) {
-                    toast.warning('Account login another place')
-                    dispatch(logOut());
+                    setTimeout(()=>{
+                        toast.warning('Account login another place')
+                        dispatch(logOut());
+                    },3000)
                 }
             }
             return config;
@@ -85,7 +95,6 @@ export const RegisterApi = async (registerDTO: RegisterDTO) => {
 }
 export const GetAllTourApi = async (currentPage:number,name?:string,start?:string,minPrice?:number,maxPrice?:number,startDay?:Date,endDate?:Date) => {
     // /search=?name=${name}&start=${start}&min=${minPrice}&max=${maxPrice}&start-day=${startDay}&end-day=${endDate}
-    console.log(name)
     const queryParams = new URLSearchParams({
         name: name || '',
         start: start || '',
@@ -100,7 +109,7 @@ export const GetAllTourApi = async (currentPage:number,name?:string,start?:strin
         )
         return res.data as TourDTO[]
     } catch (e) {
-        throw new Error(e)
+        throw e
     }
 }
 export const upVoteTourApi = async (tourId: string, accessToken: string, axiosJWT: any,userIdRedux:string) => {
@@ -287,9 +296,9 @@ export const deleteAllValueCartAPI = async (accessToken: string, userId: string,
         throw new Error('Tour is null');
     }
 }
-export const getTourOfStore = async (accessToken: string ,userId: string ,axiosJWT: any) => {
+export const getTourOfStore = async (accessToken: string ,userId: string ,axiosJWT: any,page:number) => {
     try {
-        const res = await axiosJWT.get(`http://localhost:4000/api/store/list-tour/page=1`, {
+        const res = await axiosJWT.get(`http://localhost:4000/api/store/list-tour/page=${page}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 "x-client-id": userId
@@ -299,7 +308,7 @@ export const getTourOfStore = async (accessToken: string ,userId: string ,axiosJ
             throw new Error("can not found");
         }
         const data = res.data;
-        return data as TourOfStore[]
+        return data as dataTourOfStore
     } catch (err) {
         throw new Error('Error');
     }
@@ -307,6 +316,25 @@ export const getTourOfStore = async (accessToken: string ,userId: string ,axiosJ
 export const createTourAPI = async (accessToken: string, userId: string, formData: any,axiosJWT:any) => {
     try {
         const res = await axiosJWT.post(`http://localhost:4000/api/tour/create`,
+            formData
+            , {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const updateTourAPI = async (accessToken: string, userId: string, formData: any,axiosJWT:any,tourId:string) => {
+    try {
+        const res = await axiosJWT.post(`http://localhost:4000/api/tour/update/${tourId}`,
             formData
             , {
                 headers: {
@@ -391,6 +419,25 @@ export const createCommentPost = async (accessToken: string, userId: string, exp
         throw new Error('Error');
     }
 }
+export const getBillOfStore = async (axiosJWT:any,accessToken:string,userId:string,page:number) => {
+    try {
+        const res = await axiosJWT.get(`http://localhost:4000/api/store/bill/page=${page}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "x-client-id": userId
+                }
+            }
+        )
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as BillTotalPagesDTO
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
 export const createUpExperienceVoteAPI = async (accessToken: string, userId: string, experienceId: string,axiosJWT:any) => {
     try {
         const res = await axiosJWT.post(`http://localhost:4000/api/experience/upvote`, {
@@ -444,6 +491,42 @@ export const loginWithGoogle = async (accessToken: string) => {
         throw new Error('Error');
     }
 }
+
+export const DashboardDataManagerAMonth = async (accessToken: string,userId:string,axiosJWT:any,month:number) => {
+    try {
+        const res = await axiosJWT.get(`http://localhost:4000/api/store/dash-board/data/month=${month}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as DataDashBoardDTO
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+export const DashboardDataManagerEachMonth = async (accessToken: string,userId:string,axiosJWT:any) => {
+    try {
+        const res = await axiosJWT.get('http://localhost:4000/api/store/data-each-month', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as DataDashBoardEachMonthDTO[]
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+
 export const PaymentAPI = async (sendBackEndDTO:SendBackEndDTO) => {
     try {
         const res = await axios.get('http://localhost:4000/api/payment',

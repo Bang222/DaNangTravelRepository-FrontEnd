@@ -42,7 +42,7 @@ import AccompaniedService from "@/components/ui/AccompaniedService";
 import LargeHeading from "@/components/ui/LargeHeading";
 import {toast} from "react-toastify";
 import {PayPalButton} from "react-paypal-button-v2";
-import PaymentButton from "@/components/PaymentButton";
+import PaymentButton from "@/components/user/PaymentButton";
 import {AppDispatch} from "@/redux/store";
 
 

@@ -171,7 +171,7 @@ const PrimarySearchAppBar: React.FC = () => {
                                 onChange={handleSearchInputChange}
                                 onKeyDown={(e) => handleKeyPress(e)}
                             />
-                        </Search> : ''}
+                        </Search> : <div className={'sm:w-[400px] lg:w-[250px]'}></div>}
                     </Box>
                     <div className={'hidden sf7:flex justify-between w-[35%]'}>
                         <NavbarChild/>

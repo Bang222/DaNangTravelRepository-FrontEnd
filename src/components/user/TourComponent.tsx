@@ -21,7 +21,7 @@ interface TourData {
     userIdInStore: string,
     dataSearch: any
 }
-
+//tour/page
 export default React.memo(function TourComponent(props: TourData) {
     const {userIdInStore, dataSearch} = props
     const dispatch = useDispatch<AppDispatch>();
@@ -36,8 +36,12 @@ export default React.memo(function TourComponent(props: TourData) {
         }
     }
     const fetchProjects = async ({pageParam = 1}) => {
-        const res = await GetAllTourApi(pageParam, dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
-        return res
+        try {
+            const res = await GetAllTourApi(pageParam, dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
+            return res
+        } catch (error) {
+            return 'failed'
+        }
     }
     const {data, fetchNextPage, isFetchingNextPage, isLoading, isFetching} = useInfiniteQuery(
         ['All-Tour', userIdInStore],
@@ -63,19 +67,18 @@ export default React.memo(function TourComponent(props: TourData) {
         queryClient.fetchInfiniteQuery(['All-Tour', userIdInStore])
     }, [dataSearch])
     useEffect(() => {
-        console.log('useEffect', entry?.isIntersecting)
         if (entry?.isIntersecting) fetchNextPage()
     }, [entry])
-    const _tour = data?.pages.flatMap((page) => page)
+    const _tour = data?.pages?.flatMap((page) => page)
     return (
         <>
             {isLoading ? (
-                <div className={'flex justify-center items-center h-screen'}>
+                <div className={'flex justify-center h-full'}>
                     <CircularProgress color="secondary"/>
                 </div>
             ) : (
                 <div>
-                    {_tour.length !== 0 ? <>
+                    {_tour[0] !== "failed" ? <>
                         {_tour?.map((tour: TourDTO, i) => {
                             if (i === _tour.length - 1) return <div key={tour?.id} ref={ref}
                                                                     className={'flex justify-center'}>
@@ -139,7 +142,9 @@ export default React.memo(function TourComponent(props: TourData) {
                         disabled={isFetchingNextPage} // Disable if pages fetched >= 3
                     >
                         {isFetchingNextPage ? (
+                            <div className="flex w-full h-full justify-center">
                             <CircularProgress color="secondary"/>
+                            </div>
                         ) : (
                             (data?.pages.length ?? 0) < 3 ? '' : 'No More Data'
                         )}

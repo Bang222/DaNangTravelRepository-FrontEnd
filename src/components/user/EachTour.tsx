@@ -12,7 +12,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import Paragraph from "@/components/ui/Paragraph";
 import CardActions from "@mui/material/CardActions";
 import {CircularProgress, Tooltip} from "@mui/material";
-import ModalCommentOfTour from "@/components/modal/user/ModalCommentOfTour";
+import ModalCommentOfTour from "@/components/user/modal/ModalCommentOfTour";
 import * as React from "react";
 import {CommentTourDTO, TourDTO} from "@/types";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
@@ -175,9 +175,9 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                 </section>
             </CardContent>
             <CardContent sx ={{paddingY:'0',paddingX:'12px'}}>
+                <Paragraph size={'sm'}>Name: <b className={'text-[8px] sm:text-[12px]'}>{tour.name}</b></Paragraph>
                 <div className={'grid grid-flow-col justify-stretch'}>
                     <div>
-                        <Paragraph size={'sm'}>Name: <b className={'text-[8px] sm:text-[12px]'}>{tour.name}</b></Paragraph>
                         <Paragraph size={'sm'}>Price: <b className={'text-[8px] sm:text-[12px]'}>{formatPrice}/<b
                             className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
                         <Paragraph size={'sm'}>Address: <b className={'text-[8px] sm:text-[12px]'}>{tour.address}</b></Paragraph>

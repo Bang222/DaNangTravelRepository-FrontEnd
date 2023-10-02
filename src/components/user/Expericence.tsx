@@ -18,7 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import LoginIcon from "@mui/icons-material/Login";
 import {CircularProgress, Tooltip} from "@mui/material";
-import ModalCommentOfTour from "@/components/modal/user/ModalCommentOfTour";
+import ModalCommentOfTour from "@/components/user/modal/ModalCommentOfTour";
 import {useSelector} from "react-redux";
 import {
     createCommentPost,
@@ -27,7 +27,7 @@ import {
     getToCartAPI
 } from "@/util/api/apiReuqest";
 import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import ModalCommentExpericence from "@/components/modal/user/ModalCommentExpericence";
+import ModalCommentExpericence from "@/components/user/modal/ModalCommentExpericence";
 import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 import {toast} from "react-toastify";
 import {useEffect, useRef} from "react";
@@ -76,12 +76,12 @@ export default function Experience() {
                 const res = await getAllFeedsPostPage(pageParam, localStorage.getItem('searchExperience'))
                 return res
             } catch (e) {
-                return e
+                return 'failed'
             }
         },
         {
             getNextPageParam: (data, pages) => {
-                if (data.length > 2) {
+                if (data?.length > 2) {
                     return pages.length + 1;
                 } else {
                     return undefined
@@ -99,7 +99,7 @@ export default function Experience() {
         if (entry?.isIntersecting) fetchNextPageExperience()
     }, [entry])
 
-    const dataExperience = dataExperiencePages?.pages.flatMap((page) => page)
+    const dataExperience = dataExperiencePages?.pages?.flatMap((page) => page)
 
     React.useEffect(() => {
         if (isErrorExperience) {
@@ -118,8 +118,10 @@ export default function Experience() {
         month: 'numeric',
         day: 'numeric',
     }
-    return isLoadingExperience ? <div>Loading...</div> :
-        dataExperience || isErrorExperience.statusCode === 429 ? (
+    return isLoadingExperience ? <div className={'w-full flex justify-center h-screen'}>
+            <CircularProgress color="secondary"/>
+        </div> :
+        dataExperience[0] !== "failed" ? (
             <>
                 {
                     dataExperience?.map((item, index) => {
@@ -270,5 +272,7 @@ export default function Experience() {
                     )}
                 </button>
             </>
-        ) : <div>not found</div>
+        ) :   <div className={'w-full flex justify-center h-screen'}>
+            <CircularProgress color="secondary"/>
+        </div>
 }

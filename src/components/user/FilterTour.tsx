@@ -20,12 +20,13 @@ interface FilterTourProps {
     userId: string
     dataSearch: any
     setDataSearch: React.Dispatch<React.SetStateAction<any>>
+    vietnamCities : string[]
 }
 
-//bang
+//tour/page
 
 const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
-    const {formik, userId, dataSearch, setDataSearch} = props
+    const {formik, userId, dataSearch, setDataSearch, vietnamCities} = props
     const queryClient = useQueryClient();
     const formatMinPrice = formik?.values?.min?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const formatMaxPrice = formik?.values?.max?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
@@ -85,7 +86,14 @@ const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
                                     value={formik.values.start}
                                     onChange={formik.handleChange}
                                     className='w-full h-[24px] p-2 rounded-[8px] border border-gray-400'
+                                    list={"vietnamCities"}
                                 />
+                                <datalist id="vietnamCities" className={'max-h-[100px]'}>
+                                {vietnamCities.map((city, index) => (
+                                    <option key={index} value={city} />
+                                ))}
+                            </datalist>
+                                <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.start}</p>
                             </div>
                             <div className={'pb-3 items-center'}>
                                 <input

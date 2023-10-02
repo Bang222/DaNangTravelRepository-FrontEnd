@@ -1,8 +1,13 @@
+'use client'
 import React, {FC, useState} from 'react';
-import {useQueryClient} from "@tanstack/react-query";
-import {useSelector} from "react-redux";
-import {TourOfStore} from "@/types/seller";
-import ModalDetailOrder from "@/components/modal/seller/ModalDetailOrder";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {BillTotalPagesDTO, TourOfStore} from "@/types/seller";
+import ModalDetailOrder from "@/components/seller/modal/ModalDetailOrder";
+import {createAxios, getBillOfStore} from "@/util/api/apiReuqest";
+import {AppDispatch} from "@/redux/store";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 interface BillManagerProps {
 }
@@ -12,79 +17,110 @@ interface BillManagerProps {
 const BillManager: FC<BillManagerProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
-    const query = useQueryClient()
-    const [data, setData] = useState<TourOfStore[] | undefined>(query.getQueryData(['TourOfStore', userId]))
+    const [page, setPage] = React.useState(1);
+    const [totalPages, setTotalPages] = React.useState<number | undefined>(undefined);
     const [money, setMoney] = useState<number>()
+    const queryClient = useQueryClient()
+
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux = useSelector((state) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux, dispatch)
+
+
     const optionVND = {style: 'currency', currency: 'VND'}
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
     }
+
+
+    const {data, isLoading, isError}: BillTotalPagesDTO = useQuery(['billStore', userId],
+        async () => {
+            try {
+                let time: number = 2000;
+                let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+                const res = await getBillOfStore(axiosJWT, accessToken, userId, page)
+                if (res.message) {
+                    setTimeout(async () => {
+                        const res = await getBillOfStore(axiosJWT, accessToken, userId, page)
+                        return res
+                    }, time + randomNumber)
+                }
+                return res
+            } catch (e) {
+                throw new e
+            }
+        }
+    )
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
+
     React.useEffect(() => {
-        if (data) {
-            const totalIncome = data.reduce((total, item) => {
-                const money = item.orderDetails.reduce((a, cur) => {
-                    return a + cur.order.totalPrice;
-                }, 0);
+        if (data?.orders) {
+            const totalIncome = data?.orders?.reduce((total, item) => {
+                const money = item.totalPrice
                 return total + money;
             }, 0);
             setMoney(totalIncome);
-            query.invalidateQueries(['TourOfStore', userId])
+            setTotalPages(data.totalPages)
+            // const totalParticular
+            // query.invalidateQueries(['TourOfStore', userId])
         }
-    }, [data, query, userId])
-
-    return (
-        <section className={'w-full p-3 bg-white'}>
-            <div className="overflow-auto max-h-[70vh]">
-                <table className="table-auto w-full border border-solid">
-                    <thead>
-                    <tr className={'text-left border border-solid bg-black text-white text-[12px]'}>
-                        <th className={'border border-solid p-1'}>TourId</th>
-                        <th className={'border border-solid p-1'}>Tour Name</th>
-                        <th className={'border border-solid p-1'}>Created</th>
-                        <th className={'border border-solid p-1'}>Total Participants</th>
-                        <th className={'border border-solid p-1'}>Total Price</th>
-                        <th className={'border border-solid p-1'}>Detail</th>
-                    </tr>
-                    </thead>
-                    {data?.map((item) => {
-                        let totalParticular = item.orderDetails.reduce((a, cur) => {
-                            return a + cur.order.participants
-                        }, 0)
-                        let Money = item.orderDetails.reduce((a, cur) => {
-                            return a + cur.order.totalPrice
-                        }, 0)
-                        const createAt = new Date(item.createdAt)
-                        const formatCreateAt = createAt.toLocaleDateString('es-us', options)
-                        const formatPrice = Money.toLocaleString('vi-VN', optionVND)
-                        return (
-                            <tbody key={item.id}>
-                            <tr className={'text-left border border-solid text-[10px]'}>
-                                <td className={'border border-solid p-1'}>{item.id}</td>
-                                <td className={'border border-solid p-1'}>{item.name} </td>
-                                <td className={'border border-solid p-1'}>{formatCreateAt} </td>
-                                <td className={'border border-solid p-1'}>{totalParticular}</td>
-                                <td className={'border border-solid p-1'}>{formatPrice}</td>
-                                {item.orderDetails.length > 0 ?
-                                    <td className={'border border-solid p-1'}><ModalDetailOrder
-                                        orderDetails={item.orderDetails}/></td>
-                                    : <td className={'border border-solid p-1 cursor-default'}>
-                                        null
-                                    </td>
-                                }
-
-                            </tr>
-                            </tbody>
-                        )
-                    })}
-                </table>
-            </div>
-            <div className={'text-right pr-4 pt-4'}>
-                <b>Total Income:</b> {money?.toLocaleString('vi-VN', optionVND)}
-            </div>
-        </section>
-    );
+    }, [data, userId])
+    React.useEffect(() => {
+        queryClient.fetchQuery(['billStore', userId])
+    }, [page])
+    return isLoading ? <div> Loading...</div> : <> {data?.orders ? <section className={'w-full p-3 bg-white'}>
+        <div class="overflow-x-scroll md:overflow-x-auto">
+            <div class=" w-[79vw] h-[73vh] md:w-full">
+            <table className="table-auto w-full border border-solid">
+                <thead>
+                <tr className={'text-left border border-solid bg-black text-white text-[12px] md:text-[15px]'}>
+                    <th className={'border border-solid p-2'}>Code Tour</th>
+                    <th className={'border border-solid p-2'}>Tour Name</th>
+                    <th className={'border border-solid p-2'}>Created</th>
+                    <th className={'border border-solid p-2'}>Total Participants</th>
+                    <th className={'border border-solid p-2'}>Total Price</th>
+                    <th className={'border border-solid p-2'}>Detail</th>
+                </tr>
+                </thead>
+                {data?.orders.map((order) => {
+                    // let Money = item.orderDetails.reduce((a, cur) => {
+                    //     return a + cur.order.totalPrice
+                    // }, 0)
+                    let orderDetail = order.orderDetail
+                    const totalParticular = orderDetail.toddlerPassengers + orderDetail.infantPassengers + orderDetail.adultPassengers + orderDetail.childPassengers
+                    const createAt = new Date(order.createdAt)
+                    const formatCreateAt = createAt.toLocaleDateString('es-us', options)
+                    const formatPrice = order.totalPrice.toLocaleString('vi-VN', optionVND)
+                    return (
+                        <tbody key={order.id}>
+                        <tr className={'text-left border border-solid text-[10px] md:text-[13px]'}>
+                            <td className={'border border-solid px-2 py-3'}>{order.id}</td>
+                            <td className={'border border-solid px-2 py-3'}>{order.orderDetail.tour.name} </td>
+                            <td className={'border border-solid px-2 py-3'}>{formatCreateAt} </td>
+                            <td className={'border border-solid px-2 py-3'}>{totalParticular}</td>
+                            <td className={'border border-solid px-2 py-3'}>{formatPrice}</td>
+                            <td className={'border border-solid px-2 py-3'}><ModalDetailOrder
+                                order={order}/></td>
+                        </tr>
+                        </tbody>
+                    )
+                })}
+            </table>
+        </div>
+        </div>
+        <Stack sx={{paddingTop: '12px'}} spacing={2}>
+            <Pagination sx={{display: 'flex', justifyContent: 'center'}} count={Math.ceil(totalPages / 10)} page={page}
+                        onChange={handleChange}/>
+        </Stack>
+        <div className={'text-right pr-4 pt-4'}>
+            <b>Total Income:</b> {money?.toLocaleString('vi-VN', optionVND)}
+        </div>
+    </section> : <div> Data Null </div>} </>
 }
 
 export default BillManager;

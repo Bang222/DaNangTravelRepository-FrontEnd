@@ -1,3 +1,4 @@
+
 interface UserDTO {
     id: string;
     firstName: string;
@@ -19,11 +20,30 @@ export interface PassengerDTO {
     sex: string,
     dayOfBirth: number
 }
-
+export interface DataDashBoardDTO {
+    totalIncome: number;
+    totalPassengers: number;
+    totalTours: number;
+    totalOrder: number;
+    totalLike: number;
+    totalComments: number;
+    totalAdults: number;
+    totalChildren: number;
+    totalToddler: number;
+    totalInfants: number;
+    totalMen: number;
+    totalWomen: number;
+}
 export interface CreateStoreDTO {
     name: string
     slogan: string
 }
+
+export interface DataDashBoardEachMonthDTO {
+    totalIncome: string
+    month: string
+}
+
 export interface OrderDTO {
     id:string,
     firstName:string,
@@ -71,7 +91,10 @@ export interface CommentDTO {
     content: string;
     createdAt: Date;
 }
-
+export interface dataTourOfStore {
+    findTourToStore:TourOfStore[]
+    pages: number
+}
 export interface TourOfStore {
     id: string;
     name: string;
@@ -92,4 +115,53 @@ export interface TourOfStore {
     schedules: ScheduleDTO[]
     orderDetails: OrderDetailDTO[]
     status: string;
+}
+export interface BillDTO {
+    id: string
+    firstName: string ,
+    fullName: string,
+    email:string ,
+    phone: string,
+    address: string,
+    createdAt: Date,
+    participants: number,
+    totalPrice: number,
+    status: string,
+    userId:string,
+    storeId:string,
+    orderDetailId:string,
+    orderDetail: orderDetailDTO
+}
+export interface BillTotalPagesDTO {
+    orders: BillDTO[]
+    totalPages:number
+}
+export interface orderDetailDTO {
+    id: string,
+    adultPassengers: number,
+    childPassengers: number,
+    toddlerPassengers: number,
+    infantPassengers: number,
+    orderId: string,
+    tourId:string
+    tour:TourDTO,
+    passengers : PassengerDTO[]
+}
+interface TourDTO {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    quantity: number;
+    imageUrl: string[];
+    lastRegisterDate: Date;
+    address: string;
+    startDate: Date;
+    endDate: Date;
+    endingAddress: string;
+    startAddress: string;
+    upVote: string[];
+    createdAt: Date;
+    status: string;
+    storeId:string;
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from "@/components/user/navbar/Navbar";
-import Introduction from "@/components/Introduction";
+import Introduction from "@/components/user/Introduction";
 import NavMobile from "@/components/user/navbar/NavMobile";
 
 export default async function RootLayout({children,}: { children: React.ReactNode }) {

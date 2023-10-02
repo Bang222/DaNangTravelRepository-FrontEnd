@@ -12,7 +12,7 @@ import StoreSharpIcon from '@mui/icons-material/StoreSharp';
 import LineCustom from "@/components/ui/LineCustom";
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
-import Introduction from "@/components/Introduction";
+import Introduction from "@/components/user/Introduction";
 
 interface NavLeftProps {
 }
@@ -25,16 +25,15 @@ interface navBarLeftInterface {
 
 const NavLeft: FC<NavLeftProps> = ({}) => {
     const user = useSelector((state) => state.auth.value?.user)
+    const isAuth = useSelector((state) => state.auth.value?.isAuth)
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
         {name: user.role === 'user' ? 'Become Business' :'Account Seller', href:'/seller',icon: <StoreSharpIcon sx={{color:'white'}}/>},
-        {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>},
+        // {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>},
         {name:'Used Tours', href:'#',icon: <FlightLandIcon sx={{color:'white'}}/>},
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
         ])
-    const isAuth = useSelector((state) => state.auth.value?.isAuth)
-    return isAuth ? (
-        <Card
+    return <Card
             variant="outlined"
             sx={{
                 maxHeight: 'max-content',
@@ -46,7 +45,7 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                 paddingBottom: '12px',
             }}
         >
-            <CardHeader
+        {isAuth ? <>  <CardHeader
                 avatar={
                     <Avatar src={user.profilePicture} alt={'user'} sx={{bgcolor: red[500]}} aria-label="recipe"/>
                 }
@@ -66,11 +65,14 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                 </ul>
             </CardContent>
             <LineCustom size={'100%'}/>
-            <CardContent>
-                <Introduction/>
-            </CardContent>
+            <CardContent sx={{padding:0}}>
+            <Introduction/>
+            </CardContent> </>:
+            <CardContent sx={{padding:0}}>
+            <Introduction/>
+        </CardContent>}
+
         </Card>
-    ): <div></div>;
 }
 
 export default NavLeft;

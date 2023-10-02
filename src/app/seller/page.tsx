@@ -5,7 +5,7 @@ import LargeHeading from "@/components/ui/LargeHeading";
 import Paragraph from "@/components/ui/Paragraph";
 import Link from "next/link";
 import * as React from "react";
-import ModalCreateStore from "@/components/modal/user/ModalCreateStore";
+import ModalCreateStore from "@/components/user/modal/ModalCreateStore";
 import {useMutation} from "@tanstack/react-query";
 import {bookingAPI, createStoreAPI} from "@/util/api/apiReuqest";
 import {useSelector} from "react-redux";

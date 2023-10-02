@@ -7,7 +7,7 @@ import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import Label from "@/components/ui/Label";
 import Paragraph from "@/components/ui/Paragraph";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {bookingAPI, createAxios, createTourAPI} from "@/util/api/apiReuqest";
+import {bookingAPI, createAxios, createTourAPI, updateTourAPI} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
 import {useDispatch, useSelector} from "react-redux";
 import {CircularProgress} from "@mui/material";
@@ -24,17 +24,19 @@ import 'swiper/css/scrollbar';
 
 import {Keyboard, Navigation, Pagination} from "swiper/modules";
 import {AppDispatch} from "@/redux/store";
+import {TourOfStore} from "@/types/seller";
 
-
-interface InputCreateTourProps {
+interface InputEditTourProps {
+    dataTour:TourOfStore
 }
 
-//Modal Create Tour
+//bang
 
-const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
-    const [totalDay, setTotalDay] = React.useState<number>(0)
+const InputEditTour: FC<InputEditTourProps> = ({dataTour}) => {
+    const [totalDay, setTotalDay] = React.useState<number>(dataTour.schedules.length)
     const [price, setPrice] = React.useState<number>(0)
-    const [previewImage, setPreviewImage] = React.useState<>([])
+    const [err, setErr] = React.useState<boolean>(false)
+    const [previewImage, setPreviewImage] = React.useState<>(dataTour.imageUrl)
     const vietnamCities = [
         "",
         "Ha Noi",
@@ -99,6 +101,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         "Vinh Phuc",
         "Yen Bai"
     ];
+
     const dispatch = useDispatch<AppDispatch>()
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
@@ -106,43 +109,55 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const queryClient = useQueryClient()
-
-    const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour, isSuccess: isSuccessCreateTour} = useMutation(
+    const {mutate: mutateEditTour, isLoading: isLoadingEditTour, isSuccess: isSuccessEditTour,data:dataEditTour} = useMutation(
         async (formData: any) => {
             try {
-                const res = await createTourAPI(accessToken, userId, formData, axiosJWT)
+                const res = await updateTourAPI(accessToken, userId, formData, axiosJWT,dataTour.id)
                 return res;
             } catch (error) {
                 throw error;
             }
         }, {
-            onSuccess: () => {
-                toast.success('Create Success')
+            onSuccess: (dataEditTour) => {
+                if(dataEditTour.message){
+                   return toast.error(dataEditTour.message)
+                }
+                toast.success('Edit Successfully')
                 // formik.resetForm()
                 // setPreviewImage([])
                 queryClient.invalidateQueries(['TourOfStore', userId]);
             },
             onError: (error) => {
-                toast.error('Create error', error)
+                // toast.error('Edit error', error)
+                console.log(error)
             },
         });
+    React.useEffect(()=>{
+        queryClient.invalidateQueries(['TourOfStore', userId]);
+    },[isSuccessEditTour])
+    const date = new Date(dataTour.lastRegisterDate);
+    const startDay = new Date(dataTour.startDate);
+    const endDay = new Date(dataTour.endDate);
+
+
+    const formattedRegisterDate = date.toISOString().split('T')[0];
+    const formattedStartDayDate = startDay.toISOString().split('T')[0];
+    const formattedEndDayDate = endDay.toISOString().split('T')[0];
 
     const formik = useFormik({
         initialValues: {
-            name: "",
-            description: "",
-            price: '',
-            baseQuantity: "",
-            lastRegisterDate: "",
-            address: "",
-            startDate: "",
-            endDate: "",
-            endingAddress: "",
-            startAddress: "",
+            name: dataTour.name,
+            description:  dataTour.description,
+            price: dataTour.price,
+            baseQuantity: dataTour.baseQuantity,
+            lastRegisterDate: formattedRegisterDate,
+            address: dataTour.address,
+            startDate: formattedStartDayDate,
+            endDate: formattedEndDayDate,
+            endingAddress: dataTour.endingAddress,
+            startAddress: dataTour.startAddress,
             files: [],
-            schedules: [
-                {day: "", title: '', description: ""}
-            ]
+            schedules: dataTour.schedules
         },
         validationSchema: Yup.object().shape({
             name: Yup.string().required('Please Input name').max(100,'can not out of 100 words'),
@@ -152,16 +167,12 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
             lastRegisterDate: Yup.date().required("Please Input last Register Date")
                 .min(new Date(), "Last Register Date cannot be in the past")
                 .test('lastRegisterDate', 'Last Register Date must be before Start Date', function (value) {
-                    return !value || !this.parent.startDate || value < this.parent.startDate;
+                    return  !this.parent.startDate || value < this.parent.startDate;
                 }),
             address: Yup.string().required("Please Input Address"),
-            startDate: Yup.date().required("Please Input Start Day")
-                .test('startDate', 'Start Date must be before End Date', function (value) {
-                    return !value || !this.parent.endDate || value < this.parent.endDate;
-                }),
-            endDate: Yup.date().required("Please Input End Day"),
-            startAddress: Yup.string().required("Please Input Start Address"),
-            endingAddress: Yup.string().required("Please Input Ending Address"),
+            startDate: Yup.date(),
+            startAddress: Yup.string(),
+            endingAddress: Yup.string(),
             files: Yup.array().required("Please Input Image"),
             schedules: Yup.array()
                 .min(totalDay, 'Please add at least one schedule')
@@ -188,31 +199,22 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
             return errors;
         },
         onSubmit: async (values) => {
-            let formData = new FormData();
-            formData.append("name", values.name);
-            formData.append("description", values.description);
-            formData.append("price", values.price);
-            formData.append("baseQuantity", values.baseQuantity);
-            formData.append("lastRegisterDate", values.lastRegisterDate);
-            formData.append("address", values.address);
-            formData.append("startAddress", values.startAddress);
-            formData.append("endingAddress", values.endingAddress);
-            formData.append("endDate", values.endDate);
-            formData.append("startDate", values.startDate);
-
-            values.files.forEach((file) => {
-                formData.append(`files[]`, file);
-            });
-
-            values.schedules.forEach((schedule, index) => {
-                formData.append(`schedules[${index}][day]`, index + 1);
-                formData.append(`schedules[${index}][title]`, schedule.title);
-                formData.append(`schedules[${index}][description]`, schedule.description);
-            });
-            mutateCreateTour(formData)
+           const data = {
+               name:values.name,
+               description:values.description,
+               baseQuantity:values.baseQuantity,
+               lastRegisterDate:values.lastRegisterDate,
+               schedules:values.schedules
+           }
+            // values.schedules.forEach((schedule, index) => {
+            //     formData.append(`schedules[${index}][day]`, index + 1);
+            //     formData.append(`schedules[${index}][title]`, schedule.title);
+            //     formData.append(`schedules[${index}][description]`, schedule.description);
+            // });
+            // console.log(values.schedules)
+            mutateEditTour(data)
         },
     });
-
     React.useEffect(() => {
         const formattedPrice = formik.values.price.toLocaleString("vi-VN", {
             style: "currency",
@@ -224,11 +226,6 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         const minSchedules = Math.ceil((new Date(formik.values.endDate) - new Date(formik.values.startDate)) / (1000 * 60 * 60 * 24)) + 1;
         setTotalDay(minSchedules)
     }, [formik.values.startDate, formik.values.endDate])
-    const handleDeleteImage = index => {
-        const updatedImages = previewImage.filter((_, i) => i !== index);
-        formik.setFieldValue('files', updatedImages);
-        setPreviewImage(updatedImages)
-    };
     return (
         <form onSubmit={formik.handleSubmit}>
             <div className={'nh:grid nh:grid-cols-2 nh:gap-2.5'}>
@@ -271,6 +268,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                placeholder='Price VND'
                                name='price'
                                id="price"
+                               disabled={true}
                                className={'w-full h-[32px] p-1 pl-3 rounded-[10px] border border-gray-300 '}
                                required
                                value={formik.values.price}
@@ -308,6 +306,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                             required
                             value={formik.values.address}
                             onChange={formik.handleChange}
+                            disabled={true}
                             min={1}
                             list="vietnamCities" // Associate with the datalist
                         />
@@ -330,6 +329,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                className={'w-full h-[32px] p-1 pl-3 rounded-[10px] border border-gray-300 '}
                                required
                                value={formik.values.startAddress}
+                               disabled={true}
                                onChange={formik.handleChange}
                                min={1}
                                list={"vietnamCities"}
@@ -351,6 +351,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                className={'w-full h-[32px] p-1 pl-3 rounded-[10px] border border-gray-300 '}
                                required
                                value={formik.values.endingAddress}
+                               disabled={true}
                                onChange={formik.handleChange}
                                list={"vietnamCities"}
                         />
@@ -387,6 +388,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                name='startDate'
                                id="startDate"
                                className={'w-full h-[32px] p-1 pl-3 rounded-[10px] border border-gray-300 '}
+                               disabled={true}
                                required
                                value={formik.values.startDate}
                                onChange={formik.handleChange}
@@ -403,6 +405,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                id="endDate"
                                className={'w-full h-[32px] p-1 pl-3 rounded-[10px] border border-gray-300 '}
                                required
+                               disabled={true}
                                value={formik.values.endDate}
                                onChange={formik.handleChange}
                         />
@@ -447,22 +450,8 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                 )
             }) : ''}
             <div className="">
-                <label className="font-extralight cursor-pointer " htmlFor='labelUpload'
-                ><DriveFolderUploadIcon/> Upload Image</label>
-                <input
-                    id='labelUpload'
-                    type="file"
-                    name="imageUrl"
-                    accept="image/*"
-                    multiple
-                    hidden
-                    onChange={event => {
-                        const selectedFiles = Array.from(event.target.files);
-                        setPreviewImage(selectedFiles)
-                        formik.setFieldValue('files', selectedFiles);
-                    }}
-                    onBlur={formik.handleBlur}
-                />
+                <label className="font-extralight cursor-not-allowed " htmlFor='labelUpload'
+                ><DriveFolderUploadIcon/> Can not change Image</label>
                 <div
                     className={'h-[40vh] mb-4 bg-neutral-200 w-full border border-dashed border-gray-300 p-4 cursor-default'}>
                     {previewImage && previewImage.length > 0 ? (
@@ -489,29 +478,15 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                 centeredSlides={true}
                                 modules={[Keyboard, Pagination, Navigation]}
                             >
-                                {previewImage?.map((file, index) => (
+                                {dataTour?.imageUrl.map((item, index) => (
                                     <SwiperSlide key={index}
                                                  style={{display: 'flex', justifyContent: 'center', height: '35vh'}}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <div>
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img className={'h-[35vh] w-[69vw] nh:w-[29vw] object-cover'}
-                                                 src={URL.createObjectURL(file)}
+                                                 src={item}
                                                  alt={`Image ${index + 1}`}/>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleDeleteImage(index)}
-                                                className="text-red-500 hover:text-red-700 absolute z-[9999] top-0 right-0 left-[87%] nh:left-[37%] m-1"
-                                            >
-                                                <CancelIcon sx={{
-                                                    color: 'red',
-                                                    opacity: '0.6',
-                                                    transition: 'opacity 0.3s, transform 0.3s',
-                                                    '&:hover': {
-                                                        opacity: 1
-                                                    }
-                                                }}/>
-                                            </button>
                                         </div>
                                     </SwiperSlide>
                                 ))}
@@ -537,7 +512,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                     }
                 </div>
             </div>
-            {isLoadingCreateTour ?
+            {isLoadingEditTour ?
                 <div className={'flex justify-center w-full'}>
                     <CircularProgress color="secondary"/>
                 </div> : <button
@@ -548,7 +523,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                 </button>}
 
         </form>
-    );
+    )
 }
 
-export default InputCreateTour;
+export default InputEditTour;

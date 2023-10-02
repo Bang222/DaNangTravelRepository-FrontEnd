@@ -1,8 +1,9 @@
 import React, {useEffect} from "react";
-import Experience from "@/components/Expericence";
-import CreateExperience from "@/components/CreateExperience";
+import Experience from "@/components/user/Expericence";
+import CreateExperience from "@/components/user/CreateExperience";
 import NavLeft from "@/components/user/navbar/NavLeft";
-import Introduction from "@/components/Introduction";
+import Introduction from "@/components/user/Introduction";
+import ButtonBackToTop from "@/components/buttonBackToTop/ButtonBackToTop";
 
 export default async function Home() {
     return (
@@ -21,6 +22,9 @@ export default async function Home() {
                     <div className="sticky top-[10%]">
                     </div>
                 </section>
+                <section className={'hidden lg:block'}>
+                <ButtonBackToTop/>
+            </section>
             </section>
         </>
     )
