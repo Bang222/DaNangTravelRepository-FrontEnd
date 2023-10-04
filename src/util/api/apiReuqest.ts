@@ -62,6 +62,8 @@ export const createAxios = (dataRedux,dispatch) => {
                         toast.warning('Account login another place')
                         dispatch(logOut());
                     },3000)
+                    toast.warning('Account login another place')
+                    dispatch(logOut());
                 }
             }
             return config;

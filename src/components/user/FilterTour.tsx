@@ -14,6 +14,7 @@ import {GetAllTourApi} from "@/util/api/apiReuqest";
 import EachTour from "@/components/user/EachTour";
 import TourComponent from "@/components/user/TourComponent";
 import {useQueryClient} from "@tanstack/react-query";
+import {useSelector} from "react-redux";
 
 interface FilterTourProps {
     formik: any
@@ -27,11 +28,20 @@ interface FilterTourProps {
 
 const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
     const {formik, userId, dataSearch, setDataSearch, vietnamCities} = props
+    const userIdInStore = useSelector((state) => state.auth.value?.user.id)
     const queryClient = useQueryClient();
     const formatMinPrice = formik?.values?.min?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const formatMaxPrice = formik?.values?.max?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
+    const resetPageParam = () => {
+        queryClient.setQueryData(['All-Tour', userIdInStore], {
+            pages: [],
+            pageParams: [1], // Reset to page 1
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
     React.useEffect(() => {
-        queryClient.fetchInfiniteQuery(['All-Tour', userId])
+        // Reset pageParam to 1 when dataSearch changes
+        resetPageParam()
     }, [dataSearch])
     return (
         <Card sx={{maxWidth: 345}}>

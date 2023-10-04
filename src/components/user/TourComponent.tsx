@@ -54,7 +54,11 @@ export default React.memo(function TourComponent(props: TourData) {
                     return undefined
                 }
             },
-            suspense: true
+            suspense: true,
+            onSettled: () => {
+                // Reset pageParam to 1 whenever dataSearch changes
+                fetchProjects({ pageParam: 1 });
+            },
         }
     );
     const totalPagesFetched = data?.pages.length ?? 0;
