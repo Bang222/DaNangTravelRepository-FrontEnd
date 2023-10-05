@@ -29,7 +29,8 @@ import CartComponent from "@/components/user/CartComponent";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {createAxios, getToCartAPI} from "@/util/api/apiReuqest";
 import {CartDTO} from "@/types";
-import { usePathname } from 'next/navigation'
+import {usePathname} from 'next/navigation'
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 const Search = styled('div')(({theme}) => ({
@@ -83,13 +84,19 @@ const PrimarySearchAppBar: React.FC = () => {
     const userId = useSelector((state) => state.auth.value?.user?.id)
     const [cart, setCart] = React.useState<CartDTO[]>();
     const [search, setSearch] = React.useState<string>()
+    const [loading, setLoading] = React.useState<boolean>(false);
     const queryClient = useQueryClient();
 
     const dataRedux = useSelector((state) => state.auth?.value)
-    let axiosJWT = createAxios(dataRedux,dispatch)
+    let axiosJWT = createAxios(dataRedux, dispatch)
 
-    const {data: cartData, isLoading:isLoadingOfCart, isError:isErrorOfCart, isSuccess:isSuccessGetOfCart} = useQuery(['cart', userId], () =>
-        getToCartAPI(accessToken, userId,axiosJWT)
+    const {
+        data: cartData,
+        isLoading: isLoadingOfCart,
+        isError: isErrorOfCart,
+        isSuccess: isSuccessGetOfCart
+    } = useQuery(['cart', userId], () =>
+        getToCartAPI(accessToken, userId, axiosJWT)
     );
     React.useEffect(() => {
         if (isSuccessGetOfCart) {
@@ -123,13 +130,23 @@ const PrimarySearchAppBar: React.FC = () => {
         if (pathname === '/') {
             if (typeof search === "string") {
                 localStorage.setItem('searchExperience', search)
+                let key = ['experienceExperiencePage', userId]
+                queryClient.setQueryData(key, {
+                    pages: [],
+                    pageParams: [1], // Reset to page 1
+                })
             }
         }
     };
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            handleSearch();
-            queryClient.fetchInfiniteQuery(['experienceExperiencePage', userId])
+            setLoading(true)
+            setTimeout(() => {
+                setLoading(false)
+                handleSearch();
+                queryClient.fetchInfiniteQuery(['experienceExperiencePage', userId])
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }, 1000)
         }
     };
     return (
@@ -139,15 +156,16 @@ const PrimarySearchAppBar: React.FC = () => {
             backgroundColor: 'black'
         }}>
             <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
-                <Toolbar sx={{ display: 'flex',width: '100%', backgroundColor: 'black', justifyContent: 'space-around'}}
-                         // className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}
+                <Toolbar sx={{display: 'flex', width: '100%', backgroundColor: 'black', justifyContent: 'space-around'}}
+                    // className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}
                 >
-                    <Box sx={{ display: 'flex'}}>
+                    <Box sx={{display: 'flex'}}>
                         <Typography
                             variant="h6"
                             component="div"
-                            sx={{display: {xs: 'flex', sm: 'none'},alignItems:'center', paddingRight: '12px'
-                        }}
+                            sx={{
+                                display: {xs: 'flex', sm: 'none'}, alignItems: 'center', paddingRight: '12px'
+                            }}
                             // className={' max-sm:flex  max-sm:items-center  max-sm:pr-3 max-sm:block sm:hidden'}
                         >
                             <Link href={'/'}>DN</Link>
@@ -156,13 +174,15 @@ const PrimarySearchAppBar: React.FC = () => {
                             variant="h6"
                             noWrap
                             component="div"
-                            sx={{display: {xs: 'none',sm: 'flex',md: 'flex'}}}
+                            sx={{display: {xs: 'none', sm: 'flex', md: 'flex'}}}
                         >
                             <Link href={'#'}>DaNang Travel</Link>
                         </Typography>
-                        {pathname === '/' ?  <Search className={'rounded-[30px]'}>
+                        {pathname === '/' ? <Search className={'rounded-[30px]'}>
                             <SearchIconWrapper>
-                                <SearchIcon/>
+                                {loading ? <RestartAltIcon sx={{color:'#6CB4EE'}}/> :
+                                    <SearchIcon/>
+                                }
                             </SearchIconWrapper>
                             <StyledInputBase
                                 placeholder="Search…"
@@ -177,46 +197,46 @@ const PrimarySearchAppBar: React.FC = () => {
                         <NavbarChild/>
                     </div>
                     <Box sx={{display: 'flex',}}>
-                        <Tooltip title="Cart" sx={{ color: showCart ? '#3d3ded' : 'white' }} onClick={toggleCart}>
+                        <Tooltip title="Cart" sx={{color: showCart ? '#3d3ded' : 'white'}} onClick={toggleCart}>
                             <IconButton>
-                                <Badge color="error" badgeContent={cart?.length} max={10} >
-                                <ShoppingCartIcon/>
+                                <Badge color="error" badgeContent={cart?.length} max={10}>
+                                    <ShoppingCartIcon/>
                                 </Badge>
                             </IconButton>
                         </Tooltip>
-                            { isAuth === true ?
-                                <Box sx={{display:'flex'}}>
-                                    <Link href="/user/:id" underline="hover">
-                                        <Tooltip title="Profile" sx={{color: 'white'}}>
-                                            <IconButton>
-                                                <AccountCircleIcon/>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Link>
-                                    <Typography onClick={handleClickLogOut}>
-                                        <Tooltip title="Log out" sx={{color: 'white'}}>
-                                            <IconButton>
-                                                <LogoutIcon/>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Typography>
-                                </Box>
-                                :
-                        <Link href="/login" underline="hover">
-                            <Tooltip title="Log In" sx={{color: 'white'}}>
-                                <IconButton>
-                                    <LoginIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Link>
-                            }
+                        {isAuth === true ?
+                            <Box sx={{display: 'flex'}}>
+                                <Link href="/user/:id" underline="hover">
+                                    <Tooltip title="Profile" sx={{color: 'white'}}>
+                                        <IconButton>
+                                            <AccountCircleIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Link>
+                                <Typography onClick={handleClickLogOut}>
+                                    <Tooltip title="Log out" sx={{color: 'white'}}>
+                                        <IconButton>
+                                            <LogoutIcon/>
+                                        </IconButton>
+                                    </Tooltip>
+                                </Typography>
+                            </Box>
+                            :
+                            <Link href="/login" underline="hover">
+                                <Tooltip title="Log In" sx={{color: 'white'}}>
+                                    <IconButton>
+                                        <LoginIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Link>
+                        }
                     </Box>
                 </Toolbar>
                 <div className={'flex sf7:hidden justify-around'}>
                     <NavbarChild/>
                 </div>
-                {showCart &&(<CartComponent
-                    toggleCart ={toggleCart}
+                {showCart && (<CartComponent
+                    toggleCart={toggleCart}
                     cart={cart}
                     accessToken={accessToken}
                     userId={userId}
