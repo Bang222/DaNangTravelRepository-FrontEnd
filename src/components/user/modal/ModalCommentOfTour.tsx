@@ -62,7 +62,7 @@ export interface props {
         slogan: string;
         isActive: boolean;
     }
-    commentData: CommentTourDTO[];
+    commentData: CommentTourDTO[] | undefined;
     setCommentData: React.Dispatch<React.SetStateAction<CommentTourDTO[]>>;
 }
 

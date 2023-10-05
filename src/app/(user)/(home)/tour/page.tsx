@@ -22,6 +22,7 @@ const Page: FC<PageProps> = ({}) => {
     const userIdInStore = useSelector((state) => state.auth.value?.user.id)
     const [value, setValue] = React.useState<string>('')
     const [loading,setLoading] = React.useState<boolean>(false)
+    const queryClient = useQueryClient()
     const vietnamCities = [
         "",
         "Ha Noi",
@@ -86,7 +87,13 @@ const Page: FC<PageProps> = ({}) => {
         "Vinh Phuc",
         "Yen Bai"
     ];
-
+    const resetPageParam = () => {
+        queryClient.setQueryData(['All-Tour', userIdInStore], {
+            pages: [],
+            pageParams: [1], // Reset to page 1
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
     const [dataSearch,setDataSearch] = React.useState({
         start: "",
         min:"",
@@ -119,6 +126,7 @@ const Page: FC<PageProps> = ({}) => {
             setLoading(true)
             setTimeout(() => {
                 setLoading(false);
+                resetPageParam()
                 setDataSearch({
                     name: values.name,
                     max: values.max,
@@ -130,6 +138,9 @@ const Page: FC<PageProps> = ({}) => {
             }, 1000);
         }
     });
+    React.useEffect(() => {
+        queryClient.prefetchInfiniteQuery(['All-Tour', userIdInStore])
+    }, [dataSearch])
     return (
         <section className={'pt-2 lg:grid lg:grid-cols-4 lg:gap-3 container mx-auto px-5'}>
             <section className="hidden mt-[65px] lg:block relative">

@@ -60,8 +60,8 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const user = useSelector((state) => state.auth.value?.user)
     const {err, setErr} = React.useState<string>('')
     const [commentData, setCommentData] = useState<CommentTourDTO[] | undefined>()
-    const [upvote, setUpvote] = useState<number>(tour.upVote.length)
-    const [previewImage, setPreviewImage] = useState<string[]>(tour.imageUrl)
+    const [upvote, setUpvote] = useState<number>(tour?.upVote?.length)
+    const [previewImage, setPreviewImage] = useState<string[] | undefined>(tour?.imageUrl)
 
     const queryClient = useQueryClient();
     const {mutate, data} = useMutation(

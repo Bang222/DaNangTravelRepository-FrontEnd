@@ -100,7 +100,6 @@ export default function Experience() {
     }, [entry])
 
     const dataExperience = dataExperiencePages?.pages?.flatMap((page) => page)
-
     React.useEffect(() => {
         if (isErrorExperience) {
             if (experienceError?.status === 429) {
@@ -110,6 +109,9 @@ export default function Experience() {
             }
         }
     }, [experienceError, isErrorExperience])
+    React.useEffect(()=>{
+
+    },[localStorage?.getItem('searchExperience')])
     const handleExpandClick = (experienceId) => {
         setExpanded(!expanded);
     };

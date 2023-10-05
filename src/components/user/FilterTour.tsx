@@ -39,27 +39,28 @@ const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    React.useEffect(() => {
-        // Reset pageParam to 1 when dataSearch changes
+    const onClickClear = (e) => {
+        formik.handleReset(e)
+        setDataSearch({
+            name: "",
+            max: "",
+            min: "",
+            start: "",
+            startDay: "",
+            endDay: "",
+        })
         resetPageParam()
+    }
+    React.useEffect(() => {
+        queryClient.prefetchInfiniteQuery(['All-Tour', userIdInStore])
     }, [dataSearch])
     return (
         <Card sx={{maxWidth: 345}}>
             <CardHeader sx={{backgroundColor: 'blue', paddingY: '8px'}} title={
                 <div className="flex items-center">
                 <p className="ml-1 text-white">Search</p>
-                <p className="mr-1 text-white text-right w-full" onClick={(e) => {
-                    formik.handleReset(e)
-                    setDataSearch({
-                        name: "",
-                        max: "",
-                        min: "",
-                        start: "",
-                        startDay: "",
-                        endDay: "",
-                    })
-                }
-                }>Clear</p>
+                <p className="mr-1 text-right w-full " onClick={(e) => onClickClear(e)}
+                > <span className={'text-white cursor-pointer hover:text-red-400'}> Clear</span></p>
             </div>}
             />
             <CardContent>
@@ -157,7 +158,7 @@ const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
                         <Paragraph status={'error'}>{formik.errors.max}</Paragraph>
                     </div>
                     <button
-                        className="max-md:text-[15px] mt-[24px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                        className="max-md:text-[15px] text-white hover:bg-sky-300 mt-[24px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
                         type={"submit"}
                     >
                         Search

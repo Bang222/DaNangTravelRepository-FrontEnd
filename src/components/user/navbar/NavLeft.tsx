@@ -40,7 +40,6 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
     ])
-    console.log(user.role)
     return <Card
         variant="outlined"
         sx={{
