@@ -117,10 +117,8 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
             }
         }, {
             onSuccess: () => {
+                queryClient.fetchQuery(['TourOfStore', userId]).then(r => console.log('oke'));
                 toast.success('Create Success')
-                // formik.resetForm()
-                // setPreviewImage([])
-                queryClient.invalidateQueries(['TourOfStore', userId]);
             },
             onError: (error) => {
                 toast.error('Create error', error)
