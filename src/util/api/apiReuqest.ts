@@ -15,7 +15,6 @@ import {useQuery} from "@tanstack/react-query";
 import {getCookie, setCookie} from "@/util/api/cookies";
 import {
     BillDTO,
-    BillTotalDTO,
     BillTotalPagesDTO,
     CreateStoreDTO, DataDashBoardDTO, DataDashBoardEachMonthDTO,
     dataTourOfStore,

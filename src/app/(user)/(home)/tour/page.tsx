@@ -149,13 +149,13 @@ const Page: FC<PageProps> = ({}) => {
              </div>
             </section>
             <div className={'lg:col-span-2 col-span-4 w-6/6 p-3.5'}>
-                {loading ? <div className={'flex justify-center h-[90vh]'}>
+                {loading ? <div className={'flex justify-center mt-[100px] h-[90vh]'}>
                     <CircularProgress color="secondary"/>
                 </div> : <TourComponent userIdInStore={userIdInStore} dataSearch={dataSearch}/>}
             </div>
             <section className={'hidden lg:block relative mt-[65px]'}>
                 <div className="sticky top-[15%]">
-                    <FilterTour vietnamCities={vietnamCities}  formik={formik} userId={userIdInStore} dataSearch={dataSearch} setDataSearch = {setDataSearch} />
+                    <FilterTour vietnamCities={vietnamCities}  formik={formik} userId={userIdInStore} dataSearch={dataSearch} setDataSearch = {setDataSearch} setLoading={setLoading} loading={loading}/>
                 </div>
             </section>
             <ButtonBackToTop/>

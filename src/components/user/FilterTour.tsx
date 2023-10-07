@@ -21,6 +21,8 @@ interface FilterTourProps {
     userId: string
     dataSearch: any
     setDataSearch: React.Dispatch<React.SetStateAction<any>>
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+    loading: boolean
     vietnamCities : string[]
 }
 
@@ -40,16 +42,20 @@ const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     const onClickClear = (e) => {
-        formik.handleReset(e)
-        setDataSearch({
-            name: "",
-            max: "",
-            min: "",
-            start: "",
-            startDay: "",
-            endDay: "",
-        })
-        resetPageParam()
+        props.setLoading(true)
+        setTimeout(()=>{
+            props.setLoading(false)
+            formik.handleReset(e)
+            setDataSearch({
+                name: "",
+                max: "",
+                min: "",
+                start: "",
+                startDay: "",
+                endDay: "",
+            })
+            resetPageParam()
+        },1000)
     }
     React.useEffect(() => {
         queryClient.prefetchInfiniteQuery(['All-Tour', userIdInStore])

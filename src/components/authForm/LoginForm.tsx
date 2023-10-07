@@ -33,13 +33,16 @@ const LoginForm: () => JSX.Element = () => {
             }
         }, {
             onSuccess: (googleData) => {
-                const token = googleData.token.access
+                if(googleData.message){
+                    return setLoginError(googleData.message)
+                }
+                const token = googleData?.token?.access
                 setCookie('token', token)
                 dispatch(logIn(googleData));
                 router.push('/');
             },
             onError: (error) => {
-                setLoginError('Register Your Account');
+                setLoginError(error.error);
             },
         }
     )
@@ -52,14 +55,14 @@ const LoginForm: () => JSX.Element = () => {
     });
     const {mutate, isLoading, data: userData} = useMutation(loginAPI, {
         onSuccess: (userData) => {
-            if(userData.error) return setLoginError(userData.error)
+            if(userData.error) return setLoginError(userData.error);
             const token = userData.token.access
             setCookie('token', token)
             dispatch(logIn(userData));
             router.push('/');
         },
         onError: (error) => {
-            // setLoginError(error.message);
+            setLoginError(error.message);
         },
     });
 
@@ -91,6 +94,11 @@ const LoginForm: () => JSX.Element = () => {
     const handleShowHidePassword = () => {
         setShowHidePassword(!showHidePassword)
     }
+    React.useEffect(()=>{
+        if(googleData?.message) {
+            setLoginError(googleData.message)
+        }
+    },[googleData])
     return (
         <section className="flex items-center justify-center h-screen">
             <div

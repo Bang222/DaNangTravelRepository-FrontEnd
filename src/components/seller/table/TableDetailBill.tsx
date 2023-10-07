@@ -1,6 +1,7 @@
 import {FC} from 'react';
 import * as React from "react";
 import {BillDTO} from "@/types/seller";
+import FormatDate from "@/components/ui/FormatDate";
 
 interface TableDetailBillProps {
     order: BillDTO
@@ -9,14 +10,7 @@ interface TableDetailBillProps {
 //bang
 
 const TableDetailBill: FC<TableDetailBillProps> = ({order}) => {
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-    }
     let orderDetail = order.orderDetail
-    const createAt = new Date(order.createdAt)
-    const formattedOrderDay = createAt.toLocaleDateString('es-uk', options)
     const totalPrice = order.totalPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     return (
         <table className="table-auto border border-solid w-full">
@@ -40,7 +34,7 @@ const TableDetailBill: FC<TableDetailBillProps> = ({order}) => {
                 <td className={'p-2 border border-solid text-[10px]'}>{order.fullName}</td>
                 <td className={'p-2 border border-solid text-[10px]'}>{order.email}</td>
                 <td className={'p-2 border border-solid text-[10px]'}>{order.phone}</td>
-                <td className={'p-2 border border-solid text-[10px]'}>{formattedOrderDay}</td>
+                <td className={'p-2 border border-solid text-[10px]'}><FormatDate date={order.createdAt}/></td>
                 <td className={'p-2 border border-solid text-[10px]'}>{totalPrice}</td>
                 <td className={'p-2 border border-solid text-[10px]'}>{orderDetail.adultPassengers} </td>
                 <td className={'p-2 border border-solid text-[10px]'}>{orderDetail.childPassengers} </td>

@@ -13,6 +13,7 @@ import Drawer from "@mui/material/Drawer";
 import * as React from "react";
 import AirplanemodeActiveIcon from "@mui/icons-material/AirplanemodeActive";
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import PaidIcon from '@mui/icons-material/Paid';
 import Link from "next/link";
 import HomeIcon from "@mui/icons-material/Home";
 import Paragraph from "@/components/ui/Paragraph";
@@ -93,19 +94,27 @@ export default function LayoutComponent({children, ...props}: Props) {
             },
             {
                 id: 2,
-                title: 'manager-store',
+                title: 'store',
                 display: "Store",
                 icon: <StoreIcon sx={{color: 'black'}}/>,
-                onClick: () => handleMenuItemClick('manager-store'),
-                active: selectedComponent === 'manager-store',
+                onClick: () => handleMenuItemClick('store'),
+                active: selectedComponent === 'store',
             },
             {
                 id: 3,
-                title: 'manager-user',
+                title: 'user',
                 display: "User",
                 icon: <PersonIcon sx={{color: 'black'}}/>,
-                onClick: () => handleMenuItemClick('manager-user'),
-                active: selectedComponent === 'manager-user',
+                onClick: () => handleMenuItemClick('user'),
+                active: selectedComponent === 'user',
+            },
+            {
+                id: 4,
+                title: 'profit',
+                display: "Profit",
+                icon: <PaidIcon sx={{color: 'black'}}/>,
+                onClick: () => handleMenuItemClick('profit'),
+                active: selectedComponent === 'profit',
             },
         ]
     )
@@ -138,7 +147,7 @@ export default function LayoutComponent({children, ...props}: Props) {
     )
 
     useEffect(() => {
-        if (role === props.role) {
+        if (role === 'admin') {
             const updatedMenuItems = menuItem.map(item => ({
                 ...item,
                 active: item.title === selectedComponent,
@@ -147,11 +156,11 @@ export default function LayoutComponent({children, ...props}: Props) {
             return;
         }
         if (role === 'seller') {
-            const updatedMenuItems = menuItem.map(item => ({
+            const updatedMenuItems = menuItemSeller.map(item => ({
                 ...item,
                 active: item.title === selectedComponent,
             }));
-            setMenuItem(updatedMenuItems);
+            setMenuItemSeller(updatedMenuItems);
             return;
         } else {
             return router.push('/');
@@ -230,8 +239,6 @@ export default function LayoutComponent({children, ...props}: Props) {
         </div>
     );
 
-    const container = window !== undefined ? () => window().document.body : undefined;
-
     return role === props.role ? (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
@@ -254,31 +261,24 @@ export default function LayoutComponent({children, ...props}: Props) {
                     </IconButton>
                     <Typography width={'100%'} variant="h6" noWrap component="div">
                         <div className={'flex justify-between items-center'}>
-                                <div className={props.role === 'admin' ? 'hidden':''}>
-                                    {selectedComponent === 'home' && 'Home '}
-                                    {selectedComponent === 'tour' && 'Tour '}
-                                    {selectedComponent === 'bill' && 'Bill'}
-                                </div>
-                                <div className={props.role === 'seller' ? 'hidden':''}>
-                                    {selectedComponent === 'admin' && 'Home'}
-                                    {selectedComponent === 'manager-store' && 'Store'}
-                                    {selectedComponent === 'manager-user' && 'User'}
-                                </div>
+                            <div className={props.role === 'admin' ? 'hidden' : ''}>
+                                {selectedComponent === 'home' && 'Home '}
+                                {selectedComponent === 'tour' && 'Tour '}
+                                {selectedComponent === 'bill' && 'Bill'}
+                            </div>
+                            <div className={props.role === 'seller' ? 'hidden' : ''}>
+                                {selectedComponent === 'admin' && 'Home'}
+                                {selectedComponent === 'store' && 'Store'}
+                                {selectedComponent === 'user' && 'User'}
+                                {selectedComponent === 'profit' && 'Profit'}
+                            </div>
                             <div className={'flex mr-6'}>
                                 <div className={'ml-3 cursor-pointer hover:text-gray-950'}>
                                     <Avatar sx={{backgroundColor: 'red'}} alt="store" src={user?.store?.imgUrl}/>
                                 </div>
                                 <div className={'ml-3 flex items-center'}>
-                                    {role === props.role && (
-                                        <Paragraph className={'cursor-default mb-0 '}
-                                                   size={'sm'}>Admin</Paragraph>
-                                    )
-                                    }
-                                    {role === props.role && (
-                                        <Paragraph className={'cursor-default mb-0 '}
-                                                   size={'sm'}>{user?.store?.name}</Paragraph>
-                                    )
-                                    }
+                                    <Paragraph className={'cursor-default mb-0 '}
+                                               size={'sm'}>{role === 'admin' ? 'admin' : user?.store?.name}</Paragraph>
                                 </div>
                                 <div className={'ml-6 cursor-pointer hover:text-gray-950'}>
                                     <Tooltip title="Log out">
@@ -299,7 +299,6 @@ export default function LayoutComponent({children, ...props}: Props) {
             >
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Drawer
-                    container={container}
                     variant="temporary"
                     open={mobileOpen}
                     onClose={handleDrawerToggle}
@@ -314,7 +313,6 @@ export default function LayoutComponent({children, ...props}: Props) {
                     {drawer}
                 </Drawer>
                 <Drawer
-                    container={container}
                     variant="permanent"
                     sx={{
                         display: {xs: 'none', lg: 'block'},

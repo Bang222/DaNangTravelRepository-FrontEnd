@@ -29,7 +29,7 @@ const HomeManager: FC<HomeManagerProps> = ({dataManagerAMonth,setMonth,month}) =
         }
     }, [loading]);
     return (
-        <section className={"container mx-auto px-auto"}>
+        <section className={"container mx-auto px-auto overflow-auto h-[90vh] w-[81vw] pb-[50px]"}>
             <section className={'mb-3 p-2'}>
                 <label htmlFor="months">Select a month: </label>
                 <select name="months" id="months" onChange={handleChange} disabled={loading} defaultValue={month}>

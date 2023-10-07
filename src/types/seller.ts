@@ -64,6 +64,7 @@ export interface informationStoreDTO {
     slogan: string
     imgUrl: string
     isActive: boolean
+    userId:string
     user: UserDTO
 }
 

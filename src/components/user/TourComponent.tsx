@@ -88,7 +88,6 @@ export default React.memo(function TourComponent(props: TourData) {
     };
     useEffect(() => {
         resetPageParam()
-        console.log('bang')
         queryClient.prefetchInfiniteQuery(['All-Tour', userIdInStore])
     }, [dataSearch])
     useEffect(() => {
