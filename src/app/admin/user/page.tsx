@@ -7,6 +7,7 @@ import {createAxios} from "@/util/api/apiReuqest";
 import {adminGetAllStore, adminGetAllUser} from "@/util/api/apiReuqestAdmin";
 import {CircularProgress, Pagination, Stack} from "@mui/material";
 import TableStore from "@/components/admin/table/tableStore";
+import TableUser from "@/components/admin/table/tableUser";
 
 interface PageProps {
 }
@@ -44,34 +45,42 @@ const Page: FC<PageProps> = ({}) => {
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
-    React.useEffect(()=>{
+    React.useEffect(() => {
         queryClient.fetchQuery(['getAllUserAdmin', userId])
-    },[page])
+    }, [page])
     return isLoading || isError ? (
         <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
             <CircularProgress color="secondary"/>
         </div>
     ) : (
         <>
-            <table className="table-auto border border-solid w-full text-left">
-                <thead className={'border bg-black text-white border-solid'}>
-                <tr>
-                    <th className={'p-2'}>#</th>
-                    <th className={'p-2'}>Email</th>
-                    <th className={'p-2'}>phone</th>
-                    <th className={'p-2'}>Created</th>
-                    <th className={'p-2'}>Active</th>
-                    <th className={'p-2'}>EmailValidated</th>
-                    <th className={'p-2'}>Action</th>
-                </tr>
-                </thead>
-                {data?.data.map((item, index) => (
-                    <tbody key={item.id}>
-                    </tbody>
-                ))}
-            </table>
+            <div className={'overflow-x-auto'}>
+                <div className={'h-[55vh] w-[50vw] md:w-full'}>
+                    <table
+                        className="table-auto w-full overflow-x-scroll lg:overflow-auto border border-solid w-full text-left">
+                        <thead className={'border bg-black text-white border-solid'}>
+                        <tr className={'text-[12px] lg:text-[15px]'}>
+                            <th className={'p-2'}>#</th>
+                            <th className={'p-2'}>Email</th>
+                            <th className={'p-2'}>Phone</th>
+                            <th className={'p-2'}>Created</th>
+                            <th className={'p-2'}>Active</th>
+                            <th className={'p-2'}>EmailValidated</th>
+                            <th className={'p-2'}>Action</th>
+                        </tr>
+                        </thead>
+                        {data?.data.map((item, index) => (
+                            <tbody key={item.id}>
+                            <TableUser active={item.isActive} created={item.createdTime} index={index}
+                                       phone={item.phone} emailValidated={item.isEmailValidated} email={item.email}/>
+                            </tbody>
+                        ))}
+                    </table>
+                </div>
+            </div>
             <Stack sx={{paddingTop: '12px'}} spacing={2}>
-                <Pagination sx={{display: 'flex', justifyContent: 'center'}} color="secondary" count={Math.ceil(data?.totalUser / 10)} page={page}
+                <Pagination sx={{display: 'flex', justifyContent: 'center'}} color="secondary"
+                            count={Math.ceil(data?.totalUser / 10)} page={page}
                             onChange={handleChange}/>
             </Stack>
         </>
