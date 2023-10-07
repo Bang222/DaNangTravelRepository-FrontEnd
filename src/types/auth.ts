@@ -37,6 +37,7 @@ export interface UserDTO {
     sex: string;
     isEmailValidated: boolean;
     address: string;
+    isActive:boolean
     phone: string;
     createdTime: Date;
     profilePicture: string;
