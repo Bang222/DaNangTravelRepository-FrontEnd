@@ -144,7 +144,7 @@ const TableTour: FC<TableTourProps> = ({page,userId,setTotalPage}) => {
                                     </td>
                                     <td className="whitespace-nowrap px-2 py-1 border border-solid">{item.baseQuantity}</td>
                                     {item.quantity > 0 && item.status !== 'available' ?
-                                        <td className="whitespace-nowrap px-2 py-2 border border-solid text-red-400">{ item.baseQuantity-item.quantity}</td> :
+                                        <td className="whitespace-nowrap px-2 py-2 border border-solid text-red-400">{item.quantity}</td> :
                                         <td className="whitespace-nowrap px-2 py-2 border border-solid">{item.quantity}</td>
                                     }
                                     {/*<td className="whitespace-nowrap px-2 py-1 border border-solid">{item.imageUrl.length}</td>*/}

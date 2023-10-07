@@ -16,21 +16,12 @@ interface TableProfitProps {
 
 //bang
 
-const TableProfit: FC<TableProfitProps> = ({
-                                               index,
-                                               name,
-                                               totalPrice,
-                                               status,
-                                               id,
-                                               setStoreId,
-                                               setProfit,
-                                               mutate,
-                                               updatePaidIsLoading
-                                           }) => {
+const TableProfit: FC<TableProfitProps> = ({index, name, totalPrice, status, id, setStoreId, setProfit, mutate, updatePaidIsLoading}) => {
+    const currentDay = new Date()
     const data = totalPrice * 0.17;
     const handleOnClick = (e) => {
         setStoreId(id)
-        setProfit(data)
+        setProfit(totalPrice)
         mutate()
     }
     return (
@@ -40,7 +31,7 @@ const TableProfit: FC<TableProfitProps> = ({
             <td className={"p-2 border border-solid"}>{name}</td>
             <td className={"p-2 border border-solid"}><FormatPriceToVnd price={totalPrice}/></td>
             <td className={"p-2 border border-solid"}><FormatPriceToVnd price={data}/></td>
-            <td className={"p-2 border border-solid"}>{updatePaidIsLoading ? <span>Loading...</span> : <> {status ?
+            <td className={"p-2 border border-solid"}>{updatePaidIsLoading ? <span>Loading...</span> : <> { status ?
                 <span className={'text-green-400'}>Paid </span> : <button className={'text-red-400'}
                                                                           onClick={(e) => handleOnClick(e)}
                 >Pay not yet</button>}</>} </td>

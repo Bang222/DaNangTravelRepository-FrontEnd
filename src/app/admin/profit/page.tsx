@@ -9,6 +9,7 @@ import {CircularProgress, Pagination, Stack} from "@mui/material";
 import TableStore from "@/components/admin/table/tableStore";
 import TableProfit from "@/components/admin/table/tableProfit";
 import {useMutation} from "@tanstack/react-query";
+import {toast} from "react-toastify";
 
 interface PageProps {
 }
@@ -19,10 +20,11 @@ const Page: FC<PageProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const [page, setPage] = React.useState(1);
-    const [profit, setProfit] = React.useState(undefined);
-    const [storeId, setStoreId] = React.useState(undefined);
-    const currenDay = new Date()
-    const [month, setMonth] = React.useState<number>(currenDay.getMonth() + 1);
+    const [loadingMonth, setLoadingMonth] = React.useState<boolean>(false);
+    const [profit, setProfit] = React.useState<number>(0);
+    const [storeId, setStoreId] = React.useState<string>("");
+    const currentDay = new Date()
+    const [month, setMonth] = React.useState<number>(currentDay.getMonth() + 1);
     const queryClient = useQueryClient()
 
 
@@ -47,7 +49,7 @@ const Page: FC<PageProps> = ({}) => {
             }
         }
     )
-    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError} = useMutation(
+    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError,data: dataConfirm} = useMutation(
         async () => {
             try {
                 let time: number = 2000;
@@ -65,22 +67,62 @@ const Page: FC<PageProps> = ({}) => {
             }
         }, {
             onSuccess: () => {
+                if(dataConfirm.message){
+                    return toast.warn(dataConfirm.message)
+                }
                 queryClient.invalidateQueries(['getProfitOfStoreAdmin', userId]).then(r => console.log("oke"))
+            },
+            onError: (error)=> {
+                // return toast.warn('reloading page')
             }
         }
     )
+    const handleChangeMonth = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setLoadingMonth(true)
+        const selectedMonth = parseInt(event.target.value, 10);
+        if (selectedMonth <= currentDay.getMonth() + 2) {
+            setMonth(selectedMonth);
+        } else {
+            toast.warn('can not choose ')
+        }
+    };
+
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
     React.useEffect(() => {
-        queryClient.fetchQuery(['getAllStoreAdmin', userId])
-    }, [page])
+        if (loadingMonth) {
+            setTimeout(() => {
+                setLoadingMonth(false);
+            }, 1000);
+        }
+    }, [loadingMonth]);
+    React.useEffect(() => {
+        queryClient.fetchQuery(['getProfitOfStoreAdmin', userId])
+    }, [page,month])
     return isLoading || isError ? (
         <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
             <CircularProgress color="secondary"/>
         </div>
     ) : (
         <>
+            <section className={'mb-3 p-2'}>
+                <label htmlFor="months">Select a month: </label>
+                <select name="months" id="months" onChange={handleChangeMonth} disabled={loadingMonth} defaultValue={month}>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </section>
             <div className={'overflow-x-auto'}>
                 <div className={'h-[60vh] w-[50vw]  md:w-full'}>
                     <table className="table-auto border border-solid w-full text-left">
