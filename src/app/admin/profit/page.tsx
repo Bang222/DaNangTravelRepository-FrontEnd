@@ -23,6 +23,7 @@ const Page: FC<PageProps> = ({}) => {
     const [loadingMonth, setLoadingMonth] = React.useState<boolean>(false);
     const [profit, setProfit] = React.useState<number>(0);
     const [storeId, setStoreId] = React.useState<string>("");
+
     const currentDay = new Date()
     const [month, setMonth] = React.useState<number>(currentDay.getMonth() + 1);
     const queryClient = useQueryClient()
@@ -46,34 +47,6 @@ const Page: FC<PageProps> = ({}) => {
                 return res
             } catch (e) {
                 throw new e
-            }
-        }
-    )
-    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError,data: dataConfirm} = useMutation(
-        async () => {
-            try {
-                let time: number = 2000;
-                let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
-                const res = await adminUpdateProfit(accessToken, axiosJWT, userId, storeId, profit)
-                if (res.message) {
-                    setTimeout(async () => {
-                        const res = await adminUpdateProfit(accessToken, axiosJWT, userId, storeId, profit)
-                        return res
-                    }, time + randomNumber)
-                }
-                return res
-            } catch (e) {
-                throw new e
-            }
-        }, {
-            onSuccess: () => {
-                if(dataConfirm.message){
-                    return toast.warn(dataConfirm.message)
-                }
-                queryClient.invalidateQueries(['getProfitOfStoreAdmin', userId]).then(r => console.log("oke"))
-            },
-            onError: (error)=> {
-                // return toast.warn('reloading page')
             }
         }
     )
@@ -143,7 +116,7 @@ const Page: FC<PageProps> = ({}) => {
                                 <tbody key={item}>
                                 <TableProfit index={index} id={item.id} name={item.name}
                                              status={item.payments.length > 0} totalPrice={item.totalOrderPriceAMonth}
-                                             setStoreId={setStoreId} setProfit={setProfit} mutate={mutate} updatePaidIsLoading={updatePaidIsLoading}
+                                             setStoreId={setStoreId} setProfit={setProfit}
                                 />
                                 </tbody>
                             ))}

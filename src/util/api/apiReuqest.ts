@@ -95,7 +95,6 @@ export const RegisterApi = async (registerDTO: RegisterDTO) => {
     }
 }
 export const GetAllTourApi = async (currentPage:number,name?:string,start?:string,minPrice?:number,maxPrice?:number,startDay?:Date,endDate?:Date) => {
-    // /search=?name=${name}&start=${start}&min=${minPrice}&max=${maxPrice}&start-day=${startDay}&end-day=${endDate}
     const queryParams = new URLSearchParams({
         name: name || '',
         start: start || '',

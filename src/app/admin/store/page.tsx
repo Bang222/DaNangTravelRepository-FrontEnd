@@ -1,13 +1,14 @@
 'use client'
 import React, {FC} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AppDispatch} from "@/redux/store";
 import {createAxios, getBillOfStore} from "@/util/api/apiReuqest";
 import {BillTotalPagesDTO} from "@/types/seller";
-import {adminGetAllStore} from "@/util/api/apiReuqestAdmin";
+import {adminGetAllStore, adminUpdateProfit} from "@/util/api/apiReuqestAdmin";
 import {CircularProgress, Pagination, Stack} from "@mui/material";
 import TableStore from "@/components/admin/table/tableStore";
+import {toast} from "react-toastify";
 
 interface PageProps {
 }
@@ -17,6 +18,7 @@ interface PageProps {
 const Page: FC<PageProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
+
     const [page, setPage] = React.useState(1);
     const queryClient = useQueryClient()
 
@@ -42,6 +44,35 @@ const Page: FC<PageProps> = ({}) => {
             }
         }
     )
+    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError,data: dataConfirm} = useMutation(
+        async ({storeId,month}) => {
+            try {
+                let time: number = 2000;
+                let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+                const res = await adminUpdateProfit(accessToken, axiosJWT, userId, storeId, month)
+                if (res.message) {
+                    setTimeout(async () => {
+                        const res = await adminUpdateProfit(accessToken, axiosJWT, userId, storeId, month)
+                        return res
+                    }, time + randomNumber)
+                }
+                return res
+            } catch (e) {
+                throw new e
+            }
+        }, {
+            onSuccess: () => {
+                if(dataConfirm.message){
+                    return toast.warn(dataConfirm.message)
+                }
+                queryClient.invalidateQueries(['getProfitOfStoreAdmin', userId]).then(r => console.log("oke"))
+                 toast.success("Confirmed")
+            },
+            onError: (error)=> {
+                return toast.warn(error)
+            }
+        }
+    )
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
@@ -64,13 +95,15 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>Slogan</th>
                             <th className={'p-2'}>Created</th>
                             <th className={'p-2'}>Active</th>
+                            <th className={'p-2'}>Month</th>
+                            <th className={'p-2'}>Confirm Paid</th>
                             <th className={'p-2'}>Action</th>
                         </tr>
                         </thead>
                         {data?.data.map((item, index) => (
                             <tbody key={item.id}>
                             <TableStore createdAt={item.createdAt} id={item.id} index={index} isActive={item.isActive}
-                                        name={item.name} slogan={item.slogan}/>
+                                        name={item.name} slogan={item.slogan} mutate={mutate} updatePaidIsLoading={updatePaidIsLoading}/>
                             </tbody>
                         ))}
                     </table>
