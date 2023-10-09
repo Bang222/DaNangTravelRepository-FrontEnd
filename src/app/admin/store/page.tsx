@@ -125,7 +125,7 @@ const Page: FC<PageProps> = ({}) => {
                     return toast.warn(dataUnBanStore.message)
                 }
                 queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
-                toast.success("Baned")
+                toast.success("un Band Success")
             },
             onError: (error)=> {
                 return toast.warn(error)
@@ -137,7 +137,7 @@ const Page: FC<PageProps> = ({}) => {
     };
     React.useEffect(() => {
         queryClient.fetchQuery(['getAllStoreAdmin', userId])
-    }, [page])
+    }, [page, queryClient, userId,data])
     return isLoading ? (
         <div className={'flex justify-center items-center absolute  h-screen '}>
             <CircularProgress color="secondary"/>

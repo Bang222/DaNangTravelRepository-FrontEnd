@@ -1,7 +1,8 @@
 'use client'
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import FormatDate from "@/components/ui/FormatDate";
 import {toast} from "react-toastify";
+import {useQueryClient} from "@tanstack/react-query";
 
 interface TableStoreProps {
     index: number
@@ -10,13 +11,19 @@ interface TableStoreProps {
     slogan: string
     createdAt: Date
     isActive: string
-    updatePaidIsLoading
+    updatePaidIsLoading:boolean
+    paidMonth: string[]
     mutate: (p: { month: number; storeId: string }) => void
+    userId:string
+    banStore: (storeId: string) => void
+    unBanStore: (storeId: string) => void
 }
 
 //bang
 
-const TableStore: FC<TableStoreProps> = ({
+const TableStore: FC<TableStoreProps> = ({  unBanStore,
+                                             banStore,
+                                             userId,
                                              id,
                                              name,
                                              slogan,
@@ -24,9 +31,11 @@ const TableStore: FC<TableStoreProps> = ({
                                              isActive,
                                              index,
                                              updatePaidIsLoading,
-                                             mutate
+                                             mutate,
+                                             paidMonth
                                          }) => {
     const currentDay = new Date()
+    const queryClient = useQueryClient()
     const [month, setMonth] = React.useState<number>(currentDay.getMonth());
     const handleChangeMonth = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedMonth = parseInt(event.target.value, 10);
@@ -37,13 +46,22 @@ const TableStore: FC<TableStoreProps> = ({
             toast.warn('can not choose ')
         }
     };
-    const handleConfirm = () => {
+    const handleConfirm = (storeId) => {
         const data = {
             month:month,
-            storeId:id,
+            storeId:storeId,
         }
         mutate(data)
     }
+    const handleBanStore = (storeId) => {
+        banStore(storeId)
+    }
+    const handleUnBanStore = (storeId) => {
+        unBanStore(storeId)
+    }
+    useEffect(()=>{
+        queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+    },[month])
     return (
         <tr className={'text-[12px]'}>
             <td className={"p-2 border border-solid"}>{index + 1}</td>
@@ -71,12 +89,15 @@ const TableStore: FC<TableStoreProps> = ({
             <td className={"p-2 border border-solid"}>
                 {
                     updatePaidIsLoading ? <span>Loading...</span> :
-                        <button className={'hover:text-green-400'} onClick={handleConfirm}>
-                            Confirm
-                        </button>
+                        <> {paidMonth?.includes(`${month}`) ? <span className={'text-green-400'} >PAID</span> : <button className={'hover:text-blue-400'} onClick={()=>handleConfirm(id)}>
+                            CONFIRM
+                        </button>}</>
+
                 }
             </td>
-            <td className={"p-2 border border-solid"}>Ban</td>
+            <td className={"p-2 border border-solid"}>{isActive === 'active' ? <button className={'font-extrabold text-red-300 hover:text-red-700 cursor-pointer'} onClick={()=>handleBanStore(id)}>Ban</button> :
+                <button className={'font-extrabold text-yellow-300 hover:text-yellow-700 cursor-pointer'} onClick={()=>handleUnBanStore(id)}>UnBan</button>
+            }</td>
         </tr>
     );
 }

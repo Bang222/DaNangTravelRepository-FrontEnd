@@ -48,8 +48,8 @@ const Page: FC<PageProps> = ({}) => {
     React.useEffect(() => {
         queryClient.fetchQuery(['getAllUserAdmin', userId])
     }, [page])
-    return isLoading || isError ? (
-        <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
+    return isLoading ? (
+        <div className={'flex justify-center items-center absolute h-screen bg-light'}>
             <CircularProgress color="secondary"/>
         </div>
     ) : (
