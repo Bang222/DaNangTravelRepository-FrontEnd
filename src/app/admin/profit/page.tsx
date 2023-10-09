@@ -40,7 +40,7 @@ const Page: FC<PageProps> = ({}) => {
                 const res = await adminGetProfit(accessToken, axiosJWT, userId, page, month)
                 if (res.message) {
                     setTimeout(async () => {
-                        const res = await adminGetAllStore(accessToken, axiosJWT, userId, page)
+                        const res = await adminGetProfit(accessToken, axiosJWT, userId, page, month)
                         return res
                     }, time + randomNumber)
                 }
@@ -53,7 +53,7 @@ const Page: FC<PageProps> = ({}) => {
     const handleChangeMonth = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLoadingMonth(true)
         const selectedMonth = parseInt(event.target.value, 10);
-        if (selectedMonth <= currentDay.getMonth() + 2) {
+        if (selectedMonth <= currentDay.getMonth()) {
             setMonth(selectedMonth);
         } else {
             toast.warn('can not choose ')
@@ -80,7 +80,7 @@ const Page: FC<PageProps> = ({}) => {
         <>
             <section className={'mb-3 p-2'}>
                 <label htmlFor="months">Select a month: </label>
-                <select name="months" id="months" onChange={handleChangeMonth} disabled={loadingMonth} defaultValue={month}>
+                <select name="months" id="months" value={month} onChange={handleChangeMonth} disabled={loadingMonth} defaultValue={month}>
                     <option value="1">January</option>
                     <option value="2">February</option>
                     <option value="3">March</option>

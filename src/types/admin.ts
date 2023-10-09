@@ -10,6 +10,7 @@ interface AdminAStoreDTO {
     paidMonth:string[]
     isActive: string
     userId: string
+    totalIncome:number
 }
 
 export interface dataAllStoreAdminDTO {

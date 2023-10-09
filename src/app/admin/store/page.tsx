@@ -18,10 +18,10 @@ interface PageProps {
 const Page: FC<PageProps> = ({}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
-
+    const currentDay = new Date()
     const [page, setPage] = React.useState(1);
     const queryClient = useQueryClient()
-
+    const [month, setMonth] = React.useState<number>(currentDay.getMonth());
 
     const dispatch = useDispatch<AppDispatch>()
     const dataRedux = useSelector((state) => state.auth?.value)
@@ -32,10 +32,10 @@ const Page: FC<PageProps> = ({}) => {
             try {
                 let time: number = 2000;
                 let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
-                const res = await adminGetAllStore(accessToken, axiosJWT, userId, page)
+                const res = await adminGetAllStore(accessToken, axiosJWT, userId, page, month)
                 if (res.message) {
                     setTimeout(async () => {
-                        const res = await adminGetAllStore(accessToken, axiosJWT, userId, page)
+                        const res = await adminGetAllStore(accessToken, axiosJWT, userId, page, month)
                         return res
                     }, time + randomNumber)
                 }
@@ -45,8 +45,8 @@ const Page: FC<PageProps> = ({}) => {
             }
         }
     )
-    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError,data: dataConfirm} = useMutation(
-        async ({storeId,month}) => {
+    const {mutate, isLoading: updatePaidIsLoading, isError: updatePaidIsError, data: dataConfirm} = useMutation(
+        async ({storeId, month}) => {
             try {
                 let time: number = 2000;
                 let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
@@ -63,26 +63,26 @@ const Page: FC<PageProps> = ({}) => {
             }
         }, {
             onSuccess: (dataConfirm) => {
-                if(dataConfirm.message){
+                if (dataConfirm.message) {
                     return toast.warn(dataConfirm.message)
                 }
                 queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
-                 toast.success("Confirmed")
+                toast.success("Confirmed")
             },
-            onError: (error)=> {
+            onError: (error) => {
                 return toast.warn(error)
             }
         }
     )
-    const {mutate:banStore, isLoading: banStoreIsLoading, isError: banStoreIsError,data: dataBanStore} = useMutation(
-        async (storeId:string) => {
+    const {mutate: banStore, isLoading: banStoreIsLoading, isError: banStoreIsError, data: dataBanStore} = useMutation(
+        async (storeId: string) => {
             try {
                 let time: number = 2000;
                 let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
                 const res = await banStoreAdmin(accessToken, axiosJWT, userId, storeId)
                 if (res.message) {
                     setTimeout(async () => {
-                        const res = await banStoreAdmin(accessToken, axiosJWT, userId, storeId )
+                        const res = await banStoreAdmin(accessToken, axiosJWT, userId, storeId)
                         return res
                     }, time + randomNumber)
                 }
@@ -92,19 +92,24 @@ const Page: FC<PageProps> = ({}) => {
             }
         }, {
             onSuccess: (dataBanStore) => {
-                if(dataBanStore.message){
+                if (dataBanStore.message) {
                     return toast.warn(dataBanStore.message)
                 }
                 queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("Baned")
             },
-            onError: (error)=> {
+            onError: (error) => {
                 return toast.warn(error)
             }
         }
     )
-    const {mutate: unBanStore, isLoading: unBanStoreIsLoading, isError: unBanStoreIsError,data: dataUnBanStore} = useMutation(
-        async (storeId:string) => {
+    const {
+        mutate: unBanStore,
+        isLoading: unBanStoreIsLoading,
+        isError: unBanStoreIsError,
+        data: dataUnBanStore
+    } = useMutation(
+        async (storeId: string) => {
             try {
                 let time: number = 2000;
                 let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
@@ -121,13 +126,13 @@ const Page: FC<PageProps> = ({}) => {
             }
         }, {
             onSuccess: (dataUnBanStore) => {
-                if(dataUnBanStore.message){
+                if (dataUnBanStore.message) {
                     return toast.warn(dataUnBanStore.message)
                 }
                 queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("un Band Success")
             },
-            onError: (error)=> {
+            onError: (error) => {
                 return toast.warn(error)
             }
         }
@@ -135,9 +140,17 @@ const Page: FC<PageProps> = ({}) => {
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
+    const handleChangeMonth = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedMonth = parseInt(event.target.value, 10);
+        if (selectedMonth <= currentDay.getMonth()) {
+            setMonth(selectedMonth);
+        } else {
+            toast.warn('can not choose ')
+        }
+    };
     React.useEffect(() => {
-        queryClient.fetchQuery(['getAllStoreAdmin', userId])
-    }, [page, queryClient, userId,data])
+        queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+    }, [page, queryClient, userId, data, month])
     return isLoading ? (
         <div className={'flex justify-center items-center absolute  h-screen '}>
             <CircularProgress color="secondary"/>
@@ -145,6 +158,22 @@ const Page: FC<PageProps> = ({}) => {
     ) : (
         <>
             <div className={'overflow-x-auto'}>
+                <div className={'p-4'}>
+                    <select name="months" id="months" value={month} onChange={handleChangeMonth} defaultValue={month}>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
                 <div className={'h-[60vh] w-[50vw]  md:w-full'}>
                     <table className="table-auto border border-solid w-full text-left">
                         <thead className={'border bg-black text-white border-solid'}>
@@ -154,16 +183,21 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>Slogan</th>
                             <th className={'p-2'}>Created</th>
                             <th className={'p-2'}>Active</th>
-                            <th className={'p-2'}>Month</th>
                             <th className={'p-2'}>Paid</th>
                             <th className={'p-2'}>Income</th>
+                            <th className={'p-2'}>Profit</th>
                             <th className={'p-2'}>Action</th>
                         </tr>
                         </thead>
                         {data?.data.map((item, index) => (
                             <tbody key={item.id}>
                             <TableStore createdAt={item.createdAt} id={item.id} index={index} isActive={item.isActive}
-                                        name={item.name} slogan={item.slogan} mutate={mutate} updatePaidIsLoading={updatePaidIsLoading} paidMonth={item.paidMonth} userId={userId} banStore={banStore} unBanStore={unBanStore}/>
+                                        name={item.name} slogan={item.slogan} mutate={mutate}
+                                        updatePaidIsLoading={updatePaidIsLoading}
+                                        paidMonth={item.paidMonth} userId={userId} banStore={banStore}
+                                        unBanStore={unBanStore} month={month} setMonth={setMonth}
+                                        totalIncome={item.totalIncome}
+                                        currentDay={currentDay}/>
                             </tbody>
                         ))}
                     </table>
