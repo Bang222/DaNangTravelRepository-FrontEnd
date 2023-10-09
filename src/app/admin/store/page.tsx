@@ -5,7 +5,7 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AppDispatch} from "@/redux/store";
 import {createAxios, getBillOfStore} from "@/util/api/apiReuqest";
 import {BillTotalPagesDTO} from "@/types/seller";
-import {adminGetAllStore, adminUpdateProfit} from "@/util/api/apiReuqestAdmin";
+import {adminGetAllStore, adminUpdateProfit, banStoreAdmin, unBanStoreAdmin} from "@/util/api/apiReuqestAdmin";
 import {CircularProgress, Pagination, Stack} from "@mui/material";
 import TableStore from "@/components/admin/table/tableStore";
 import {toast} from "react-toastify";
@@ -66,8 +66,66 @@ const Page: FC<PageProps> = ({}) => {
                 if(dataConfirm.message){
                     return toast.warn(dataConfirm.message)
                 }
-                queryClient.invalidateQueries(['getProfitOfStoreAdmin', userId]).then(r => console.log("oke"))
+                queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                  toast.success("Confirmed")
+            },
+            onError: (error)=> {
+                return toast.warn(error)
+            }
+        }
+    )
+    const {mutate:banStore, isLoading: banStoreIsLoading, isError: banStoreIsError,data: dataBanStore} = useMutation(
+        async (storeId:string) => {
+            try {
+                let time: number = 2000;
+                let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+                const res = await banStoreAdmin(accessToken, axiosJWT, userId, storeId)
+                if (res.message) {
+                    setTimeout(async () => {
+                        const res = await banStoreAdmin(accessToken, axiosJWT, userId, storeId )
+                        return res
+                    }, time + randomNumber)
+                }
+                return res
+            } catch (e) {
+                throw new e
+            }
+        }, {
+            onSuccess: (dataBanStore) => {
+                if(dataBanStore.message){
+                    return toast.warn(dataBanStore.message)
+                }
+                queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+                toast.success("Baned")
+            },
+            onError: (error)=> {
+                return toast.warn(error)
+            }
+        }
+    )
+    const {mutate: unBanStore, isLoading: unBanStoreIsLoading, isError: unBanStoreIsError,data: dataUnBanStore} = useMutation(
+        async (storeId:string) => {
+            try {
+                let time: number = 2000;
+                let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+                const res = await unBanStoreAdmin(accessToken, axiosJWT, userId, storeId)
+                if (res.message) {
+                    setTimeout(async () => {
+                        const res = await unBanStoreAdmin(accessToken, axiosJWT, userId, storeId)
+                        return res
+                    }, time + randomNumber)
+                }
+                return res
+            } catch (e) {
+                throw new e
+            }
+        }, {
+            onSuccess: (dataUnBanStore) => {
+                if(dataUnBanStore.message){
+                    return toast.warn(dataUnBanStore.message)
+                }
+                queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+                toast.success("Baned")
             },
             onError: (error)=> {
                 return toast.warn(error)
@@ -80,8 +138,8 @@ const Page: FC<PageProps> = ({}) => {
     React.useEffect(() => {
         queryClient.fetchQuery(['getAllStoreAdmin', userId])
     }, [page])
-    return isLoading || isError ? (
-        <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
+    return isLoading ? (
+        <div className={'flex justify-center items-center absolute  h-screen '}>
             <CircularProgress color="secondary"/>
         </div>
     ) : (
@@ -97,14 +155,14 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>Created</th>
                             <th className={'p-2'}>Active</th>
                             <th className={'p-2'}>Month</th>
-                            <th className={'p-2'}>Confirm Paid</th>
+                            <th className={'p-2'}>Paid</th>
                             <th className={'p-2'}>Action</th>
                         </tr>
                         </thead>
                         {data?.data.map((item, index) => (
                             <tbody key={item.id}>
                             <TableStore createdAt={item.createdAt} id={item.id} index={index} isActive={item.isActive}
-                                        name={item.name} slogan={item.slogan} mutate={mutate} updatePaidIsLoading={updatePaidIsLoading}/>
+                                        name={item.name} slogan={item.slogan} mutate={mutate} updatePaidIsLoading={updatePaidIsLoading} paidMonth={item.paidMonth} userId={userId} banStore={banStore} unBanStore={unBanStore}/>
                             </tbody>
                         ))}
                     </table>

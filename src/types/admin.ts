@@ -7,6 +7,7 @@ interface AdminAStoreDTO {
     slogan: string
     imgUrl: string
     createdAt: Date
+    paidMonth:string[]
     isActive: string
     userId: string
 }
@@ -26,7 +27,7 @@ interface orderTotalDTO {
     totalPrice: number
 }
 
-interface paymentConfirmDTO {
+export interface paymentConfirmDTO {
     id: string,
     isPaymentConfirmed: boolean,
     totalProfit: number,
@@ -43,11 +44,10 @@ interface TotalDataAMonthDTO {
     createdAt: Date
     isActive: string
     userId: string
+    paidMonth:string[]
     payments: paymentConfirmDTO[]
-    orders: orderTotalDTO[]
-    totalOrderPriceAMonth: number
 }
-export interface  getProfileAMonthDTO {
+export interface getProfileAMonthDTO {
     data:TotalDataAMonthDTO[]
     totalData:number;
 }
