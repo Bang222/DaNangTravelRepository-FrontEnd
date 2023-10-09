@@ -10,8 +10,8 @@ interface TableStoreProps {
     slogan: string
     createdAt: Date
     isActive: string
-    updatePaidIsLoading:boolean
-    mutate: (data: { month: number; storeId: string }) => void
+    updatePaidIsLoading
+    mutate: (p: { month: number; storeId: string }) => void
 }
 
 //bang

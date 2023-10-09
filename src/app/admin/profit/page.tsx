@@ -106,7 +106,6 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>Name</th>
                             <th className={'p-2'}>Total Income</th>
                             <th className={'p-2'}>Total Profit</th>
-                            <th className={'p-2'}>Status</th>
                         </tr>
                         </thead>
                         {data?.data?.length < 1 ? <tbody>

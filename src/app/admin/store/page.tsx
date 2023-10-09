@@ -26,6 +26,7 @@ const Page: FC<PageProps> = ({}) => {
     const dispatch = useDispatch<AppDispatch>()
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
+
     const {data, isLoading, isError} = useQuery(['getAllStoreAdmin', userId],
         async () => {
             try {
@@ -61,7 +62,7 @@ const Page: FC<PageProps> = ({}) => {
                 throw new e
             }
         }, {
-            onSuccess: () => {
+            onSuccess: (dataConfirm) => {
                 if(dataConfirm.message){
                     return toast.warn(dataConfirm.message)
                 }
