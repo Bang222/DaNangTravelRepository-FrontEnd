@@ -156,6 +156,7 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>Active</th>
                             <th className={'p-2'}>Month</th>
                             <th className={'p-2'}>Paid</th>
+                            <th className={'p-2'}>Income</th>
                             <th className={'p-2'}>Action</th>
                         </tr>
                         </thead>

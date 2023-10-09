@@ -95,6 +95,10 @@ const TableStore: FC<TableStoreProps> = ({  unBanStore,
 
                 }
             </td>
+            <td className={"p-2 border border-solid"}>
+
+
+            </td>
             <td className={"p-2 border border-solid"}>{isActive === 'active' ? <button className={'font-extrabold text-red-300 hover:text-red-700 cursor-pointer'} onClick={()=>handleBanStore(id)}>Ban</button> :
                 <button className={'font-extrabold text-yellow-300 hover:text-yellow-700 cursor-pointer'} onClick={()=>handleUnBanStore(id)}>UnBan</button>
             }</td>
