@@ -59,7 +59,6 @@ const Page: FC<PageProps> = ({}) => {
             toast.warn('can not choose ')
         }
     };
-
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
     };
@@ -72,9 +71,9 @@ const Page: FC<PageProps> = ({}) => {
     }, [loadingMonth]);
     React.useEffect(() => {
         queryClient.fetchQuery(['getProfitOfStoreAdmin', userId])
-    }, [page,month])
+    }, [page, month, queryClient, userId])
     return isLoading || isError ? (
-        <div className={'flex justify-center w-screen items-center absolute z-100 h-screen bg-light'}>
+        <div className={'flex justify-center items-center absolute z-100 h-screen bg-light'}>
             <CircularProgress color="secondary"/>
         </div>
     ) : (
@@ -104,7 +103,7 @@ const Page: FC<PageProps> = ({}) => {
                             <th className={'p-2'}>#</th>
                             <th className={'p-2'}>id</th>
                             <th className={'p-2'}>Name</th>
-                            <th className={'p-2'}>Total Income</th>
+                            <th className={'p-2'}>Day Paid</th>
                             <th className={'p-2'}>Total Profit</th>
                         </tr>
                         </thead>
@@ -114,8 +113,7 @@ const Page: FC<PageProps> = ({}) => {
                             {data?.data?.map((item, index) => (
                                 <tbody key={item}>
                                 <TableProfit index={index} id={item.id} name={item.name}
-                                             status={item.payments.length > 0} totalPrice={item.totalOrderPriceAMonth}
-                                             setStoreId={setStoreId} setProfit={setProfit}
+                                              payments={item.payments}
                                 />
                                 </tbody>
                             ))}
@@ -133,5 +131,4 @@ const Page: FC<PageProps> = ({}) => {
     )
 
 }
-
 export default Page;
