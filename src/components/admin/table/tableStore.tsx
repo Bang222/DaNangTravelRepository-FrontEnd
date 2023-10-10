@@ -9,7 +9,7 @@ interface TableStoreProps {
     index: number
     id: string
     name: string
-    slogan: string
+    email: string
     createdAt: Date
     isActive: string
     updatePaidIsLoading: boolean
@@ -32,7 +32,7 @@ const TableStore: FC<TableStoreProps> = ({
                                              userId,
                                              id,
                                              name,
-                                             slogan,
+                                             email,
                                              createdAt,
                                              isActive,
                                              index,
@@ -58,13 +58,13 @@ const TableStore: FC<TableStoreProps> = ({
         <tr className={'text-[12px]'}>
             <td className={"p-2 border border-solid"}>{index + 1}</td>
             <td className={"p-2 border border-solid"}>{name}</td>
-            <td className={"p-2 border border-solid"}>{slogan}</td>
+            <td className={"p-2 border border-solid"}>{email}</td>
             <td className={"p-2 border border-solid"}><FormatDate date={createdAt}/></td>
             <td className={isActive === "active" ? "p-2 border border-solid text-green-400" : "p-2 border border-solid text-red-400"}>{String(isActive)}</td>
             <td className={"p-2 border border-solid"}>
                 {
                     updatePaidIsLoading ? <span>Loading...</span> :
-                        <>{totalIncome === 0 ? <span className={'cursor-pointer'}>not yet</span> : <> {paidMonth?.includes(`${month}`) ?
+                        <>{totalIncome === 0 ? <span className={'cursor-default'}>not yet</span> : <> {paidMonth?.includes(`${month}`) ?
                             <span className={'text-green-400'}>PAID</span> :
                             <button className={'hover:text-blue-400'} onClick={() => handleConfirm(id)}>
                                 CONFIRM

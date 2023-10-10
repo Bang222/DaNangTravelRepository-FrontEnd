@@ -14,6 +14,7 @@ import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import Introduction from "@/components/user/Introduction";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import NotificationBan from "@/components/notificationBan";
 
 interface NavLeftProps {
 }
@@ -71,17 +72,20 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                             </li>
                             :
                             <>
-                                {navBarLeft.map((item, index: number) => {
-                                    return (
-                                        <li className={'mb-2'} key={index}>
-                                            <Link href={item.href} className={'flex'}>
-                                                <div
-                                                    className={'mr-4 p-1 bg-gradient-to-r from-cyan-500 to-blue-500  rounded-full'}>{item.icon} </div>
-                                                {item.name}
-                                            </Link>
-                                        </li>
-                                    )
-                                })}
+                                {user.store.isActive === 'close' ? <NotificationBan/> : <>
+                                    {navBarLeft.map((item, index: number) => {
+                                        return (
+                                            <li className={'mb-2'} key={index}>
+                                                <Link href={item.href} className={'flex'}>
+                                                    <div
+                                                        className={'mr-4 p-1 bg-gradient-to-r from-cyan-500 to-blue-500  rounded-full'}>{item.icon} </div>
+                                                    {item.name}
+                                                </Link>
+                                            </li>
+                                        )
+                                    })}
+                                </>
+                                }
                             </>
                         }
                     </ul>

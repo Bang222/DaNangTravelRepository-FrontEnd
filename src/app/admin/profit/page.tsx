@@ -25,7 +25,7 @@ const Page: FC<PageProps> = ({}) => {
     const [storeId, setStoreId] = React.useState<string>("");
 
     const currentDay = new Date()
-    const [month, setMonth] = React.useState<number>(currentDay.getMonth() + 1);
+    const [month, setMonth] = React.useState<number>(currentDay.getMonth());
     const queryClient = useQueryClient()
 
 
@@ -112,7 +112,7 @@ const Page: FC<PageProps> = ({}) => {
                         </tbody> : <>
                             {data?.data?.map((item, index) => (
                                 <tbody key={item}>
-                                <TableProfit index={index} id={item.id} name={item.name}
+                                <TableProfit index={index} email={item.user.email} name={item.name}
                                               payments={item.payments}
                                 />
                                 </tbody>

@@ -180,7 +180,7 @@ const Page: FC<PageProps> = ({}) => {
                         <tr>
                             <th className={'p-2'}>#</th>
                             <th className={'p-2'}>Name</th>
-                            <th className={'p-2'}>Slogan</th>
+                            <th className={'p-2'}>Email</th>
                             <th className={'p-2'}>Created</th>
                             <th className={'p-2'}>Active</th>
                             <th className={'p-2'}>Paid</th>
@@ -192,7 +192,7 @@ const Page: FC<PageProps> = ({}) => {
                         {data?.data.map((item, index) => (
                             <tbody key={item.id}>
                             <TableStore createdAt={item.createdAt} id={item.id} index={index} isActive={item.isActive}
-                                        name={item.name} slogan={item.slogan} mutate={mutate}
+                                        name={item.name} email={item.user.email} mutate={mutate}
                                         updatePaidIsLoading={updatePaidIsLoading}
                                         paidMonth={item.paidMonth} userId={userId} banStore={banStore}
                                         unBanStore={unBanStore} month={month} setMonth={setMonth}
