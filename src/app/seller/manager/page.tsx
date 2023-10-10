@@ -49,7 +49,7 @@ const Page: FC<PageProps> = ({}) => {
         }
     )
     useEffect(() => {
-        queryClient.fetchQuery(['dataDashBoard', userId])
+        queryClient.prefetchQuery(['dataDashBoard', userId])
     }, [month])
     return isLoadingManagerAMonth ? <div className={'flex justify-center'}>
         <CircularProgress color="secondary"/>

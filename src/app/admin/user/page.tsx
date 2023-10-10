@@ -46,8 +46,8 @@ const Page: FC<PageProps> = ({}) => {
         setPage(value);
     };
     React.useEffect(() => {
-        queryClient.fetchQuery(['getAllUserAdmin', userId])
-    }, [page])
+        queryClient.prefetchQuery()
+    }, [page,data])
     return isLoading ? (
         <div className={'flex justify-center items-center absolute h-screen bg-light'}>
             <CircularProgress color="secondary"/>
@@ -72,7 +72,9 @@ const Page: FC<PageProps> = ({}) => {
                         {data?.data.map((item, index) => (
                             <tbody key={item.id}>
                             <TableUser active={item.isActive} created={item.createdTime} index={index}
-                                       phone={item.phone} emailValidated={item.isEmailValidated} email={item.email}/>
+                                       phone={item.phone} emailValidated={item.isEmailValidated} email={item.email}
+                                       dispatch={dispatch} dataRedux={dataRedux} axiosJWT={axiosJWT}
+                             userId={userId} accessToken={accessToken} userBanId={item.id}/>
                             </tbody>
                         ))}
                     </table>

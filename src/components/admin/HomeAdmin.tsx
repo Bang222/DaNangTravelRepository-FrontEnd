@@ -1,38 +1,35 @@
+'use client'
+
 import React, {FC} from 'react';
 import CardComponent from "@/components/seller/CardComponent";
 import ChartAndBody from "@/components/seller/dasboard/ChartAndBody";
-import LineCustom from "@/components/ui/LineCustom";
-import {DataDashBoardDTO} from "@/types/seller";
-import Paragraph from "@/components/ui/Paragraph";
+import {dataEachMonthOfAdmin, getDataAMonthOfAdmin} from "@/types/admin";
+import LineChartAdmin from "@/components/admin/chart/LineChartAdmin";
+import ChartAdmin from "@/components/admin/ChartAdmin";
 
-interface HomeManagerProps {
-    dataManagerAMonth:DataDashBoardDTO
+interface HomeAdminProps {
     month:number
     setMonth: React.Dispatch<React.SetStateAction<number>>
+    loading:boolean
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+    dataAdminAMonth: getDataAMonthOfAdmin | undefined
+    dataAdminEachMonth:dataEachMonthOfAdmin[] | undefined
 }
 
 //bang
 
-const HomeManager: FC<HomeManagerProps> = ({dataManagerAMonth,setMonth,month}) => {
-    const [loading,setLoading] = React.useState<boolean>(false);
+const HomeAdmin: FC<HomeAdminProps> = ({month,setMonth,loading,setLoading,dataAdminAMonth,dataAdminEachMonth}) => {
+
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLoading(true)
         const selectedMonth = parseInt(event.target.value);
         setMonth(selectedMonth);
-
     };
-    React.useEffect(() => {
-        if (loading) {
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        }
-    }, [loading]);
     return (
         <section className={"container mx-auto px-auto overflow-auto h-[90vh] w-[81vw] pb-[50px]"}>
             <section className={'mb-3 p-2'}>
                 <label htmlFor="months">Select a month: </label>
-                <select name="months" value={month} id="months" onChange={handleChange} disabled={loading} defaultValue={month}>
+                <select name="months" id="months" value={month} onChange={handleChange} disabled={loading} defaultValue={month}>
                     <option value="1">January</option>
                     <option value="2">February</option>
                     <option value="3">March</option>
@@ -48,16 +45,15 @@ const HomeManager: FC<HomeManagerProps> = ({dataManagerAMonth,setMonth,month}) =
                 </select>
             </section>
             <section className={"flex flex-1 flex-wrap justify-center md:justify-around gap-4 mb-5"}>
-                <CardComponent text={"Tour"} total={dataManagerAMonth.totalTours}/>
-                <CardComponent text={"Order"} total={dataManagerAMonth.totalOrder}/>
-                <CardComponent text={"Total Income"} total={dataManagerAMonth.totalIncome}/>
-                <CardComponent text={"Passengers"} total={dataManagerAMonth.totalPassengers}/>
+                <CardComponent text={"User Created"} total={dataAdminAMonth?.userCreate}/>
+                <CardComponent text={"Store Created"} total={dataAdminAMonth?.storeCreate}/>
+                <CardComponent text={"Total Income"} total={dataAdminAMonth?.totalProfitSum}/>
             </section>
             <section className={'w-full pt-5'}>
-                <ChartAndBody dataManagerAMonth={dataManagerAMonth}/>
+               <ChartAdmin dataAdminEachMonth={dataAdminEachMonth}/>
             </section>
         </section>
     );
 }
 
-export default HomeManager;
+export default HomeAdmin;

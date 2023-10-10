@@ -95,7 +95,7 @@ const Page: FC<PageProps> = ({}) => {
                 if (dataBanStore.message) {
                     return toast.warn(dataBanStore.message)
                 }
-                queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+                queryClient.prefetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("Baned")
             },
             onError: (error) => {
@@ -129,7 +129,7 @@ const Page: FC<PageProps> = ({}) => {
                 if (dataUnBanStore.message) {
                     return toast.warn(dataUnBanStore.message)
                 }
-                queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
+                queryClient.prefetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("un Band Success")
             },
             onError: (error) => {
