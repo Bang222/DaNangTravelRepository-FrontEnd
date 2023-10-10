@@ -72,7 +72,7 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
                             </li>
                             :
                             <>
-                                {user.store.isActive === 'close' ? <NotificationBan/> : <>
+                                {user?.store?.isActive === 'close' ?? false ? <NotificationBan/> : <>
                                     {navBarLeft.map((item, index: number) => {
                                         return (
                                             <li className={'mb-2'} key={index}>
