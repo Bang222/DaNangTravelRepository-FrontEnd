@@ -10,6 +10,9 @@ interface AdminAStoreDTO {
     paidMonth:string[]
     isActive: string
     userId: string
+    user: {
+        email: string
+    }
     totalIncome:number
 }
 
@@ -45,6 +48,9 @@ interface TotalDataAMonthDTO {
     createdAt: Date
     isActive: string
     userId: string
+    user: {
+        email:string
+    }
     paidMonth:string[]
     payments: paymentConfirmDTO[]
 }
