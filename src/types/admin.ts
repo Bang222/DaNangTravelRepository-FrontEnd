@@ -58,3 +58,12 @@ export interface getProfileAMonthDTO {
     data:TotalDataAMonthDTO[]
     totalData:number;
 }
+export interface getDataAMonthOfAdmin {
+    storeCreate: number,
+    totalProfitSum: number,
+    userCreate: number
+}
+export interface dataEachMonthOfAdmin {
+    totalIncomeAMonthAdmin: number,
+    month: number
+}
