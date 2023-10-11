@@ -46,8 +46,8 @@ const Page: FC<PageProps> = ({}) => {
         setPage(value);
     };
     React.useEffect(() => {
-        queryClient.prefetchQuery()
-    }, [page,data])
+        queryClient.prefetchQuery(['getAllUserAdmin', userId])
+    }, [page, data, queryClient])
     return isLoading ? (
         <div className={'flex justify-center items-center absolute h-screen bg-light'}>
             <CircularProgress color="secondary"/>
