@@ -18,7 +18,7 @@ const CardComponent: FC<HomeManagerProps> = ({text,total}) => {
     const optionVND = {style: 'currency', currency: 'VND'}
     let VNDChange:string
     if(text === 'Total Income'){
-        VNDChange= total.toLocaleString('vi-VN', optionVND)
+        VNDChange= total?.toLocaleString('vi-VN', optionVND)
     }
 
     return (

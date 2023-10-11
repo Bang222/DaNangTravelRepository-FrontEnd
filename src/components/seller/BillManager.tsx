@@ -71,7 +71,7 @@ const BillManager: FC<BillManagerProps> = ({}) => {
         }
     }, [data, userId])
     React.useEffect(() => {
-        queryClient.fetchQuery(['billStore', userId])
+        queryClient.prefetchQuery(['billStore', userId])
     }, [page])
     return isLoading ? <div> Loading...</div> : <> {data?.orders ? <section className={'w-full p-3 bg-white'}>
         <div class="overflow-x-scroll md:overflow-x-auto">

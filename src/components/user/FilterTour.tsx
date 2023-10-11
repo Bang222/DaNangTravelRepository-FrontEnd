@@ -115,10 +115,11 @@ const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
                             <div className={'pb-3 items-center'}>
                                 <input
                                     placeholder='Min Price'
-                                    defaultValue={0}
+                                    defaultValue={1}
                                     type='number'
                                     name='min'
                                     id='min'
+                                    min={1}
                                     value={formik.values.min}
                                     onChange={formik.handleChange}
                                     className='w-full h-[24px] p-2 rounded-[8px] border border-gray-400'
