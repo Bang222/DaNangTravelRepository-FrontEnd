@@ -41,7 +41,7 @@ export default React.memo(function TourComponent(props: TourData) {
         async ({pageParam = 1}) => {
             try {
                 const res = await GetAllTourApi(pageParam,dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
-                if(res.includes('failed')){
+                if(res.includes('failed') || res.message){
                     setTimeout(async ()=>{
                         const res = await GetAllTourApi(pageParam, dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
                         return res
@@ -102,9 +102,9 @@ export default React.memo(function TourComponent(props: TourData) {
                 <div className={'flex justify-center h-full'}>
                     <CircularProgress color="secondary"/>
                 </div>
-            ) : (
+            ) : isError ? <div>Loading...</div> : (
                 <div>
-                    {!_tour.includes("failed") ? <>
+                    {!data?.pages?.includes("failed") ? <>
                         {_tour?.map((tour: TourDTO, i) => {
                             if (i === _tour.length - 1) return <div key={tour?.id} ref={ref}
                                                                     className={'flex justify-center'}>
@@ -163,22 +163,22 @@ export default React.memo(function TourComponent(props: TourData) {
                             )
                         })
                         }
-                    </> : <div className={'flex justify-center h-full'}>
+                        <button
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage} // Disable if pages fetched >= 3
+                        >
+                            {isFetchingNextPage ? (
+                                <div className="flex w-full h-full justify-center">
+                                    <CircularProgress color="secondary"/>
+                                </div>
+                            ) : (
+                                (data?.pages.length ?? 0) < 4 ? 'loading...' : ''
+                            )}
+                        </button>
+                    </> : <div className={'flex justify-center h-screen items-center'}>
                         <CircularProgress color="secondary"/>
                     </div>
                     }
-                    <button
-                        onClick={() => fetchNextPage()}
-                        disabled={isFetchingNextPage} // Disable if pages fetched >= 3
-                    >
-                        {isFetchingNextPage ? (
-                            <div className="flex w-full h-full justify-center">
-                                <CircularProgress color="secondary"/>
-                            </div>
-                        ) : (
-                            (data?.pages.length ?? 0) < 4 ? 'oke' : 'null'
-                        )}
-                    </button>
                 </div>
             )}
         </>
