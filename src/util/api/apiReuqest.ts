@@ -193,7 +193,7 @@ export const getTourById = async (tourIdEndToken: TourIdEndToken,axiosJWT:any) =
         throw new Error('sorry can not find comments');
     }
 }
-export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, userId: string, tourId: string,axiosJWT:any) => {
+export const bookingAPI = async (bookingDTO: BookingDTO, accessToken: string, userId: string, tourId: string, axiosJWT: any) => {
     try {
         const res = await axiosJWT.post(`http://localhost:4000/api/booking/${tourId}`, bookingDTO, {
             headers: {

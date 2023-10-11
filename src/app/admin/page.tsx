@@ -20,7 +20,7 @@ const Page: FC<PageProps> = ({}) => {
     const [loading,setLoading] = React.useState<boolean>(false);
     const userId = useSelector((state) => state.auth.value?.user?.id)
     const currenDay = new Date()
-    const [month, setMonth] = React.useState<number>(currenDay.getMonth() + 1);
+    const [month, setMonth] = React.useState<number>(currenDay.getMonth());
     const queryClient = useQueryClient()
 
     const dispatch = useDispatch<AppDispatch>()

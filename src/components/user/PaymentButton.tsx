@@ -31,7 +31,7 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
     const handleApprove = (data) => {
 
     }
-    const initialOptions = {
+    const initialOptions  = {
         clientId: "ATtq4NPFbuB8-MlfYR1n9avUvBiVlv2bcb0_GSst9HP3eKiJ9r5lXjOsQKI1sALqUV0TXN_85l9KuddV",
         currency: "USD",
         intent: "capture",
@@ -76,6 +76,7 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
                                 return actions.order?.capture().then(function (details) {
                                    setSuccessDataBaking(true)
                                     mutateBooking()
+
                                })
                             }}
                             onError={(err)=> console.log(err)}
