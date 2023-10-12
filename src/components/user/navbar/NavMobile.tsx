@@ -28,8 +28,6 @@ interface navBarLeftInterface {
 const NavMobile: FC<NavMobileProps> = ({}) => {
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
         {name: 'Account Seller', href: '/seller', icon: <StoreSharpIcon sx={{color: 'white'}}/>},
-        {name: 'Follow Registered trip', href: '#', icon: <FlightTakeoffIcon sx={{color: 'white'}}/>},
-        {name: 'Used Tours', href: '#', icon: <FlightLandIcon sx={{color: 'white'}}/>},
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
     ])
@@ -79,17 +77,17 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
                 } nh:hidden `}
             >
                 <ul className={'flex justify-center items-center h-full'}>
-                    <li className={'mr-4'}>
-                        <HomeIcon sx={{color: 'white', fontSize: '2rem'}} onClick={scrollToTop}/>
+                    <li>
+                        <HomeIcon sx={{color: 'white', fontSize: '2rem',marginRight:'36px'}} onClick={scrollToTop}/>
                     </li>
                     <li>
-                        <BorderAllIcon onClick={toggleSection} className={'ml-4'}
-                                       sx={{color: 'white', fontSize: '2rem'}}/>
+                        <BorderAllIcon onClick={toggleSection}
+                                       sx={{color: 'white', fontSize: '2rem',marginRight:'0'}}/>
                     </li>
                 </ul>
             </section>
             <section
-                className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>
+                className={`fixed z-[99999] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>
                 <Card
                     variant="outlined"
                     sx={{
@@ -131,6 +129,10 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
                     </CardContent>
                 </Card>
             </section>
+            {/*<section*/}
+            {/*    className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>*/}
+
+            {/*</section>*/}
         </>
     );
 }

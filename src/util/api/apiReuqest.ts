@@ -18,7 +18,7 @@ import {
     BillTotalPagesDTO,
     CreateStoreDTO, DataDashBoardDTO, DataDashBoardEachMonthDTO,
     dataTourOfStore,
-    informationStoreDTO,
+    informationStoreDTO, orderHistoryUser,
     TourOfStore
 } from "@/types/seller";
 // import {createAxios} from '@/createInstance'
@@ -509,6 +509,25 @@ export const DashboardDataManagerAMonth = async (accessToken: string,userId:stri
         throw new Error('Error');
     }
 }
+
+export const userOrderHistory = async (accessToken: string,axiosJWT:any,userId:string) => {
+    try {
+        const res = await axiosJWT.get(`http://localhost:4000/api/user/get-order`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "x-client-id": userId
+            }
+        })
+        if (!res.data) {
+            throw new Error("can not found");
+        }
+        const data = res.data;
+        return data as orderHistoryUser[]
+    } catch (err) {
+        throw new Error('Error');
+    }
+}
+
 export const DashboardDataManagerEachMonth = async (accessToken: string,userId:string,axiosJWT:any) => {
     try {
         const res = await axiosJWT.get('http://localhost:4000/api/store/data-each-month', {

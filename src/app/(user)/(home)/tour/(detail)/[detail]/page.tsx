@@ -58,6 +58,11 @@ const Page: NextPage<TourDetailProps> = ({params}) => {
             setTourError(error.message);
         },
     });
+
+    useEffect(() => {
+        document.title = `Tour Detail`
+    }, [])
+
     useEffect(() => {
         const data: TourIdEndToken= {
             tourId: tourId,
