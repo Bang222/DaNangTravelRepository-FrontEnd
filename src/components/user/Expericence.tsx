@@ -120,6 +120,9 @@ export default function Experience() {
         month: 'numeric',
         day: 'numeric',
     }
+    useEffect(() => {
+        document.title = `Experience`
+    }, [])
     return isLoadingExperience ? <div className={'w-full flex justify-center h-screen'}>
             <CircularProgress color="secondary"/>
         </div> :

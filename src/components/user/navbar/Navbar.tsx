@@ -156,7 +156,7 @@ const PrimarySearchAppBar: React.FC = () => {
             backgroundColor: 'black'
         }}>
             <AppBar position="fixed" sx={{backgroundColor: 'black'}}>
-                <Toolbar sx={{display: 'flex', width: '100%', backgroundColor: 'black', justifyContent: 'space-around'}}
+                <Toolbar sx={{display: 'flex', width: '100%', backgroundColor: 'black', justifyContent: 'space-between'}}
                     // className={'max-lg:justify-between container mx-auto max-sm:pl-2 max-sm:pr-2'}
                 >
                     <Box sx={{display: 'flex'}}>
