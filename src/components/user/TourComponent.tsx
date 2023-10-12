@@ -59,21 +59,6 @@ export default React.memo(function TourComponent(props: TourData) {
             },
         }
     );
-    // useEffect(()=>{
-    // let fetching = false
-    //     const onScroll = (e) => {
-    //     const scroll: HTMLElement =
-    //         e.target.scrollingElement
-    //     }
-    //     if(!fetching && -) {
-    //         fetching = true
-    //         if(hasNextPage) fetchNextPage()
-    //     }
-    //     document.addEventListener('scroll', onScroll)
-    //     return () => {
-    //         document.removeEventListener('scroll', onScroll)
-    //     }
-    // },[])
     const lastPostRef = useRef<HTMLElement>(null)
     const {ref, entry} = useIntersection({
         root: lastPostRef.current,

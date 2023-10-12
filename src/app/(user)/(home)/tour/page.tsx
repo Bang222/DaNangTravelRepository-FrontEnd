@@ -1,6 +1,6 @@
 'use client'
 
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import TourComponent from "@/components/user/TourComponent";
 import NavLeft from "@/components/user/navbar/NavLeft";
 import FilterTour from "@/components/user/FilterTour";
@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import {useDebounce} from "@/components/hooks/UseDebounce";
 import ButtonBackToTop from "@/components/buttonBackToTop/ButtonBackToTop";
 import {CircularProgress} from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 interface PageProps {
 }
@@ -21,7 +22,8 @@ interface PageProps {
 const Page: FC<PageProps> = ({}) => {
     const userIdInStore = useSelector((state) => state.auth.value?.user.id)
     const [value, setValue] = React.useState<string>('')
-    const [loading,setLoading] = React.useState<boolean>(false)
+    const [loading, setLoading] = React.useState<boolean>(false)
+    const [isStickyLeft, setIsStickyLeft] = React.useState(false);
     const queryClient = useQueryClient()
     const vietnamCities = [
         "",
@@ -92,22 +94,27 @@ const Page: FC<PageProps> = ({}) => {
             pages: [],
             pageParams: [1], // Reset to page 1
         });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     };
-    const [dataSearch,setDataSearch] = React.useState({
+
+    const handleStickyClick = () => {
+        setIsStickyLeft(!isStickyLeft);
+    };
+    const [dataSearch, setDataSearch] = React.useState({
         start: "",
-        min:"",
-        max:"",
-        startDay:"",
-        endDay:"",})
+        min: "",
+        max: "",
+        startDay: "",
+        endDay: "",
+    })
     const formik = useFormik({
         initialValues: {
             name: "",
             start: "",
-            min:"",
-            max:"",
-            startDay:"",
-            endDay:"",
+            min: "",
+            max: "",
+            startDay: "",
+            endDay: "",
         },
         validationSchema: Yup.object({
             min: Yup.number()
@@ -138,29 +145,48 @@ const Page: FC<PageProps> = ({}) => {
             }, 1000);
         }
     });
+    useEffect(() => {
+        document.title = `Tour`
+    }, [])
     React.useEffect(() => {
         queryClient.prefetchInfiniteQuery(['All-Tour', userIdInStore])
     }, [dataSearch])
     return (
+
         <section className={'pt-2 lg:grid lg:grid-cols-4 lg:gap-3 container mx-auto px-5'}>
             <section className="hidden mt-[65px] lg:block relative">
                 <div className="sticky top-[15%] overflow-y-auto">
-                <NavLeft/>
-             </div>
+                    <NavLeft/>
+                </div>
             </section>
             <div className={'lg:col-span-2 col-span-4 w-6/6 p-3.5'}>
+                <div className={' my-4 p-1 nh:hidden'}>
+                    <div className={"top-[125px] w-full left-0 bg-gray-400 z-[99998] fixed rounded-md "}>
+                        <div className={"flex justify-center"}>
+                            <button onClick={handleStickyClick}
+                                    className={"text-white py-2 px-4"}>
+                                <SearchIcon sx={{color: "white"}}/> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 {loading ? <div className={'flex justify-center mt-[100px] h-[90vh]'}>
                     <CircularProgress color="secondary"/>
                 </div> : <TourComponent userIdInStore={userIdInStore} dataSearch={dataSearch}/>}
             </div>
-            <section className={'hidden lg:block relative mt-[65px]'}>
-                <div className="sticky top-[15%]">
-                    <FilterTour vietnamCities={vietnamCities}  formik={formik} userId={userIdInStore} dataSearch={dataSearch} setDataSearch = {setDataSearch} setLoading={setLoading} loading={loading}/>
+
+            <section className={' lg:block relative mt-[65px]'}>
+                <div
+                    className={`fixed lg:sticky z-[1200] top-[30%] lg:top-[15%] left-[8%] lg:left-0 transition-transform transform ${!isStickyLeft ? 'translate-x-[-150%]' : '-translate-x-0'} lg:translate-x-0`}>
+                    <FilterTour vietnamCities={vietnamCities} formik={formik} userId={userIdInStore}
+                                dataSearch={dataSearch} setDataSearch={setDataSearch} setLoading={setLoading}
+                                loading={loading}/>
                 </div>
             </section>
-            <ButtonBackToTop/>
+            <section className={'hidden lg:block'}>
+                <ButtonBackToTop/>
+            </section>
         </section>
     );
 }
-
 export default Page;

@@ -397,6 +397,12 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const toddlerPrice = InputToddlerPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const infantPrice = InputInfantPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const totalPrice = InputTotalPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
+
+
+    useEffect(() => {
+        document.title = `Booking`
+    }, [])
+
     useEffect(() => {
         const data: TourIdEndToken = {
             tourId: tourId,

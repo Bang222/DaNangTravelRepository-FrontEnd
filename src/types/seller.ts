@@ -12,7 +12,25 @@ interface UserDTO {
     profilePicture: string;
     role: string;
 }
-
+export interface orderHistoryUser {
+    id:string,
+    firstName: string,
+    fullName: string,
+    createdAt: Date,
+    email: string,
+    participants: number,
+    totalPrice: number,
+    status: string,
+    store: { name: string },
+    orderDetail: {
+        id: string,
+        // toddlerPassengers: true,
+        // adultPassengers: true,
+        // childPassengers: true,
+        // infantPassengers: true,
+        tour: { name: string },
+    }
+}
 export interface PassengerDTO {
     id: string
     type: string,
