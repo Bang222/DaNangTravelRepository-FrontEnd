@@ -29,6 +29,7 @@ type AuthState = {
             imgUrl:string,
             isActive:boolean,
             userId:string,
+            paymentId:string,
         }
     };
 }

@@ -1,5 +1,5 @@
 'use client'
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {BillTotalPagesDTO, TourOfStore} from "@/types/seller";
@@ -73,6 +73,9 @@ const BillManager: FC<BillManagerProps> = ({}) => {
     React.useEffect(() => {
         queryClient.prefetchQuery(['billStore', userId])
     }, [page])
+    useEffect(() => {
+        document.title = `Bill`
+    }, [])
     return isLoading ? <div> Loading...</div> : <> {data?.orders ? <section className={'w-full p-3 bg-white'}>
         <div class="overflow-x-scroll md:overflow-x-auto">
             <div class=" w-[79vw] h-[73vh] md:w-full">
