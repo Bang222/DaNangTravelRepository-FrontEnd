@@ -1,5 +1,5 @@
 'use client'
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {AppDispatch} from "@/redux/store";
@@ -151,6 +151,9 @@ const Page: FC<PageProps> = ({}) => {
     React.useEffect(() => {
         queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
     }, [page, queryClient, userId, data, month])
+    useEffect(() => {
+        document.title = `Manager Store`
+    }, [])
     return isLoading ? (
         <div className={'flex justify-center items-center absolute  h-screen '}>
             <CircularProgress color="secondary"/>

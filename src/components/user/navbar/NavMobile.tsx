@@ -26,10 +26,10 @@ interface navBarLeftInterface {
 }
 
 const NavMobile: FC<NavMobileProps> = ({}) => {
+    const userRedux = useSelector((state) => state.auth.value?.user)
+
     const [navBarLeft, setNavBarLeft] = React.useState<navBarLeftInterface[]>([
-        {name: 'Account Seller', href: '/seller', icon: <StoreSharpIcon sx={{color: 'white'}}/>},
-        // {name:'Account Seller', href:''},
-        // {name:'Account Seller', href:''},
+        {name: userRedux.role !== 'user' ? 'Account Seller' :"Become to business", href: '/seller', icon: <StoreSharpIcon sx={{color: 'white'}}/>},
     ])
     const [sectionOpen, setSectionOpen] = React.useState<boolean>(true);
     const toggleSection = () => {
@@ -129,10 +129,6 @@ const NavMobile: FC<NavMobileProps> = ({}) => {
                     </CardContent>
                 </Card>
             </section>
-            {/*<section*/}
-            {/*    className={`fixed z-[1200] w-[100vw] h-screen bottom-0 transition-transform transform ${sectionOpen ? 'translate-x-full' : '-translate-x-0'} nh:hidden`}>*/}
-
-            {/*</section>*/}
         </>
     );
 }

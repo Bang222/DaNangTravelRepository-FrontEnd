@@ -106,7 +106,7 @@ const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,car
     //     height: '100%',
     // };
     return (
-        <section className={'absolute opacity-95 top-[100%] z-[1300] right-0 w-[100%] nh:w-[40%] nh:right-[5%] lg:right-[10%]'}>
+        <section className={'absolute opacity-95 top-[100%] z-[99999] right-0 w-[100%] nh:w-[40%] nh:right-[5%] lg:right-[10%]'}>
             <Card
                 variant="outlined"
                 sx={{

@@ -2,6 +2,8 @@ import {FC} from 'react';
 import * as React from "react";
 import Button from '@mui/joy/Button';
 import {FUNDING, PayPalButtons, PayPalScriptProvider} from "@paypal/react-paypal-js";
+import {useSelector} from "react-redux";
+import {toast} from "react-toastify";
 
 interface PaymentButtonProps {
     InputTotalPrice: number
@@ -10,10 +12,11 @@ interface PaymentButtonProps {
     setPayment: React.Dispatch<React.SetStateAction<boolean>>
     userId: string
     accessToken: string
+    paymentId:string | undefined
     mutateBooking: () => void
 }
 
-const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, userId, InputTotalPrice, openModal, setOpenModal, setPayment}) => {
+const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, userId, InputTotalPrice, openModal, setOpenModal, setPayment,paymentId}) => {
     const handleOpen = () => setOpenModal(true);
     const handleClose = () => setOpenModal(false);
 
@@ -28,14 +31,12 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
         shape: 'pill',
         borderRadius: '30px'
     }
-    const handleApprove = (data) => {
-
-    }
     const initialOptions  = {
-        clientId: "ATtq4NPFbuB8-MlfYR1n9avUvBiVlv2bcb0_GSst9HP3eKiJ9r5lXjOsQKI1sALqUV0TXN_85l9KuddV",
+        clientId: paymentId,
         currency: "USD",
         intent: "capture",
     };
+    console.log("null",paymentId)
     return (
         <div className={'w-full'}>
             <div className={'nh:flex justify-between'}>
@@ -79,7 +80,7 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
 
                                })
                             }}
-                            onError={(err)=> console.log(err)}
+                            onError={(err)=> toast.error("can u choose another tour this tour out of day")}
                         />
                     </PayPalScriptProvider>
                 </button>

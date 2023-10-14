@@ -130,19 +130,17 @@ const PolicyCreateStore: FC<PolicyCreateStoreProps> = ({handleSubmit, formErrors
                     />
                     <DialogActions>
                         <div className={'text-center'}>
-                            {formErrors.slogan && (
+                            {formErrors.slogan || formErrors.name  || formErrors.paymentId ? (
                                 <Paragraph status={'error'} size="sx">
-                                    {formErrors.slogan}
+                                   can not null data
                                 </Paragraph>
-                            )}
-                            {formErrors.name && (
-                                <Paragraph status={'error'} size="sx">
-                                    {formErrors.name}
-                                </Paragraph>
-                            )}
+                                )
+                                :
+                                ""
+                            }
                         </div>
                     </DialogActions>
-                    {accessPolicy && !formErrors.slogan && !formErrors.name ?
+                    {accessPolicy && !formErrors.slogan && !formErrors.name && !formErrors.paymentId ?
                         <DialogActions>
                             <button onClick={handlePolicyAccept} className={'text-blue-400'}>
                                 Register

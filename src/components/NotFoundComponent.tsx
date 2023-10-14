@@ -1,4 +1,5 @@
-import {FC} from 'react';
+'use client'
+import {FC, useEffect} from 'react';
 import Link from "next/link";
 
 interface NotFoundComponentProps {
@@ -7,6 +8,9 @@ interface NotFoundComponentProps {
 //bang
 
 const NotFoundComponent: FC<NotFoundComponentProps> = ({}) => {
+    useEffect(() => {
+        document.title = `not-found`
+    }, [])
     return (
         <div class="text-center">
             <h1 class="mb-4 text-6xl font-semibold text-red-500">404</h1>

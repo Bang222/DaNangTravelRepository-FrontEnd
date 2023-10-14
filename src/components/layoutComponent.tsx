@@ -33,6 +33,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import {Tooltip} from "@mui/material";
 import StoreIcon from '@mui/icons-material/Store';
 import PersonIcon from '@mui/icons-material/Person';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const drawerWidth = 240;
 
@@ -143,6 +144,14 @@ export default function LayoutComponent({children, ...props}: Props) {
                 onClick: () => handleMenuItemClick('bill'),
                 active: selectedComponent === 'bill',
             },
+        {
+            id: 4,
+            title: 'profile',
+            display: "Profile",
+            icon: <AccountBoxIcon sx={{color: 'black'}}/>,
+            onClick: () => handleMenuItemClick('profile'),
+            active: selectedComponent === 'profile',
+        },
         ]
     )
 
@@ -225,11 +234,13 @@ export default function LayoutComponent({children, ...props}: Props) {
             </List>
             <Divider/>
             {/*<List>*/}
-            {/*    {['All mail', 'Trash', 'Spam'].map((text, index) => (*/}
+            {/*    {['Profile'].map((text, index) => (*/}
             {/*        <ListItem key={text} disablePadding>*/}
             {/*            <ListItemButton>*/}
             {/*                <ListItemIcon>*/}
-            {/*                    {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}*/}
+            {/*                    <Link href={'/seller/manages/profile'}>*/}
+            {/*                        <AccountBoxIcon/>*/}
+            {/*                    </Link>*/}
             {/*                </ListItemIcon>*/}
             {/*                <ListItemText primary={text}/>*/}
             {/*            </ListItemButton>*/}

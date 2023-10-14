@@ -1,4 +1,5 @@
-import {FC} from 'react';
+'use client'
+import {FC, useEffect} from 'react';
 import Link from "next/link";
 
 interface PageProps {
@@ -7,6 +8,9 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
+    useEffect(() => {
+        document.title = `Thanks`
+    }, [])
     return (
         <div class="flex items-center justify-center h-screen">
             <div class="p-4 rounded shadow-lg ring ring-indigo-600/50">

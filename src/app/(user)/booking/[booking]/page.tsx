@@ -65,6 +65,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
     const [openModal, setOpenModal] = React.useState(false);
+    const user = useSelector((state) => state.auth.value?.user)
 
     const [tourError, setTourError] = useState("");
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
@@ -96,7 +97,6 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const dispatch = useDispatch<AppDispatch>()
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
-
     const {mutate: mutateBooking, isLoading: isLoadingBooking, data: dataBookingTour, status, isSuccess} = useMutation(
         async () => {
             try {
@@ -1240,6 +1240,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                            InputTotalPrice={InputAdultPrice}
                                                            setPayment={setPayment}
                                                            mutateBooking={mutateBooking}
+                                                           paymentId={dataTour?.store?.paymentId}
                                             />
                                         }
                                         </>

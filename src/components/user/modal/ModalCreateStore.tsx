@@ -85,6 +85,7 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
         initialValues: {
             name: "",
             slogan: "",
+            paymentId: "",
         },
         validationSchema: Yup.object({
             name: Yup.string()
@@ -92,16 +93,15 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
                 .min(6, "Minimum 6 characters")
                 .required("Please Input Name Store"),
             slogan: Yup.string()
-                .required("Please Input Slogan")
-            // .matches(
-            //     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{4,19}$/,
-            //     "Minimum 6 characters, at least one letter, one number, one special character"
-            // ),
+                .required("Please Input Slogan"),
+            paymentId: Yup.string()
+                .required("Please Input PaymentId ")
         }),
         onSubmit: (values) => {
             const createStore = {
                 name: values.name,
                 slogan: values.slogan,
+                paymentId: values.paymentId,
             };
             mutateCreateStore(createStore)
         },
@@ -159,6 +159,19 @@ const ModalCreateStore: FC<ModalCreateStoreProps> = ({}) => {
                                        onChange={formik.handleChange}
                                 />
                                 <Paragraph status={'error'}>{formik.errors.slogan}</Paragraph>
+                            </div>
+                            <label className={'font-bold text-black'}>Payment Id</label>
+                            <div className="pt-[8px] pb-[24px] text-black">
+                                <input type='text'
+                                       placeholder='Payment Id'
+                                       name='paymentId'
+                                       id="paymentId"
+                                       className={'w-full h-[36px] px-3 rounded-[4px] border-solid border-1 border-gray-400 focus:border-blue-500'}
+                                       required
+                                       value={formik.values.paymentId}
+                                       onChange={formik.handleChange}
+                                />
+                                <Paragraph status={'error'}>{formik.errors.paymentId}</Paragraph>
                             </div>
                             <PolicyCreateStore handleSubmit={formik.handleSubmit} formErrors={formik.errors} />
                             {errorData ? <Paragraph status={'error'}>{errorData}</Paragraph> : ''}

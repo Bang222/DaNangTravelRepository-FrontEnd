@@ -22,7 +22,7 @@ const CardComponent: FC<HomeManagerProps> = ({text,total}) => {
     }
 
     return (
-        <Card sx={{ width: 200, backgroundColor:'#009933' }}>
+        <Card sx={{ width: {xs:"100%",lg:"200px"}, backgroundColor:'#009933' }}>
             <CardContent>
                 <Typography variant="h5" component="div" sx={{color: 'white'}}>
                     {text}

@@ -1,5 +1,5 @@
 'use client'
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {AppDispatch} from "@/redux/store";
@@ -80,6 +80,9 @@ const Page: FC<PageProps> = ({}) => {
     React.useEffect(() => {
         queryClient.prefetchQuery(['dataDashBoardAdmin', userId])
     }, [month]);
+    useEffect(() => {
+        document.title = `Admin`
+    }, [])
     return isLoadingAdminAMonth || isLoadingAdminEachMonth ? <div className={'flex justify-center'}>
         <CircularProgress color="secondary"/>
     </div> :(

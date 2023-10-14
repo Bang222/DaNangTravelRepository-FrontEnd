@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import {FC} from "react";
+import {FC, useEffect} from "react";
 import {Card} from "@mui/material";
 import TableTour from "@/components/seller/table/TableTour";
 import ModalCreateTour from "@/components/seller/modal/ModalCreateTour";
@@ -26,9 +26,9 @@ const TourManager: FC<TourManagerProps> = ({}) => {
         queryClient.fetchQuery(['TourOfStore', userId])
     },[page])
 
-    React.useEffect(()=>{
-
-    },[totalPage])
+    useEffect(() => {
+        document.title = `Manager Tour`
+    }, [])
     return (
         <Card
             variant="outlined"

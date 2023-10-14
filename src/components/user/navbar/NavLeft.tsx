@@ -37,7 +37,6 @@ const NavLeft: FC<NavLeftProps> = ({}) => {
             icon: <StoreSharpIcon sx={{color: 'white'}}/>
         },
         // {name:'Follow Registered trip', href:'#',icon: <FlightTakeoffIcon sx={{color:'white'}}/>}
-        {name: 'Used Tours', href: '#', icon: <FlightLandIcon sx={{color: 'white'}}/>},
         // {name:'Account Seller', href:''},
         // {name:'Account Seller', href:''},
     ])

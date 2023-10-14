@@ -177,7 +177,7 @@ const Page: FC<PageProps> = ({}) => {
 
             <section className={' lg:block relative mt-[65px]'}>
                 <div
-                    className={`fixed lg:sticky z-[1200] top-[30%] lg:top-[15%] left-[8%] lg:left-0 transition-transform transform ${!isStickyLeft ? 'translate-x-[-150%]' : '-translate-x-0'} lg:translate-x-0`}>
+                    className={`fixed lg:sticky z-[1999] nh:z-[1] top-[30%] lg:top-[15%] left-[8%] lg:left-0 transition-transform transform ${!isStickyLeft ? 'translate-x-[-150%]' : '-translate-x-0'} lg:translate-x-0`}>
                     <FilterTour vietnamCities={vietnamCities} formik={formik} userId={userIdInStore}
                                 dataSearch={dataSearch} setDataSearch={setDataSearch} setLoading={setLoading}
                                 loading={loading}/>

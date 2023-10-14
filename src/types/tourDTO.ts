@@ -86,6 +86,7 @@ export interface TourDetailInterface {
         slogan: string;
         isActive: boolean;
         imgUrl: string;
+        paymentId:string;
     }
     upVote: string[];
     createdAt: Date;
