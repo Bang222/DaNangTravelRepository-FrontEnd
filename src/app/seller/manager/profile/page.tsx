@@ -28,13 +28,13 @@ const Page: FC<PageProps> = ({}) => {
                 {isEditing ? "Save" : "Edit"}
             </button>
             </div>
-            <div className={"h-[50%]"}>
-                <div className={'grid grid-cols-5 h-full gap-4 content-center'}>
-                    <div className={'col-span-2'}>
+            <div className={"h-[50%] lg:mt-[100px]"}>
+                <div className={'grid grid-cols-5 h-full gap-4 mt-12 lg:mt-0'}>
+                    <div className={'col-span-5 lg:col-span-2'}>
                         <Avatar alt="Remy Sharp" src={user.profilePicture}
                                 sx={{width: '200px', height: '200px', backgroundColor: 'red'}}/>
                     </div>
-                    <div className={"col-span-1 font-bold flex items-center flex-wrap"}>
+                    <div className={"col-span-2 lg:col-span-1 font-bold flex flex-wrap mt-8 lg:mt-0"}>
                         <div>
                             <Paragraph>Name</Paragraph>
                             <Paragraph>Create</Paragraph>
@@ -42,7 +42,7 @@ const Page: FC<PageProps> = ({}) => {
                             <Paragraph>PayPalId</Paragraph>
                         </div>
                     </div>
-                    <div className={"col-span-2 flex items-center flex-wrap "}>
+                    <div className={"col-span-3 lg:col-span-1 mt-8 lg:mt-0 flex flex-wrap "}>
                         {isEditing ? (
                             <div>
                                 <input
@@ -54,20 +54,23 @@ const Page: FC<PageProps> = ({}) => {
                                     <FormatDate date={user.store.createdAt} />
                                 </Paragraph>
                                 <Paragraph>{user.email}</Paragraph>
-                                <input
+                                <textarea
                                     type="text"
+                                    className={"h-full w-full"}
                                     value={editedPayPalId}
                                     onChange={(e) => setEditedPayPalId(e.target.value)}
                                 />
                             </div>
                         ) : (
-                            <div>
+                            <div className={''}>
                                 <Paragraph>{editedName}</Paragraph>
                                 <Paragraph>
                                     <FormatDate date={user.store.createdAt} />
                                 </Paragraph>
                                 <Paragraph>{user.email}</Paragraph>
-                                <Paragraph>{editedPayPalId}</Paragraph>
+                                <Paragraph>
+                                    <span className={"break-all"}>{editedPayPalId}</span>
+                                </Paragraph>
                             </div>
                         )}
                     </div>

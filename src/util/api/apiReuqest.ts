@@ -32,6 +32,17 @@ export const refreshToken = async (data) => {
     try {
         const refreshToken = data?.token?.refresh
         const userId = data.user?.id
+        const randomNum:number = Math.floor(Math.random() * 1000) + 1;
+        const time:number = 3000
+        setTimeout(async ()=>{
+            const res = await axios.post('http://localhost:4000/api/refresh-token',{},{
+                headers: {
+                    "x-client-id": userId,
+                    " x-client-rf": refreshToken,
+                }
+            })
+            return res.data;
+        },time + randomNum)
         const res = await axios.post('http://localhost:4000/api/refresh-token',{},{
             headers: {
                 "x-client-id": userId,

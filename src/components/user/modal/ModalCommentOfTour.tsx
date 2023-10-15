@@ -150,7 +150,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
             <CustomButton onClick={handleOpen}><CommentIcon/></CustomButton>
             </Tooltip>
             <Modal
-                sx={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                sx={{width: '100%', display: 'flex', justifyContent: 'center', alignItems:'center',marginTop: {xs:"150px",lg:"auto"}}}
                 disableEnforceFocus={true}
                 open={open}
                 onClose={handleClose}
@@ -165,7 +165,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                     marginBottom: '48px',
                     overflowY: 'scroll',
                     position: 'relative',
-                    paddingBottom: props.comments > 1 ? '60px' : '50px'
+                    // paddingBottom: props.comments > 1 ? '60px' : '50px'
                 }}>
                     <CardHeader
                         //src={} alt={}
@@ -182,12 +182,12 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         title={props.store.name}
                         subheader={formattedCreateAt}
                     />
-                    <CardContent>
+                    <CardContent sx={{padding:0}}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <section className={'mb-4'}>
                             <Slice previewImage ={props.imageUrl}  />
                         </section>
-                        <div className={'grid grid-flow-col justify-stretch'}>
+                        <div className={'grid grid-flow-col justify-stretch px-3'}>
                             <div>
                                 <Paragraph size={"sm"}><b>Name: </b>{props.name}</Paragraph>
                             </div>
@@ -199,7 +199,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         <div style={{backgroundColor: '#A9A9A9', width: '90%', height: '1px'}}></div>
                     </div>
                     <CardActions sx={{width: '100%'}}>
-                        <Box sx={{display: 'flex', justifyContent: 'space-around', width: '100%'}}>
+                        <Box sx={{display: 'flex',marginLeft:"40px", width: '100%'}}>
                             <Typography sx={{display: 'flex'}}>
                                 <Tooltip title="comment" placement="top" sx={{
                                     color: 'black', cursor: 'pointer', '&:hover': {
@@ -209,10 +209,7 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                                 }} onClick={(e) => handleClickComments(props.id)}>
                                     <CommentIcon/>
                                 </Tooltip>
-                                <Paragraph>{ props.commentData?.length }</Paragraph>
-                            </Typography>
-                            <Typography>
-                                <Paragraph className={'text-blue-500'}> see more</Paragraph>
+                                <Paragraph className={"ml-[12px]"}>{ props.commentData?.length }</Paragraph>
                             </Typography>
                         </Box>
                     </CardActions>
@@ -236,10 +233,12 @@ const ModalCommentOfTour: React.FC<props> = ({...props}) => {
                         </>}
                     </CardContent>
                     <CardContent sx={{
-                        position: 'fixed',
+                        position: 'sticky',
+                        bottom:0,
+                        zIndex:"99999",
                         paddingTop: 0,
                         paddingBottom: '0!important',
-                        bottom: {xs: props.comments >= 1 ? '15%' : '15%',md: props.comments >= 1 ? '15%' : '15%'},
+                        // bottom: {xs: props.comments >= 1 ? '15%' : '15%',md: props.comments >= 1 ? '15%' : '15%'},
                         backgroundColor: '#B8B8B8',
                         margin: '0',
                         width: {xs: '80vw', lg: '50vw'}

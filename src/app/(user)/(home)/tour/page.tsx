@@ -164,7 +164,7 @@ const Page: FC<PageProps> = ({}) => {
                     <div className={"top-[125px] w-full left-0 bg-gray-400 z-[99998] fixed rounded-md "}>
                         <div className={"flex justify-center"}>
                             <button onClick={handleStickyClick}
-                                    className={"text-white py-2 px-4"}>
+                                    className={"text-white py-2 px-4 w-full"}>
                                 <SearchIcon sx={{color: "white"}}/> Filter
                             </button>
                         </div>

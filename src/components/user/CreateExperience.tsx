@@ -169,7 +169,9 @@ const CreateExperience: React.FC = () => {
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                             src={'https://static.hahalolo.com/common/defaults/noThumbImage.svg?_v=1306113061'}
-                                            alt={'image'}/>
+                                            alt={'image'}
+                                            className={"w-full"}
+                                        />
                                     }
 
                                 </label>

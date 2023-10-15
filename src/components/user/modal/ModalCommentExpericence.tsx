@@ -120,12 +120,12 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
                 open={open}
-                sx={{width: '400px', top: '10%',left: { lg:'67%'}}}
+                sx={{width: {xs:"100%",lg:"400px"}, top: '10%',left: { lg:'67%'}}}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                     Comments
                 </BootstrapDialogTitle>
-                <DialogContent dividers sx={{height:'80vh'}}>
+                <DialogContent dividers sx={{height:'80vh',width: {xs:"80vw",lg:"auto"}}}>
                     {comments.length !== 0 ?
                         <>
                             {comments?.map((comment) => {
@@ -177,11 +177,6 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
                         </div>
                     </DialogActions>
                 </section>
-                {/*<DialogActions>*/}
-                {/*    <Button autoFocus onClick={handleClose}>*/}
-                {/*        Save changes*/}
-                {/*    </Button>*/}
-                {/*</DialogActions>*/}
             </BootstrapDialog>
         </div>
     );
