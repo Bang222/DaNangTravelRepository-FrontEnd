@@ -228,7 +228,7 @@ const RegisterForm: (props) => JSX.Element = () => {
                     </form>
                     <div className={'w-full flex justify-center '}>
                         <Paragraph>You got a account?</Paragraph>
-                        <Link to={'/login'} className={'flex justify-center items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}
+                        <Link className={'flex justify-center items-center mb-2 max-md:mb-2 text-blue-300 text-[17px] max-md:text-[12px]'}
                               href={"/login"}>Login here</Link>
                     </div>
                     {registerError && <Paragraph status={"error"} className={'text-center'}>{registerError}</Paragraph>}

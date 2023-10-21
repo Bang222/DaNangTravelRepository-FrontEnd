@@ -102,7 +102,7 @@ const LoginForm: () => JSX.Element = () => {
     return (
         <section className="flex items-center justify-center h-screen">
             <div
-                className="bg-neutral-500 w-[93vw] sm:w-[420px] sm:h-min-[450px] w-[350px] flex justify-center rounded-md">
+                className="bg-neutral-500 w-[93vw] sm:w-[420px] sm:h-min-[450px] flex justify-center rounded-md">
                 <div className={'p-7 w-full'}>
                     <div className={'pb-7 text-center font-bold'}>
                         <LargeHeading size="sm">LOG IN</LargeHeading>
@@ -170,15 +170,12 @@ const LoginForm: () => JSX.Element = () => {
                         </button>
                         {loginError && <Paragraph status={"error"} className={'text-center'}>{loginError}</Paragraph>}
                     </form>
+                    
                     <div className={'w-full flex justify-center p-1'}>
-                        <a href="@/components/authForm/LoginForm#" className="text-blue-200 max-md:text-[12px]">Forgot
-                            password</a>
-                    </div>
-                    <div className={'w-full flex justify-center p-1'}>
-                        <div class="bg-white rounded-lg shadow-lg">
+                        <div className="bg-white rounded-lg shadow-lg">
                             <button onClick={() => login()}
                                 className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700">
-                                <span class="material-icons rounded-full bg-white mr-2"><GoogleIcon sx={{color:'blue'}}/></span>
+                                <span className="material-icons rounded-full bg-white mr-2"><GoogleIcon sx={{color:'blue'}}/></span>
                                 <span>Login with Google</span>
                             </button>
                         </div>

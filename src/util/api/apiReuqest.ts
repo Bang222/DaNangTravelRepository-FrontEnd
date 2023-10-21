@@ -59,6 +59,8 @@ export const createAxios = (dataRedux,dispatch) => {
     newInstance.interceptors.request.use(
         async (config) => {
             const current = new Date();
+            let toastShown = false; // Biến để kiểm tra xem toast đã được hiển thị hay chưa
+            const toastInterval = 3600000; // Thời gian (millisecond) giữa các lần hiển thị toast, ví dụ 1 giờ
             const decodedToken = jwt_decode(dataRedux?.token.access);
             if (decodedToken.exp < current.getTime() / 1000) {
                 try {
@@ -68,12 +70,18 @@ export const createAxios = (dataRedux,dispatch) => {
                     dispatch(logIn(data))
                     setCookie('token',data.token.access)
                 } catch (error) {
-                    setTimeout(()=>{
-                        toast.warning('Account login another place')
+                    if (error.response && error.response.status === 401) {
+                        if (!toastShown) {
+                            toast.warning('Token expired. Please log in again');
+                            toastShown = true; // Đánh dấu rằng toast đã được hiển thị
+                            setTimeout(() => {
+                                toastShown = false; // Đặt lại biến để cho phép hiển thị lại toast sau một khoảng thời gian
+                            }, toastInterval);
+                        }
                         dispatch(logOut());
-                    },3000)
-                    toast.warning('Account login another place')
-                    dispatch(logOut());
+                    } else {
+                        console.error(error); // Log lỗi cụ thể cho mục đích gỡ lỗi
+                    }
                 }
             }
             return config;
