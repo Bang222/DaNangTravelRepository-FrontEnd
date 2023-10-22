@@ -63,7 +63,7 @@ export interface props {
         isActive: boolean;
     }
     commentData: CommentTourDTO[] | undefined;
-    setCommentData: React.Dispatch<React.SetStateAction<CommentTourDTO[]>>;
+    setCommentData: React.Dispatch<React.SetStateAction<CommentTourDTO[] | undefined>>;
 }
 
 const ModalCommentOfTour: React.FC<props> = ({...props}) => {

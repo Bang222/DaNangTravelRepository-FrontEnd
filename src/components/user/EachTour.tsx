@@ -53,12 +53,13 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const dispatch = useDispatch<AppDispatch>()
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
+
     const token = useSelector<any>((state) => state.auth.value?.token)
     const accessToken = useSelector((state) => state.auth.value?.token.access)
     const userId = useSelector((state) => state.auth.value?.user.id)
 
     const user = useSelector((state) => state.auth.value?.user)
-    const {err, setErr} = React.useState<string>('')
+    const [err, setErr] = React.useState<string>('')
     const [commentData, setCommentData] = useState<CommentTourDTO[] | undefined>()
     const [upvote, setUpvote] = useState<number>(tour?.upVote?.length)
     const [previewImage, setPreviewImage] = useState<string[] | undefined>(tour?.imageUrl)

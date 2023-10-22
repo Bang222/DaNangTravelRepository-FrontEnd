@@ -90,6 +90,7 @@ const PrimarySearchAppBar: React.FC = () => {
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
+
     const {
         data: cartData,
         isLoading: isLoadingOfCart,
@@ -183,6 +184,7 @@ const PrimarySearchAppBar: React.FC = () => {
                                 }
                             </SearchIconWrapper>
                             <StyledInputBase
+                                defaultValue={localStorage.getItem('searchExperience')}
                                 placeholder="Search…"
                                 inputProps={{'aria-label': 'search'}}
                                 className={'sm:w-[400px] lg:w-[250px]'}

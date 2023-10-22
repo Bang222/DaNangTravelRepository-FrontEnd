@@ -248,7 +248,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     }
     const handleClickCount = (action: 'increase' | 'decrease', type: 'adultCount' | 'childCount' | 'toddlerCount' | 'infantCount') => {
         const validateQuantityTour = childCount + adultCount + infantCount + toddlerCount;
-        const quantityTourAvailable:number  = data?.baseQuantity - data?.quantity
+        const quantityTourAvailable:number  = Number(data?.baseQuantity) - Number(data?.quantity)
         if (type === 'infantCount') {
             if (action === 'increase' ) {
                 validateQuantityTour >= quantityTourAvailable ? toast.warn("Not Enough") :setInfantCount(infantCount + 1);

@@ -13,7 +13,7 @@ import 'swiper/css/scrollbar';
 import '../../app/(user)/(home)/tour/swiper.css'
 
 interface SlideProps {
-    previewImage :string[]
+    previewImage :string[] | undefined
 }
 
 //bang

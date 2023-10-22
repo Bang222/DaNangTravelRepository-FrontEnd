@@ -27,23 +27,13 @@ import {useDispatch, useSelector} from "react-redux";
 import jwt_decode from "jwt-decode";
 import {logIn, logOut} from "@/redux/feature/auth-slice";
 import {toast} from "react-toastify";
+import { Dispatch, AnyAction } from "@reduxjs/toolkit";
 
-export const refreshToken = async (data) => {
+export const refreshToken = async (data: { token: any; user?: any; }) => {
     try {
         const refreshToken = data?.token?.refresh
         const userId = data.user?.id
-        const randomNum:number = Math.floor(Math.random() * 1000) + 1;
-        const time:number = 3000
-        setTimeout(async ()=>{
-            const res = await axios.post('http://localhost:4000/api/refresh-token',{},{
-                headers: {
-                    "x-client-id": userId,
-                    " x-client-rf": refreshToken,
-                }
-            })
-            return res.data;
-        },time + randomNum)
-        const res = await axios.post('http://localhost:4000/api/refresh-token',{},{
+        const res = await axios.post('http://localhost:4000/api/refresh-token', {}, {
             headers: {
                 "x-client-id": userId,
                 " x-client-rf": refreshToken,
@@ -54,34 +44,23 @@ export const refreshToken = async (data) => {
         throw new Error("Token refresh failed"); // Handle this error appropriately
     }
 }
-export const createAxios = (dataRedux,dispatch) => {
+export const createAxios = (dataRedux: { token: { access: string; }; }, dispatch: Dispatch<AnyAction>) => {
     const newInstance = axios.create();
     newInstance.interceptors.request.use(
         async (config) => {
             const current = new Date();
-            let toastShown = false; // Biến để kiểm tra xem toast đã được hiển thị hay chưa
-            const toastInterval = 3600000; // Thời gian (millisecond) giữa các lần hiển thị toast, ví dụ 1 giờ
             const decodedToken = jwt_decode(dataRedux?.token.access);
+            // @ts-ignore
             if (decodedToken.exp < current.getTime() / 1000) {
                 try {
+                    console.log("Axios",decodedToken)
                     const data = await refreshToken(dataRedux);
                     config.headers["Authorization"] = "Bearer " + data.token.access;
                     config.headers["x-client-id"] = data.user.id;
                     dispatch(logIn(data))
                     setCookie('token',data.token.access)
                 } catch (error) {
-                    if (error.response && error.response.status === 401) {
-                        if (!toastShown) {
-                            toast.warning('Token expired. Please log in again');
-                            toastShown = true; // Đánh dấu rằng toast đã được hiển thị
-                            setTimeout(() => {
-                                toastShown = false; // Đặt lại biến để cho phép hiển thị lại toast sau một khoảng thời gian
-                            }, toastInterval);
-                        }
-                        dispatch(logOut());
-                    } else {
-                        console.error(error); // Log lỗi cụ thể cho mục đích gỡ lỗi
-                    }
+                    dispatch(logOut)
                 }
             }
             return config;
@@ -101,6 +80,7 @@ export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
         const data = res.data;
         return data
     } catch (err) {
+        // @ts-ignore
         return err;
     }
 }
@@ -114,6 +94,7 @@ export const RegisterApi = async (registerDTO: RegisterDTO) => {
     }
 }
 export const GetAllTourApi = async (currentPage:number,name?:string,start?:string,minPrice?:number,maxPrice?:number,startDay?:Date,endDate?:Date) => {
+    // @ts-ignore
     const queryParams = new URLSearchParams({
         name: name || '',
         start: start || '',
@@ -140,9 +121,6 @@ export const upVoteTourApi = async (tourId: string, accessToken: string, axiosJW
                 "x-client-id": userId
             }
         })
-        if (!res.data) {
-            throw new Error("can not find tour");
-        }
         const data = res.data;
         return data as voteDTO
     } catch (err) {
