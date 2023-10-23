@@ -25,9 +25,9 @@ interface CartProps {
     toggleCart: () => void;
     accessToken: string;
     userId: string;
-    setCart: React.Dispatch<React.SetStateAction<CartDTO[]>>
+    setCart: React.Dispatch<React.SetStateAction<CartDTO[]| undefined>>
     isLoadingOfCart:boolean;
-    cart:CartDTO[]
+    cart:CartDTO[] | undefined
 }
 
 //navbar

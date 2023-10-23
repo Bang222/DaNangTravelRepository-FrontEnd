@@ -53,7 +53,6 @@ export const createAxios = (dataRedux: { token: { access: string; }; }, dispatch
             // @ts-ignore
             if (decodedToken.exp < current.getTime() / 1000) {
                 try {
-                    console.log("Axios",decodedToken)
                     const data = await refreshToken(dataRedux);
                     config.headers["Authorization"] = "Bearer " + data.token.access;
                     config.headers["x-client-id"] = data.user.id;
@@ -77,6 +76,21 @@ export const createAxios = (dataRedux: { token: { access: string; }; }, dispatch
 export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
         const res = await axios.post('http://localhost:4000/api/auth/login', loginDTO)
+        const data = res.data;
+        return data
+    } catch (err) {
+        // @ts-ignore
+        return err;
+    }
+}
+export const LogOutAPI = async (accessToken:string,useId:string): Promise<any> => {
+    try {
+        const res = await axios.get('http://localhost:4000/api/logout',{
+            headers: {
+                "Authorization": "Bearer " + accessToken,
+                "x-client-id": useId,
+            }
+        })
         const data = res.data;
         return data
     } catch (err) {

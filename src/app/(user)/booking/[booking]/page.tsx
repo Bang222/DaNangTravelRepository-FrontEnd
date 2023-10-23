@@ -438,6 +438,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             }
         }
         , [isSuccess])
+    // @ts-ignore
+    // @ts-ignore
     return isLoading ? <LoadingComponent/> : (
         <>
             <Box sx={{paddingY: '48px', fontFamily: 'font-poppins'}}>

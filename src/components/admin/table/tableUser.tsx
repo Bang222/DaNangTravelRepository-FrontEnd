@@ -38,7 +38,7 @@ const TableUser: FC<TableUserProps> = ({accessToken,index,email,phone,created,ac
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }, {
@@ -50,6 +50,7 @@ const TableUser: FC<TableUserProps> = ({accessToken,index,email,phone,created,ac
                 toast.success("Baned User:",dataBanUser.email )
             },
             onError: (error) => {
+                // @ts-ignore
                 return toast.warn(error)
             }
         }
@@ -72,7 +73,7 @@ const TableUser: FC<TableUserProps> = ({accessToken,index,email,phone,created,ac
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }, {
@@ -83,17 +84,17 @@ const TableUser: FC<TableUserProps> = ({accessToken,index,email,phone,created,ac
                 queryClient.prefetchQuery(['getAllUserAdmin', userId]).then(r => console.log('user oke'))
                 toast.success("un Band Success:",dataUnBanUser.email)
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 return toast.warn(error)
             }
         }
     )
 
 
-    const handleBan = (userId) => {
+    const handleBan = (userId:string) => {
         banUser(userId)
     }
-    const handleUnBan = (userId) => {
+    const handleUnBan = (userId:string) => {
         unBanUser(userId)
     }
     return (

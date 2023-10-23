@@ -27,10 +27,11 @@ import {logOut} from "@/redux/feature/auth-slice";
 import {removeCookie} from "@/util/api/cookies";
 import CartComponent from "@/components/user/CartComponent";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {createAxios, getToCartAPI} from "@/util/api/apiReuqest";
+import {createAxios, getToCartAPI, LogOutAPI} from "@/util/api/apiReuqest";
 import {CartDTO} from "@/types";
 import {usePathname} from 'next/navigation'
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import {toast} from "react-toastify";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -75,21 +76,35 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 
 const PrimarySearchAppBar: React.FC = () => {
     const {isLoading, status} = useUserDetailAPI()
+    // @ts-ignore
     const isAuth = useSelector((state) => state.auth.value?.isAuth)
     const pathname = usePathname()
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter()
     const [showCart, setShowCart] = React.useState<boolean>(false);
+    // @ts-ignore
     const accessToken = useSelector((state) => state.auth.value?.token?.access)
+    // @ts-ignore
     const userId = useSelector((state) => state.auth.value?.user?.id)
     const [cart, setCart] = React.useState<CartDTO[]>();
     const [search, setSearch] = React.useState<string>()
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [loadingLogout, setLoadingLogOut] = React.useState<boolean>(false);
     const queryClient = useQueryClient();
 
+    // @ts-ignore
     const dataRedux = useSelector((state) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
+
+    const logOutAPI = async (accessToken:string,userId:string) => {
+        try {
+            const res = await LogOutAPI(accessToken, userId)
+            return res
+        } catch(e:any){
+            throw new Error(e)
+        }
+    }
 
     const {
         data: cartData,
@@ -117,9 +132,14 @@ const PrimarySearchAppBar: React.FC = () => {
         setAnchorEl(event.currentTarget);
     };
     const handleClickLogOut = () => {
-        dispatch(logOut())
-        removeCookie('token')
-        router.push('/')
+        setLoadingLogOut(true);
+        logOutAPI(accessToken, userId).then(()=>{
+            dispatch(logOut())
+            removeCookie('token')
+            router.push('/')
+            setLoadingLogOut(false)
+            toast.success("GoodBye")
+        } , error => toast.error("LogOut Again"))
     }
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
@@ -139,7 +159,7 @@ const PrimarySearchAppBar: React.FC = () => {
             }
         }
     };
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         if (e.key === 'Enter') {
             setLoading(true)
             setTimeout(() => {
@@ -206,7 +226,7 @@ const PrimarySearchAppBar: React.FC = () => {
                         </Tooltip>
                         {isAuth === true ?
                             <Box sx={{display: 'flex'}}>
-                                <Link href="/user/:id" underline="hover">
+                                <Link href="/user/:id" >
                                     <Tooltip title="Profile" sx={{color: 'white'}}>
                                         <IconButton>
                                             <AccountCircleIcon/>
@@ -222,7 +242,7 @@ const PrimarySearchAppBar: React.FC = () => {
                                 </Typography>
                             </Box>
                             :
-                            <Link href="/login" underline="hover">
+                            <Link href="/login">
                                 <Tooltip title="Log In" sx={{color: 'white'}}>
                                     <IconButton>
                                         <LoginIcon/>

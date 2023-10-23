@@ -19,6 +19,7 @@ interface TableStoreProps {
     banStore: (storeId: string) => void
     unBanStore: (storeId: string) => void
     month: number
+    storeId:string
     setMonth: React.Dispatch<React.SetStateAction<number>>
     currentDay: Date
     totalIncome: number
@@ -27,6 +28,7 @@ interface TableStoreProps {
 //bang
 
 const TableStore: FC<TableStoreProps> = ({
+    storeId,
                                              unBanStore,
                                              banStore,
                                              userId,
@@ -41,17 +43,17 @@ const TableStore: FC<TableStoreProps> = ({
                                              paidMonth,
                                              month, setMonth, currentDay, totalIncome
                                          }) => {
-    const handleConfirm = (storeId) => {
+    const handleConfirm = (storeId:string) => {
         const data = {
             month: month,
             storeId: storeId,
         }
         mutate(data)
     }
-    const handleBanStore = (storeId) => {
+    const handleBanStore = (storeId:string) => {
         banStore(storeId)
     }
-    const handleUnBanStore = (storeId) => {
+    const handleUnBanStore = (storeId:string) => {
         unBanStore(storeId)
     }
     return (
