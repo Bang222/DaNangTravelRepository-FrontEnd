@@ -15,9 +15,10 @@ import {useRouter} from "next/navigation";
 interface PageProps {
 }
 
-const Page: NextPage<PageProps> = ({}) => {
-    const role = useSelector((state) => state.auth.value?.user?.role)
-    const isAuth = useSelector((state) => state.auth.value?.isAuth)
+const Page: ({}: {}) => React.JSX.Element | void = ({}) => {
+    // @ts-ignore
+    const role = useSelector<string>((state) => state.auth.value?.user?.role)
+    const isAuth = useSelector<boolean>((state) => state.auth.value?.isAuth)
     const containerStyle:React.CSSProperties = {
         backgroundImage: `url('https://wallpaperaccess.com/full/3397663.jpg')`,
         backgroundSize: 'cover',

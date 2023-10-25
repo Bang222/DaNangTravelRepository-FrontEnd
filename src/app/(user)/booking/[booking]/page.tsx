@@ -120,7 +120,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         try {
             const res = await getTourById(dataGet, axiosJWT)
             return res
-        } catch (e) {
+        } catch (e:any) {
             throw new Error(e)
         }
     }, {
@@ -202,7 +202,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             }
             return toddlerData;
         });
-        const validatedDataOfInfants = infants?.map(infant => {
+        const validatedDataOfInfants = infants?.map((infant,index) => {
             const infantData = {...infant};
             if (!infantData?.name) {
                 return false;
@@ -227,6 +227,11 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             || validatedDataOfToddlers.includes(false) || validatedDataOfInfants.includes(false)) {
             setErrorMessage('')
             setPassengerError('Input Data');
+            return false;
+        }
+        if(!email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)){
+            toast.warn("Email Invalid")
+            setPassengerError('');
             return false;
         }
         setPassengerError('');
@@ -485,7 +490,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                         id={email}
                                                         data={email}
                                                         value={email}
-                                                        type={'text'}
+                                                        type={'email'}
                                                         setData={setEmail}
                                                         disabled={true}
                                                     />
@@ -548,7 +553,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                         id={email}
                                                         data={email}
                                                         value={email}
-                                                        type={'text'}
+                                                        type={'email'}
                                                         setData={setEmail}
                                                     />
                                                 </FormControl>
