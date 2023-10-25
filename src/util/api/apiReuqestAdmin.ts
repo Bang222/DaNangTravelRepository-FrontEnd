@@ -58,7 +58,7 @@ export const banStoreAdmin = async (accessToken: string, axiosJWT: any,userId:st
         throw err
     }
 }
-export const banUserAdmin = async (accessToken: string, axiosJWT: any,userId:string,userBanId) => {
+export const banUserAdmin = async (accessToken: string, axiosJWT: any,userId:string,userBanId:string) => {
     try {
         const res = await axiosJWT.get(`http://localhost:4000/api/admin/ban/user=${userBanId}`,{
             headers: {
