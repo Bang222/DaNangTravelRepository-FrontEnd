@@ -7,7 +7,7 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createAxios, createUpExperienceVoteAPI} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 
 interface UpvoteExperienceProps {
     accessToken:string
@@ -22,7 +22,7 @@ const UpvoteExperience: FC<UpvoteExperienceProps> = ({accessToken,userId,experie
     const [upvote, setUpvote] = useState<number>(experienceUpvote.length)
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
     const queryClient = useQueryClient()
@@ -31,19 +31,19 @@ const UpvoteExperience: FC<UpvoteExperienceProps> = ({accessToken,userId,experie
             try {
                 const res = await createUpExperienceVoteAPI(accessToken, userId, experienceId,axiosJWT)
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new Error(e)
             }
         }, {
             onSuccess(dataUpVote) {
                 return setUpvote(upvote + dataUpVote.total)
             },
-            onError(err) {
+            onError(err:any) {
                 toast.error(err)
             }
         }
     )
-    const handleSubmitUpvote = (experienceId) => {
+    const handleSubmitUpvote = (experienceId:string) => {
         mutateUpVote(experienceId)
     };
     return (

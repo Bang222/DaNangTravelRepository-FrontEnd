@@ -1,9 +1,9 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-type InitialState = {
+export type InitialState = {
     value: AuthState
 }
-type AuthState = {
+export type AuthState = {
     token: {
         access: string;
         refresh: string;
@@ -27,9 +27,10 @@ type AuthState = {
             name:string,
             slogan:string,
             imgUrl:string,
-            isActive:boolean,
+            isActive:string,
             userId:string,
             paymentId:string,
+            createdAt:Date,
         }
     };
 }
@@ -60,6 +61,7 @@ const initialState = {
                 imgUrl: '',
                 isActive: '',
                 paymentId: '',
+                createdAt:'',
                 userId: '',
             }
         },
@@ -80,7 +82,12 @@ export const auth = createSlice({
                 },
             };
         },
+        updateUserDetails: (state, action) => {
+            const { name, paymentId } = action.payload;
+            state.value.user.store.name = name;
+            state.value.user.store.paymentId = paymentId;
+        },
     }
 })
-export const {logIn, logOut} = auth.actions;
+export const {logIn, logOut,updateUserDetails} = auth.actions;
 export default auth.reducer

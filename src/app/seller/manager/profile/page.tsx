@@ -1,9 +1,20 @@
 'use client'
 import React, {FC, useEffect} from 'react';
 import Avatar from '@mui/material/Avatar';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Paragraph from "@/components/ui/Paragraph";
 import FormatDate from "@/components/ui/FormatDate";
+import {AuthState, logIn, updateUserDetails} from "@/redux/feature/auth-slice";
+import {AppDispatch, RootState, store} from "@/redux/store";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {useMutation} from "@tanstack/react-query";
+import {createAxios, EditStoreAPI, loginAPI} from "@/util/api/apiReuqest";
+import {EditStoreDTO} from "@/types/seller";
+import {AxiosInstance} from "axios/index";
+import {toast} from "react-toastify";
+import {router} from "next/client";
+
 
 interface PageProps {
 }
@@ -11,11 +22,65 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
-    const user = useSelector((state) => state.auth.value?.user)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
+    const accessToken:string = useSelector((state:RootState) => state.auth.value?.token.access)
     const [isEditing, setIsEditing] = React.useState(false);
-    const [editedName, setEditedName] = React.useState<String|undefined>(user.store.name);
-    const [editedPayPalId, setEditedPayPalId] = React.useState(user.store.paymentId);
-    const handleOnCliclked = () => {
+    const userData:AuthState=useSelector((state:RootState) => state.auth.value)
+
+    const dispatch = useDispatch<AppDispatch>()
+    const dataRedux:AuthState = useSelector((state:RootState) => state.auth?.value)
+    let axiosJWT:AxiosInstance = createAxios(dataRedux, dispatch)
+
+    const {mutate, isLoading, data} = useMutation(async (editStore:EditStoreDTO) =>{
+        try {
+            let time: number = 2000;
+            let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
+            const res = await EditStoreAPI(accessToken,axiosJWT,user.id,editStore)
+            if(res.statusCode !== 200) {
+                setTimeout(async () => {
+                    const res = await EditStoreAPI(accessToken, axiosJWT, user.id, editStore)
+                    return res
+                },time + randomNumber)
+            }
+            return res
+        } catch(e:any){
+            throw new Error(e)
+        }
+    }, {
+        onSuccess: (data) => {
+            if (data.statusCode === 200) {
+                dispatch(updateUserDetails({ name: data.name, paymentId:data.paymentId }))
+                setIsEditing(!isEditing)
+                return toast.success(data.message)
+            }
+            return toast.error(data.message)
+        },
+        onError: (error: any) => {
+            toast.error(error)
+        }
+    })
+
+
+    const formik = useFormik({
+        initialValues: {
+            name: user.store.name,
+            paymentId: user.store.paymentId,
+        },
+        validationSchema: Yup.object({
+        }),
+        onSubmit: (values) => {
+            if(!values.name && !values.paymentId){
+                return;
+            }
+            const editStore:EditStoreDTO = {
+                name: values.name,
+                paymentId: values.paymentId,
+                storeId: user.store.id
+            };
+            mutate(editStore)
+        },
+    });
+    const handleOnClicked = () => {
         setIsEditing(!isEditing)
     }
     useEffect(() => {
@@ -24,8 +89,8 @@ const Page: FC<PageProps> = ({}) => {
     return (
         <section className={"container mx-auto px-auto h-[84vh]"}>
             <div>
-            <button className={ isEditing ? " p-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full": "p-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"} onClick={()=> handleOnCliclked()}>
-                {isEditing ? "Save" : "Edit"}
+            <button className={ isEditing ? " p-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full": "p-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"} onClick={()=> handleOnClicked()}>
+                {isEditing ? "Back" : "Edit"}
             </button>
             </div>
             <div className={"h-[50%] lg:mt-[100px]"}>
@@ -44,32 +109,41 @@ const Page: FC<PageProps> = ({}) => {
                     </div>
                     <div className={"col-span-3 lg:col-span-1 mt-8 lg:mt-0 flex flex-wrap "}>
                         {isEditing ? (
+                            <form className={'pb-5'} onSubmit={formik.handleSubmit}>
                             <div>
                                 <input
                                     type="text"
-                                    value={editedName}
-                                    onChange={(e) => setEditedName(e.target.value)}
+                                    name={"name"}
+                                    value={formik.values.name}
+                                    onChange={formik.handleChange}
                                 />
                                 <Paragraph>
                                     <FormatDate date={user.store.createdAt} />
                                 </Paragraph>
                                 <Paragraph>{user.email}</Paragraph>
                                 <textarea
-                                    type="text"
-                                    className={"h-full w-full"}
-                                    value={editedPayPalId}
-                                    onChange={(e) => setEditedPayPalId(e.target.value)}
+                                    className="h-full w-full"
+                                    name={"paymentId"}
+                                    value={formik.values.paymentId}
+                                    onChange={formik.handleChange}
                                 />
                             </div>
+                                <button
+                                    className="max-md:text-[15px] submit-button text-[18px] font-medium bg-sky-500 rounded-xl flex justify-center shadow-md cursor-pointer p-1 pt-[5px] pb-[5px] w-full"
+                                    type={"submit"}
+                                >
+                                    {isLoading ? "Submitting" : "Submit"}
+                                </button>
+                            </form>
                         ) : (
                             <div className={''}>
-                                <Paragraph>{editedName}</Paragraph>
+                                <Paragraph>{user.store.name}</Paragraph>
                                 <Paragraph>
                                     <FormatDate date={user.store.createdAt} />
                                 </Paragraph>
                                 <Paragraph>{user.email}</Paragraph>
                                 <Paragraph>
-                                    <span className={"break-all"}>{editedPayPalId}</span>
+                                    <span className={"break-all"}>{user.store.paymentId}</span>
                                 </Paragraph>
                             </div>
                         )}

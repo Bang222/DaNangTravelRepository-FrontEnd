@@ -17,17 +17,18 @@ import {
     BillDTO,
     BillTotalPagesDTO,
     CreateStoreDTO, DataDashBoardDTO, DataDashBoardEachMonthDTO,
-    dataTourOfStore,
+    dataTourOfStore, EditStoreDTO,
     informationStoreDTO, orderHistoryUser,
     TourOfStore
 } from "@/types/seller";
 // import {createAxios} from '@/createInstance'
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import jwt_decode from "jwt-decode";
 import {logIn, logOut} from "@/redux/feature/auth-slice";
 import {toast} from "react-toastify";
 import { Dispatch, AnyAction } from "@reduxjs/toolkit";
+import {DataEditStoreDTO, StatusCodeDTO} from "@/types/StatusCode";
 
 export const refreshToken = async (data: { token: any; user?: any; }) => {
     try {
@@ -77,22 +78,38 @@ export const loginAPI = async (loginDTO: LoginDTO): Promise<UserRequestDTO> => {
     try {
         const res = await axios.post('http://localhost:4000/api/auth/login', loginDTO)
         const data = res.data;
-        return data
-    } catch (err) {
-        // @ts-ignore
+        return data as UserRequestDTO;
+    } catch (err:any) {
         return err;
     }
 }
-export const LogOutAPI = async (accessToken:string,useId:string): Promise<any> => {
+export const LogOutAPI = async (accessToken:string,useId:string,axiosJWT:AxiosInstance): Promise<any> => {
     try {
-        const res = await axios.get('http://localhost:4000/api/logout',{
+        const res = await axiosJWT.get('http://localhost:4000/api/logout',{
             headers: {
                 "Authorization": "Bearer " + accessToken,
                 "x-client-id": useId,
             }
         })
         const data = res.data;
-        return data
+        return data as StatusCodeDTO
+    } catch (err) {
+        // @ts-ignore
+        return err;
+    }
+}
+export const EditStoreAPI = async (accessToken:string,axiosJWT:any,useId:string,editStore:EditStoreDTO): Promise<any> => {
+    try {
+        const res = await axios.post('http://localhost:4000/api/store/edit',{
+            ...editStore
+        },{
+            headers: {
+                "Authorization": "Bearer " + accessToken,
+                "x-client-id": useId,
+            }
+        })
+        const data = res.data;
+        return data as DataEditStoreDTO
     } catch (err) {
         // @ts-ignore
         return err;
@@ -395,7 +412,7 @@ export const getAllFeedsPost = async () => {
         throw new Error('Error');
     }
 }
-export const getAllFeedsPostPage = async (currentPage: number,title?:string)=> {
+export const getAllFeedsPostPage = async (currentPage: number,title?:string | null)=> {
     try {
 
         const res = await axios.get(`http://localhost:4000/api/experience/page=${currentPage}/search=?title=${title ? title :''}`)
@@ -497,7 +514,7 @@ export const loginWithGoogle = async (accessToken: string) => {
             throw new Error("can not found");
         }
         const data = res.data;
-        return data
+        return data as UserRequestDTO
     } catch (err) {
         throw new Error('Error');
     }

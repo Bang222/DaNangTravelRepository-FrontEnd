@@ -10,7 +10,7 @@ import {Card, CircularProgress} from "@mui/material";
 import {useRouter} from "next/navigation";
 import {getCookie} from "@/util/api/cookies";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
 import {useIntersection} from "@mantine/hooks";
 import {useEffect, useRef} from "react";
@@ -24,12 +24,12 @@ interface TourData {
 export default React.memo(function TourComponent(props: TourData) {
     const {userIdInStore, dataSearch} = props
     const dispatch = useDispatch<AppDispatch>();
-    const isAuth = useSelector((state) => state.auth.value?.isAuth)
+    const isAuth = useSelector((state:RootState) => state.auth.value?.isAuth)
     const [userId, setUserId] = React.useState<string>(userIdInStore)
     const queryClient = useQueryClient();
     const [haha, setHaha] = React.useState<any>([])
     const router = useRouter()
-    const auth = useSelector((state) => state.auth.value?.isAuth)
+    const auth = useSelector((state:RootState) => state.auth.value?.isAuth)
     const handleClick = () => {
         if (auth === false) {
             router.push('/login')
@@ -41,6 +41,7 @@ export default React.memo(function TourComponent(props: TourData) {
         async ({pageParam = 1}) => {
             try {
                 const res = await GetAllTourApi(pageParam,dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
+                // @ts-ignore
                 if(res.includes('failed') || res.message){
                     setTimeout(async ()=>{
                         const res = await GetAllTourApi(pageParam, dataSearch?.name, dataSearch?.start, dataSearch?.min, dataSearch?.max, dataSearch?.startDay, dataSearch?.endDay);
@@ -79,6 +80,7 @@ export default React.memo(function TourComponent(props: TourData) {
         if (entry?.isIntersecting) fetchNextPage()
     }, [entry])
     const _tour:any = data?.pages?.reduce((acc,page) => {
+        // @ts-ignore
         return [...acc,...page]
     },[])
     return (
@@ -90,7 +92,7 @@ export default React.memo(function TourComponent(props: TourData) {
             ) : isError ? <div>Loading...</div> : (
                 <div>
                     {!data?.pages?.includes("failed") ? <>
-                        {_tour?.map((tour: TourDTO, i) => {
+                        {_tour?.map((tour: TourDTO, i:number) => {
                             if (i === _tour.length - 1) return <div key={tour?.id} ref={ref}
                                                                     className={'flex justify-center'}>
                                 <Card
@@ -109,7 +111,7 @@ export default React.memo(function TourComponent(props: TourData) {
                                         name={tour.name}
                                         imageUrl={tour.imageUrl}
                                         price={tour.price}
-                                        address={tour.address}
+                                        startAddress={tour.startAddress}
                                         userId={userId}
                                         upVote={tour.upVote}
                                         comments={tour.comments?.map((item) => item)}
@@ -135,7 +137,7 @@ export default React.memo(function TourComponent(props: TourData) {
                                             name={tour.name}
                                             imageUrl={tour.imageUrl}
                                             price={tour.price}
-                                            address={tour.address}
+                                            startAddress={tour.startAddress}
                                             userId={userId}
                                             upVote={tour.upVote}
                                             comments={tour.comments?.map((item) => item)}

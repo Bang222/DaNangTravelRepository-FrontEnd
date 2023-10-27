@@ -22,7 +22,7 @@ import NavbarChild from "@/components/user/navbar/NavbarChild";
 import {useUserDetailAPI} from "@/util/api/auth";
 import {useParams, useRouter} from "next/navigation";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {logOut} from "@/redux/feature/auth-slice";
 import {removeCookie} from "@/util/api/cookies";
 import CartComponent from "@/components/user/CartComponent";
@@ -32,6 +32,7 @@ import {CartDTO} from "@/types";
 import {usePathname} from 'next/navigation'
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {toast} from "react-toastify";
+import LogOutButton from "@/components/ui/logOutButton";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -77,29 +78,28 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 const PrimarySearchAppBar: React.FC = () => {
     const {isLoading, status} = useUserDetailAPI()
     // @ts-ignore
-    const isAuth = useSelector((state) => state.auth.value?.isAuth)
+    const isAuth = useSelector((state:RootState) => state.auth.value?.isAuth)
     const pathname = usePathname()
-    const dispatch = useDispatch<AppDispatch>();
     const router = useRouter()
     const [showCart, setShowCart] = React.useState<boolean>(false);
     // @ts-ignore
-    const accessToken = useSelector((state) => state.auth.value?.token?.access)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token?.access)
     // @ts-ignore
-    const userId = useSelector((state) => state.auth.value?.user?.id)
+    const userId = useSelector((state:RootState) => state.auth.value?.user?.id)
     const [cart, setCart] = React.useState<CartDTO[]>();
     const [search, setSearch] = React.useState<string>()
     const [loading, setLoading] = React.useState<boolean>(false);
     const [loadingLogout, setLoadingLogOut] = React.useState<boolean>(false);
     const queryClient = useQueryClient();
 
-    // @ts-ignore
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dispatch = useDispatch<AppDispatch>();
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
 
-    const logOutAPI = async (accessToken:string,userId:string) => {
+    const logOutAPI = async () => {
         try {
-            const res = await LogOutAPI(accessToken, userId)
+            const res = await LogOutAPI(accessToken, userId,axiosJWT)
             return res
         } catch(e:any){
             throw new Error(e)
@@ -131,16 +131,6 @@ const PrimarySearchAppBar: React.FC = () => {
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClickLogOut = () => {
-        setLoadingLogOut(true);
-        logOutAPI(accessToken, userId).then(()=>{
-            dispatch(logOut())
-            removeCookie('token')
-            router.push('/')
-            setLoadingLogOut(false)
-            toast.success("GoodBye")
-        } , error => toast.error("LogOut Again"))
-    }
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
     };
@@ -233,13 +223,7 @@ const PrimarySearchAppBar: React.FC = () => {
                                         </IconButton>
                                     </Tooltip>
                                 </Link>
-                                <Typography onClick={handleClickLogOut}>
-                                    <Tooltip title="Log out" sx={{color: 'white'}}>
-                                        <IconButton>
-                                            <LogoutIcon/>
-                                        </IconButton>
-                                    </Tooltip>
-                                </Typography>
+                                <LogOutButton logOutAPI={logOutAPI} setLoadingLogOut={setLoadingLogOut} dispatch={dispatch} />
                             </Box>
                             :
                             <Link href="/login">

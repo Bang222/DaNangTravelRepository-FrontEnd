@@ -42,7 +42,7 @@ import AccompaniedService from "@/components/ui/AccompaniedService";
 import LargeHeading from "@/components/ui/LargeHeading";
 import {toast} from "react-toastify";
 import PaymentButton from "@/components/user/PaymentButton";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import LoadingComponent from "@/components/LoadingComponent";
 import {notFound} from 'next/navigation';
 
@@ -62,10 +62,10 @@ interface Passenger {
 
 const Booking: NextPage<BookingProps> = ({params}) => {
     const tourId = params.booking
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const [openModal, setOpenModal] = React.useState(false);
-    const user = useSelector((state) => state.auth.value?.user)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
 
     const [tourError, setTourError] = useState("");
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
@@ -95,7 +95,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const query = useQueryClient()
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
     const {mutate: mutateBooking, isLoading: isLoadingBooking, data: dataBookingTour, status, isSuccess} = useMutation(
         async () => {

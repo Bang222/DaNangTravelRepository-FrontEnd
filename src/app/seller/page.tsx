@@ -18,7 +18,7 @@ interface PageProps {
 const Page: ({}: {}) => React.JSX.Element | void = ({}) => {
     // @ts-ignore
     const role = useSelector<string>((state) => state.auth.value?.user?.role)
-    const isAuth = useSelector<boolean>((state) => state.auth.value?.isAuth)
+    const isAuth = useSelector<any>((state) => state.auth.value?.isAuth)
     const containerStyle:React.CSSProperties = {
         backgroundImage: `url('https://wallpaperaccess.com/full/3397663.jpg')`,
         backgroundSize: 'cover',

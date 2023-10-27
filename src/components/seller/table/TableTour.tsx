@@ -12,7 +12,7 @@ import {router} from "next/client";
 import {Router} from "next/router";
 import {useRouter} from "next/navigation";
 import ModalOfPassenger from "@/components/seller/modal/ModalOfPassenger";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import ModalDetailPassengerOfTour from "@/components/seller/modal/ModalDetailPassengerOfTour";
 import ModalEditTour from "@/components/seller/modal/ModalEditTour";
 
@@ -25,11 +25,11 @@ interface TableTourProps {
 // tour manager
 
 const TableTour: FC<TableTourProps> = ({page,userId,setTotalPage}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const queryClient = useQueryClient();
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
     const router = useRouter()
@@ -45,7 +45,7 @@ const TableTour: FC<TableTourProps> = ({page,userId,setTotalPage}) => {
         async (tourId:string) => {
             try{
                 const res = deleteTourAPI(accessToken,userId,tourId,axiosJWT)
-            }catch(e) {
+            }catch(e:any) {
                 throw new Error(e)
             }
         },{
@@ -54,7 +54,7 @@ const TableTour: FC<TableTourProps> = ({page,userId,setTotalPage}) => {
                 toast.success('Delete Success')
 
             },
-            onError(error){
+            onError(error:any){
                 toast.error(error.message)
             }
         }
@@ -76,7 +76,7 @@ const TableTour: FC<TableTourProps> = ({page,userId,setTotalPage}) => {
     return (
         <table
             className="table table-auto w-[89vw] lg:w-[80vw] w-full text-gray-400 space-y-6 text-sm border-black border-solid">
-            <thead class="bg-black text-white">
+            <thead className="bg-black text-white">
             <tr>
                 <th scope="col" className=" px-2 py-1">#</th>
                 <th scope="col" className="whitespace-nowrap px-2 py-1 border border-solid">Name</th>

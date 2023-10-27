@@ -12,7 +12,7 @@ interface PaymentButtonProps {
     setPayment: React.Dispatch<React.SetStateAction<boolean>>
     userId: string
     accessToken: string
-    paymentId:string | undefined
+    paymentId:string |undefined
     mutateBooking: () => void
 }
 
@@ -24,7 +24,7 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
     const [errorDataBaking, setErrorDataBaking] = React.useState<string>()
     const [successDataBaking, setSuccessDataBaking] = React.useState<boolean>(false)
     const [paidFor, setPaidFor] = React.useState<boolean>(false)
-    const styleButtonPaypal = {
+    const styleButtonPaypal= {
         color: "silver",
         layout: "horizontal",
         tagline: 'false',
@@ -73,8 +73,8 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
                             // onCancel={(data, actions)=>{
                             //
                             // }}
-                            onApprove={(data, actions) => {
-                                return actions.order?.capture().then(function (details) {
+                            onApprove={(data:any, actions:any) => {
+                                return actions.order?.capture().then(function (details:any) {
                                    setSuccessDataBaking(true)
                                     mutateBooking()
 
@@ -84,7 +84,7 @@ const PaymentButton: FC<PaymentButtonProps> = ({mutateBooking, accessToken, user
                         />
                     </PayPalScriptProvider>
                 </button>
-                <Button variant="solid" color="secondary"
+                <Button variant="solid"
                         sx={{
                             width: {lg: "30%", xs: "100%"},
                             borderRadius: '30px',

@@ -23,7 +23,7 @@ const ButtonBackToTop = () => {
         })
     }
     return (
-        <>{setBackToTopButton &&
+        <>{backToTopButton &&
             <button className={backToTopButton ? "btn-scroll-up" : "btn-scroll-down"}
                     onClick={scrollUp}
             >

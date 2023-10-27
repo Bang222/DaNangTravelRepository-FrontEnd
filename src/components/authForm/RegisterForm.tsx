@@ -10,11 +10,10 @@ import Link from "next/link";
 import {RegisterApi} from "@/util/api/apiReuqest";
 import {useMutation} from "@tanstack/react-query";
 
-interface Props {
-    setSwitchForm: React.Dispatch<React.SetStateAction<boolean>>
+interface props {
 }
 
-const RegisterForm: (props) => JSX.Element = () => {
+const RegisterForm: () => JSX.Element = () => {
     const [showHidePassword, setShowHidePassword] = useState<boolean>(true)
     const [registerError, setRegisterError] = useState("");
     const [registerSuccess, setRegisterSuccess] = useState("")
@@ -23,7 +22,7 @@ const RegisterForm: (props) => JSX.Element = () => {
 
     const {mutate, isLoading,data} = useMutation(RegisterApi, {
         onSuccess: (data) => {
-            if(data.message) return setRegisterError(data.message)
+            if(data.statusCode > 200) return setRegisterError(data.message)
             setRegisterSuccess('Confirm your email')
             setRegisterError('')
         },
@@ -130,7 +129,9 @@ const RegisterForm: (props) => JSX.Element = () => {
                                 </div>
                             </div>
                             <div>
-                                <Label htmlFor={'sex'} className={'max-md:text-[12px]'}>Sex:</Label>
+                                <label htmlFor="sex" className="max-md:text-[12px]">
+                                    Sex:
+                                </label>
                                 <select id={'sex'} value={formik.values.sex} onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
                                         className=" rounded-[8px] mt-[4px] h-[32px] text-black">

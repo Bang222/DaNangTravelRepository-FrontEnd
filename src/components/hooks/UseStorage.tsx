@@ -1,11 +1,12 @@
 import {useEffect, useState} from "react";
 
-export default function useStorage(key, type = "sessionStorage") {
+export default function useStorage(key:any, type = "sessionStorage") {
     const [value, setValue] = useState();
 
     // Initial fetch from storage
     useEffect(() => {
         const storage = type === "sessionStorage" ? sessionStorage : localStorage;
+        // @ts-ignore
         setValue(storage.getItem(key));
     }, [key, type]);
 

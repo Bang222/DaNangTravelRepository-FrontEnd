@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {BillTotalPagesDTO, TourOfStore} from "@/types/seller";
 import ModalDetailOrder from "@/components/seller/modal/ModalDetailOrder";
 import {createAxios, getBillOfStore} from "@/util/api/apiReuqest";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
@@ -15,16 +15,16 @@ interface BillManagerProps {
 //bang
 
 const BillManager: FC<BillManagerProps> = ({}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const [page, setPage] = React.useState(1);
-    const [totalPages, setTotalPages] = React.useState<number | undefined>(undefined);
+    const [totalPages, setTotalPages] = React.useState<number>(1);
     const [money, setMoney] = useState<number>()
     const queryClient = useQueryClient()
 
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
 
@@ -36,7 +36,7 @@ const BillManager: FC<BillManagerProps> = ({}) => {
     }
 
 
-    const {data, isLoading, isError}: BillTotalPagesDTO = useQuery(['billStore', userId],
+    const {data, isLoading, isError} = useQuery(['billStore', userId],
         async () => {
             try {
                 let time: number = 2000;
@@ -49,7 +49,7 @@ const BillManager: FC<BillManagerProps> = ({}) => {
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }
@@ -77,8 +77,8 @@ const BillManager: FC<BillManagerProps> = ({}) => {
         document.title = `Bill`
     }, [])
     return isLoading ? <div> Loading...</div> : <> {data?.orders ? <section className={'w-full p-3 bg-white'}>
-        <div class="overflow-x-scroll md:overflow-x-auto">
-            <div class=" w-[79vw] h-[73vh] md:w-full">
+        <div className="overflow-x-scroll md:overflow-x-auto">
+            <div className=" w-[79vw] h-[73vh] md:w-full">
             <table className="table-auto w-full border border-solid">
                 <thead>
                 <tr className={'text-left border border-solid bg-black text-white text-[12px] md:text-[15px]'}>

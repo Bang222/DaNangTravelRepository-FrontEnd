@@ -3,7 +3,7 @@ import Paragraph from "@/components/ui/Paragraph";
 
 interface StatisticalOfTourComponentProps {
     text:string
-    total:number
+    total:number |undefined
 }
 
 //bang

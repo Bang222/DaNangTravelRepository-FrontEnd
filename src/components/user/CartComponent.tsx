@@ -18,7 +18,7 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {CartDTO} from "@/types";
 import Link from "next/link";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 
 // navbar component
 interface CartProps {
@@ -34,7 +34,7 @@ interface CartProps {
 
 const CartComponent: FC<CartProps> = ({toggleCart,accessToken,userId,setCart,cart,isLoadingOfCart}) => {
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
     const {mutate: mutateDeleteAValueOfCart,data:dataCartDelete, isLoading: isLoadingDeleteAValueOfCart, status, isSuccessGetOfCart:isSuccessGetOfCartDeleteAValueOfCart} = useMutation(
         async (tourId:string) => {

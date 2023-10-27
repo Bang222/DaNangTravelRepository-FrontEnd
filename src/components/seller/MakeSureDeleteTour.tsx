@@ -49,7 +49,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 interface MakeSureDeleteTourProps {
     tourId:string;
-    handleDelete : (tourId) => void
+    handleDelete : (tourId:string) => void
 }
 
 //bang

@@ -184,3 +184,8 @@ interface TourDTO {
     status: string;
     storeId:string;
 }
+export type EditStoreDTO = {
+    name?:string
+    paymentId?:string
+    storeId?:string
+}
