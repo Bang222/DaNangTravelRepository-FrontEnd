@@ -23,7 +23,8 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import {Keyboard, Navigation, Pagination} from "swiper/modules";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
+import {AuthState} from "@/redux/feature/auth-slice";
 
 
 interface InputCreateTourProps {
@@ -34,7 +35,7 @@ interface InputCreateTourProps {
 const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
     const [totalDay, setTotalDay] = React.useState<number>(0)
     const [price, setPrice] = React.useState<number>(0)
-    const [previewImage, setPreviewImage] = React.useState<>([])
+    const [previewImage, setPreviewImage] = React.useState<any>([])
     const vietnamCities = [
         "",
         "Ha Noi",
@@ -100,11 +101,11 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         "Yen Bai"
     ];
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux:AuthState = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId:string = useSelector((state:RootState) => state.auth.value?.user.id)
     const queryClient = useQueryClient()
 
     const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour, isSuccess: isSuccessCreateTour} = useMutation(
@@ -120,7 +121,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                 queryClient.fetchQuery(['TourOfStore', userId]).then(r => console.log('oke'));
                 toast.success('Create Success')
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 toast.error('Create error', error)
             },
         });
@@ -181,7 +182,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                 errors.startAddress = "Invalid city";
             }
             if (!vietnamCities.includes(values.endingAddress)) {
-                errors.endingAddress = "Invalid city";
+                errors.endingAddress = "Invalid Address";
             }
             return errors;
         },
@@ -211,22 +212,17 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
         },
     });
 
-    React.useEffect(() => {
-        const formattedPrice = formik.values.price.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        });
-        setPrice(formattedPrice)
-    }, [formik.values.price])
+
     React.useEffect(() => {
         const minSchedules = Math.ceil((new Date(formik.values.endDate) - new Date(formik.values.startDate)) / (1000 * 60 * 60 * 24)) + 1;
         setTotalDay(minSchedules)
     }, [formik.values.startDate, formik.values.endDate])
-    const handleDeleteImage = index => {
-        const updatedImages = previewImage.filter((_, i) => i !== index);
+    const handleDeleteImage = (index:number) => {
+        const updatedImages = previewImage.filter((_:any, i:number) => i !== index);
         formik.setFieldValue('files', updatedImages);
         setPreviewImage(updatedImages)
     };
+    // @ts-ignore
     return (
         <form onSubmit={formik.handleSubmit}>
             <div className={'nh:grid nh:grid-cols-2 nh:gap-2.5'}>
@@ -455,6 +451,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                     multiple
                     hidden
                     onChange={event => {
+                        // @ts-ignore
                         const selectedFiles = Array.from(event.target.files);
                         setPreviewImage(selectedFiles)
                         formik.setFieldValue('files', selectedFiles);
@@ -487,7 +484,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                 centeredSlides={true}
                                 modules={[Keyboard, Pagination, Navigation]}
                             >
-                                {previewImage?.map((file, index) => (
+                                {previewImage?.map((file: Blob | MediaSource, index: number) => (
                                     <SwiperSlide key={index}
                                                  style={{display: 'flex', justifyContent: 'center', height: '35vh'}}>
                                         {/* eslint-disable-next-line @next/next/no-img-element */}

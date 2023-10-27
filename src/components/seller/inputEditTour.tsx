@@ -23,7 +23,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import {Keyboard, Navigation, Pagination} from "swiper/modules";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {TourOfStore} from "@/types/seller";
 
 interface InputEditTourProps {
@@ -103,11 +103,11 @@ const InputEditTour: FC<InputEditTourProps> = ({dataTour}) => {
     ];
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const queryClient = useQueryClient()
     const {mutate: mutateEditTour, isLoading: isLoadingEditTour, isSuccess: isSuccessEditTour,data:dataEditTour} = useMutation(
         async (formData: any) => {

@@ -10,6 +10,7 @@ interface IntroductionProps {
 //bang
 
 const Introduction: FC<IntroductionProps> = ({}) => {
+    // @ts-ignore
     const {data, isLoading, isFetching, error} = useGetWeather()
     const currentDay = new Date(Date.now());
     const dateOptions: Intl.DateTimeFormatOptions = {

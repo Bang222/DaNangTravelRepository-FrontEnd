@@ -6,7 +6,7 @@ import {DataDashBoardDTO} from "@/types/seller";
 import Paragraph from "@/components/ui/Paragraph";
 
 interface HomeManagerProps {
-    dataManagerAMonth:DataDashBoardDTO
+    dataManagerAMonth:DataDashBoardDTO | undefined
     month:number
     setMonth: React.Dispatch<React.SetStateAction<number>>
 }
@@ -48,10 +48,10 @@ const HomeManager: FC<HomeManagerProps> = ({dataManagerAMonth,setMonth,month}) =
                 </select>
             </section>
             <section className={"flex flex-1 flex-wrap justify-center md:justify-around gap-4 mb-5"}>
-                <CardComponent text={"Tour"} total={dataManagerAMonth.totalTours}/>
-                <CardComponent text={"Order"} total={dataManagerAMonth.totalOrder}/>
-                <CardComponent text={"Total Income"} total={dataManagerAMonth.totalIncome}/>
-                <CardComponent text={"Passengers"} total={dataManagerAMonth.totalPassengers}/>
+                <CardComponent text={"Tour"} total={dataManagerAMonth?.totalTours}/>
+                <CardComponent text={"Order"} total={dataManagerAMonth?.totalOrder}/>
+                <CardComponent text={"Total Income"} total={dataManagerAMonth?.totalIncome}/>
+                <CardComponent text={"Passengers"} total={dataManagerAMonth?.totalPassengers}/>
             </section>
             <section className={'w-full pt-5'}>
                 <ChartAndBody dataManagerAMonth={dataManagerAMonth}/>
