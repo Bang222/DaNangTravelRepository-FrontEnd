@@ -34,6 +34,9 @@ import {Tooltip} from "@mui/material";
 import StoreIcon from '@mui/icons-material/Store';
 import PersonIcon from '@mui/icons-material/Person';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import {AppDispatch, RootState} from "@/redux/store";
+import {createAxios, LogOutAPI} from "@/util/api/apiReuqest";
+import LogOutButton from "@/components/ui/logOutButton";
 
 const drawerWidth = 240;
 
@@ -53,22 +56,29 @@ interface MenuItem {
 }
 
 export default function LayoutComponent({children, ...props}: Props) {
-    const user = useSelector((state) => state.auth.value?.user)
-    const role = useSelector((state) => state.auth.value?.user.role)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
+    const role = useSelector((state:RootState) => state.auth.value?.user.role)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token?.access)
     const {window} = props;
+    const [loadingLogout, setLoadingLogOut] = React.useState<boolean>(false);
     const pathname = usePathname()
+    // @ts-ignore
     const [selectedComponent, setSelectedComponent] = React.useState(pathname.split('/')[3] ?? 'home'); // Default selected component
     const router = useRouter()
+
+    const dispatch = useDispatch<AppDispatch>();
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
+    let axiosJWT = createAxios(dataRedux, dispatch)
 
     const MailContent = () => <div>Mail Component Content</div>;
 
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
-    const handleDrawerToggle = (component) => {
+    const handleDrawerToggle = (component:any) => {
         setMobileOpen(!mobileOpen);
     };
 
-    const handleMenuItemClick = (component) => {
+    const handleMenuItemClick = (component:any) => {
         handleDrawerToggle(component);
         setSelectedComponent(component);
         if (role === 'admin') {
@@ -154,6 +164,15 @@ export default function LayoutComponent({children, ...props}: Props) {
         },
         ]
     )
+
+    const logOutAPI = async () => {
+        try {
+            const res = await LogOutAPI(accessToken, user.id,axiosJWT)
+            return res
+        } catch(e:any){
+            throw new Error(e)
+        }
+    }
 
     useEffect(() => {
         if (role === 'admin') {
@@ -292,9 +311,7 @@ export default function LayoutComponent({children, ...props}: Props) {
                                                size={'sm'}>{role === 'admin' ? 'admin' : user?.store?.name}</Paragraph>
                                 </div>
                                 <div className={'ml-6 cursor-pointer hover:text-gray-950'}>
-                                    <Tooltip title="Log out">
-                                        <LogoutIcon/>
-                                    </Tooltip>
+                                    <LogOutButton logOutAPI={logOutAPI} setLoadingLogOut={setLoadingLogOut} dispatch={dispatch} />
                                 </div>
                             </div>
                         </div>

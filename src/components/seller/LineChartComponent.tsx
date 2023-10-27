@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import * as React from "react";
 import {useRouter} from "next/navigation";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {createAxios, DashboardDataManagerAMonth, DashboardDataManagerEachMonth} from "@/util/api/apiReuqest";
 import {DataDashBoardDTO, DataDashBoardEachMonthDTO} from "@/types/seller";
 
@@ -16,22 +16,22 @@ interface LineChartComponentProps {
 //bang
 
 const LineChartComponent: FC<LineChartComponentProps> = () => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const currenDay = new Date()
     const [month, setMonth] = React.useState<number>(currenDay.getMonth());
     const router = useRouter()
     const queryClient = useQueryClient()
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
     const {
         data: dataManagerEachMonth,
         isLoading: isLoadingManagerEachMonth,
         isError: isErrorManagerEachMonth
-    }:DataDashBoardEachMonthDTO = useQuery(['dataDashEachMonthBoardChart', userId],
+    } = useQuery(['dataDashEachMonthBoardChart', userId],
         async () => {
             try {
                 let time: number = 2000;
@@ -44,11 +44,12 @@ const LineChartComponent: FC<LineChartComponentProps> = () => {
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }
     )
+    // @ts-ignore
     return isLoadingManagerEachMonth ? <div>Loading...</div>: (
         <LineChart
             xAxis={[{ data:dataManagerEachMonth?.map((item)=> item.month), label : 'Month' }]}

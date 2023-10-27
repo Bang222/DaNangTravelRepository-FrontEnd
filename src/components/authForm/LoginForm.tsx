@@ -28,12 +28,12 @@ const LoginForm: () => JSX.Element = () => {
             try {
                 const res = loginWithGoogle(accessToken)
                 return res
-            } catch(e){
+            } catch(e:any){
                 throw new Error(e)
             }
         }, {
             onSuccess: (googleData) => {
-                if(googleData.message){
+                if(googleData.statusCode > 200){
                     return setLoginError(googleData.message)
                 }
                 const token = googleData?.token?.access
@@ -41,7 +41,7 @@ const LoginForm: () => JSX.Element = () => {
                 dispatch(logIn(googleData));
                 router.push('/');
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 setLoginError(error.error);
             },
         }
@@ -55,13 +55,13 @@ const LoginForm: () => JSX.Element = () => {
     });
     const {mutate, isLoading, data: userData} = useMutation(loginAPI, {
         onSuccess: (userData) => {
-            if(userData.error) return setLoginError(userData.error);
+            if(userData.statusCode > 200) return setLoginError(userData.message);
             const token = userData.token.access
             setCookie('token', token)
             dispatch(logIn(userData));
             router.push('/');
         },
-        onError: (error) => {
+        onError: (error:any) => {
             setLoginError(error.message);
         },
     });
