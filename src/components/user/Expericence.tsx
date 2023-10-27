@@ -35,6 +35,7 @@ import {useIntersection} from "@mantine/hooks";
 import {userExperience} from "@/types";
 import UpvoteExperience from "@/components/user/UpvoteExperience";
 import getStorage from "redux-persist/es/storage/getStorage";
+import {RootState} from "@/redux/store";
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -52,11 +53,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     }),
 }));
 export default function Experience() {
-    const userId = useSelector((state) => state.auth.value?.user.id)
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const [expandedItemId, setExpandedItemId] = React.useState(null);
 
-    const toggleContent = (itemId) => {
+    const toggleContent = (itemId:any) => {
         setExpandedItemId((prevExpandedItemId) => {
             return prevExpandedItemId === itemId ? null : itemId;
         });
@@ -73,7 +74,7 @@ export default function Experience() {
     } = useInfiniteQuery(['experienceExperiencePage', userId],
         async ({pageParam = 1}) => {
             try {
-                const res = await getAllFeedsPostPage(pageParam, localStorage.getItem('searchExperience'))
+                const res = await getAllFeedsPostPage(pageParam, localStorage?.getItem('searchExperience'))
                 return res
             } catch (e) {
                 return 'failed'
@@ -112,7 +113,7 @@ export default function Experience() {
     React.useEffect(()=>{
 
     },[localStorage?.getItem('searchExperience')])
-    const handleExpandClick = (experienceId) => {
+    const handleExpandClick = (experienceId:string) => {
         setExpanded(!expanded);
     };
     const options: Intl.DateTimeFormatOptions = {

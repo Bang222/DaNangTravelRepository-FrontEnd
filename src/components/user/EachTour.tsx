@@ -23,7 +23,7 @@ import Link from "next/link";
 import LineCustom from "@/components/ui/LineCustom";
 import PublicSharpIcon from '@mui/icons-material/PublicSharp';
 import {toast} from "react-toastify";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 
 
 interface TourDetailProps {
@@ -39,7 +39,7 @@ interface TourDetailProps {
     name: string;
     imageUrl: string[];
     price: number;
-    address: string;
+    startAddress: string;
     userId: string;
     upVote: string[]
     createdAt: Date;
@@ -51,14 +51,14 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const [isLoadingOfCart, setLoadingOfCart] = useState<boolean>(false);
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
-    const token = useSelector<any>((state) => state.auth.value?.token)
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const token = useSelector((state:RootState) => state.auth.value?.token)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
 
-    const user = useSelector((state) => state.auth.value?.user)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
     const [err, setErr] = React.useState<string>('')
     const [commentData, setCommentData] = useState<CommentTourDTO[] | undefined>()
     const [upvote, setUpvote] = useState<number>(tour?.upVote?.length)
@@ -77,7 +77,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
             onSuccess: (data) => {
                 setUpvote(upvote + data.total)
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 if(error?.response?.data?.status === 429) {
                     toast.warn("Please Don\'t spam wait after 60s", {
                         position: "top-right",
@@ -116,7 +116,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                     },
                 )
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 toast.warn('Can not Add',error)
             },
         });
@@ -152,7 +152,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
     const formattedStartDate = startDate.toLocaleDateString('es-uk', options);
     const formatCreateAt = createdAt.toLocaleDateString('es-uk', options);
     const formatPrice = tour.price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
-    const differenceInMilliseconds = endDate - startDate;
+    const differenceInMilliseconds = Number(endDate) - Number(startDate);
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
     return (
         <>
@@ -181,7 +181,7 @@ const EachTour: FC<TourDetailProps> = ({...tour}) => {
                     <div>
                         <Paragraph size={'sm'}>Price: <b className={'text-[8px] sm:text-[12px]'}>{formatPrice}/<b
                             className={'text-[8px] lg:text-[12px]'}>Adult</b></b></Paragraph>
-                        <Paragraph size={'sm'}>Address: <b className={'text-[8px] sm:text-[12px]'}>{tour.address}</b></Paragraph>
+                        <Paragraph size={'sm'}>Start Address: <b className={'text-[8px] sm:text-[12px]'}>{tour.startAddress}</b></Paragraph>
                         <Paragraph size={'sm'}>Day Start: <b className={'text-[8px] sm:text-[12px]'}>{formattedStartDate}</b>
                             <Paragraph size={'sm'}>
                                 Total: <b>{differenceInDays}</b> <span

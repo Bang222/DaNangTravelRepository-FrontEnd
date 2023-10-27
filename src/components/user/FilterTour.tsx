@@ -15,6 +15,7 @@ import EachTour from "@/components/user/EachTour";
 import TourComponent from "@/components/user/TourComponent";
 import {useQueryClient} from "@tanstack/react-query";
 import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 interface FilterTourProps {
     formik: any
@@ -30,7 +31,7 @@ interface FilterTourProps {
 
 const FilterTour: FC<FilterTourProps> = (props: FilterTourProps) => {
     const {formik, userId, dataSearch, setDataSearch, vietnamCities} = props
-    const userIdInStore = useSelector((state) => state.auth.value?.user.id)
+    const userIdInStore = useSelector((state:RootState) => state.auth.value?.user.id)
     const queryClient = useQueryClient();
     const formatMinPrice = formik?.values?.min?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
     const formatMaxPrice = formik?.values?.max?.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
