@@ -19,7 +19,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createAxios, createCommentPost} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
+import {useRouter} from "next/navigation";
 
 const BootstrapDialog = styled(Dialog)(({theme}) => ({
     '& .MuiDialogContent-root': {
@@ -63,26 +64,30 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 interface ModalPostProps {
     comments: commentDTO[]
     experienceId:string
+    isAuth: boolean
 }
 //Component/Experience
-const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) => {
+const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId,isAuth}) => {
     const [open, setOpen] = React.useState(false);
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
-    const user = useSelector<userDTO>((state) => state.auth.value?.user)
-    const userId = useSelector((state) => state.auth.value?.user.id)
-    const accessToken = useSelector((state) => state.auth.value?.token?.access)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token?.access)
     const [content,setContent] = React.useState<string>()
+
+    const router = useRouter()
+
     const queryClient = useQueryClient()
     const {mutate: mutateComment, isLoading: isLoadingComment, status, isSuccess} = useMutation(
         async (content:string) => {
             try {
                 const res = await createCommentPost(accessToken, userId, experienceId, content, axiosJWT)
                 return res
-            } catch(e){
+            } catch(e:any){
                 throw new Error(e)
             }
         },{
@@ -98,6 +103,9 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
     )
 
     const handleClickOpen = () => {
+        if(!isAuth){
+           return router.push('/login')
+        }
         setOpen(true);
     };
     const handleClose = () => {
@@ -156,7 +164,7 @@ const ModalCommentExpericence: FC<ModalPostProps> = ({comments,experienceId}) =>
                                     }
                         ></CardHeader>
                         <div className={' flex justify-center items-center w-[65%] md:w-[80%]'}>
-                                <textarea type='text'
+                                <textarea
                                           placeholder='comment'
                                           name='content'
                                           id="content"

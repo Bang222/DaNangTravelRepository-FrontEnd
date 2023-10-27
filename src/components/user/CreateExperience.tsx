@@ -21,6 +21,7 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createAxios, createExperience} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
 import {AppDispatch, RootState} from "@/redux/store";
+import {useRouter} from "next/navigation";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -39,7 +40,12 @@ const style = {
 
 const CreateExperience: React.FC = () => {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+    const isAuth = useSelector((state:RootState) => state.auth.value.isAuth)
+    const router = useRouter()
+    const handleOpen = () => {
+        if(!isAuth) router.push("/login")
+        setOpen(true)
+    };
     const handleClose = () => setOpen(false);
 
     const dispatch = useDispatch<AppDispatch>()

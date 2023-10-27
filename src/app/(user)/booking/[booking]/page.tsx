@@ -63,6 +63,7 @@ interface Passenger {
 const Booking: NextPage<BookingProps> = ({params}) => {
     const tourId = params.booking
     const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const isAuth = useSelector((state:RootState) => state.auth.value.isAuth)
     const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const [openModal, setOpenModal] = React.useState(false);
     const user = useSelector((state:RootState) => state.auth.value?.user)
@@ -387,9 +388,9 @@ const Booking: NextPage<BookingProps> = ({params}) => {
         month: 'numeric',
         day: 'numeric',
     }
-    const startDate = new Date(dataTour?.startDate);
-    const endDate = new Date(dataTour?.endDate)
-    const createdAt = new Date(dataTour?.createdAt);
+    const startDate = new Date(dataTour?.startDate ?? "null");
+    const endDate = new Date(dataTour?.endDate ?? "null")
+    const createdAt = new Date(dataTour?.createdAt?? "null");
     const formattedStartDate = startDate.toLocaleDateString('es-uk', options);
     const formatEnd = endDate.toLocaleDateString('es-uk', options);
     // @ts-ignore
@@ -399,10 +400,10 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const inputNumber = parseInt(String(dataTour?.price), 10);
     const formatPrice = inputNumber.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
 
-    const InputAdultPrice = dataTour?.price * adultCount
-    const InputChildPrice = dataTour?.price * childCount
-    const InputToddlerPrice = dataTour?.price * toddlerCount * 0.7
-    const InputInfantPrice = dataTour?.price * infantCount * 0.15
+    const InputAdultPrice =( dataTour?.price ?? 0) * adultCount
+    const InputChildPrice = (dataTour?.price ?? 0) * childCount
+    const InputToddlerPrice = (dataTour?.price ?? 0) * toddlerCount * 0.7
+    const InputInfantPrice = (dataTour?.price ?? 0) * infantCount * 0.15
     const InputTotalPrice = InputAdultPrice + InputChildPrice + InputToddlerPrice + InputInfantPrice
 
     const adultPrice = InputAdultPrice.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})
@@ -443,9 +444,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
             }
         }
         , [isSuccess])
-    // @ts-ignore
-    // @ts-ignore
-    return isLoading ? <LoadingComponent/> : (
+    return isAuth ?
+     isLoading ? <LoadingComponent/> : (
         <>
             <Box sx={{paddingY: '48px', fontFamily: 'font-poppins'}}>
                 <Container fixed>
@@ -1270,6 +1270,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                 }
             </Box>
         </>
-    );
+    )
+        :  router.push("/login")
 }
 export default Booking

@@ -1,3 +1,5 @@
+import {StatusCodeDTO} from "@/types/StatusCode";
+
 export interface userDTO {
     id: string;
     firstName: string;
@@ -29,6 +31,9 @@ export interface userExperience{
     title:string
     comments: commentDTO[]
     user: userDTO
+}
+export interface UserExperiencesDTO extends StatusCodeDTO {
+    getExperience: userExperience[]
 }
 export interface createExperienceCommentDTO{
     experienceId:string

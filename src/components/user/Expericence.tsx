@@ -36,6 +36,7 @@ import {userExperience} from "@/types";
 import UpvoteExperience from "@/components/user/UpvoteExperience";
 import getStorage from "redux-persist/es/storage/getStorage";
 import {RootState} from "@/redux/store";
+import {useRouter} from "next/navigation";
 
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -56,7 +57,7 @@ export default function Experience() {
     const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const [expandedItemId, setExpandedItemId] = React.useState(null);
-
+    const isAuth:boolean = useSelector((state:RootState) => state.auth.value?.isAuth)
     const toggleContent = (itemId:any) => {
         setExpandedItemId((prevExpandedItemId) => {
             return prevExpandedItemId === itemId ? null : itemId;
@@ -76,13 +77,13 @@ export default function Experience() {
             try {
                 const res = await getAllFeedsPostPage(pageParam, localStorage?.getItem('searchExperience'))
                 return res
-            } catch (e) {
-                return 'failed'
+            } catch (e:any) {
+                return {statusCode: 400, message: e.message,getExperience:[]}
             }
         },
         {
             getNextPageParam: (data, pages) => {
-                if (data?.length > 2) {
+                if (data?.getExperience?.length > 2 ?? pages?.length > 2) {
                     return pages.length + 1;
                 } else {
                     return undefined
@@ -99,17 +100,6 @@ export default function Experience() {
     useEffect(() => {
         if (entry?.isIntersecting) fetchNextPageExperience()
     }, [entry])
-
-    const dataExperience = dataExperiencePages?.pages?.flatMap((page) => page)
-    React.useEffect(() => {
-        if (isErrorExperience) {
-            if (experienceError?.status === 429) {
-                toast.error('Too many requests. Please wait and try again later.');
-            } else {
-                toast.error('An error occurred while fetching experiences.');
-            }
-        }
-    }, [experienceError, isErrorExperience])
     React.useEffect(()=>{
 
     },[localStorage?.getItem('searchExperience')])
@@ -121,13 +111,16 @@ export default function Experience() {
         month: 'numeric',
         day: 'numeric',
     }
+    const dataExperience = dataExperiencePages?.pages.flatMap((item) => item.getExperience)
     useEffect(() => {
         document.title = `Experience`
     }, [])
+    useEffect(() => {
+    }, []);
     return isLoadingExperience ? <div className={'w-full flex justify-center h-screen'}>
             <CircularProgress color="secondary"/>
         </div> :
-        dataExperience[0] !== "failed" ? (
+        !isErrorExperience ? (
             <>
                 {
                     dataExperience?.map((item, index) => {
@@ -157,7 +150,8 @@ export default function Experience() {
                                         }
                                         title={`${item.user.firstName} ${item.user.lastName}`}
                                         subheader={<div>{formatCreateAt} <PublicSharpIcon sx={{fontSize: '14px'}}/>
-                                        </div>}
+                                        </div>
+                                    }
                                     />
                                     <CardContent sx={{paddingY: "8px"}}>
                                         <Typography variant="body1" color="text.primary">
@@ -189,13 +183,13 @@ export default function Experience() {
                                             userId={userId}
                                             experienceId={item.id}
                                             accessToken={accessToken}
-                                            experienceUpvote={item.upVote}/>
+                                            experienceUpvote={item.upVote} isAuth={isAuth}/>
                                         <Typography sx={{display: 'flex', alignItems: 'center'}}>
                                             <span className={'text-[18px]'}>{item.comments.length}</span>
                                             <Tooltip title="comment" placement="top"
                                                      sx={{color: 'black', cursor: 'pointer'}}>
                                                 <ModalCommentExpericence
-                                                    comments={item.comments} experienceId={item.id}/>
+                                                    comments={item.comments} experienceId={item.id} isAuth ={isAuth}/>
                                             </Tooltip>
                                         </Typography>
                                     </CardActions>
@@ -252,6 +246,7 @@ export default function Experience() {
                                     />
                                     <CardActions>
                                         <UpvoteExperience
+                                            isAuth={isAuth}
                                             userId={userId}
                                             experienceId={item.id}
                                             accessToken={accessToken}
@@ -261,7 +256,7 @@ export default function Experience() {
                                             <Tooltip title="comment" placement="top"
                                                      sx={{color: 'black', cursor: 'pointer'}}>
                                                 <ModalCommentExpericence
-                                                    comments={item.comments} experienceId={item.id}/>
+                                                    comments={item.comments} experienceId={item.id} isAuth={isAuth}/>
                                             </Tooltip>
                                         </Typography>
                                     </CardActions>

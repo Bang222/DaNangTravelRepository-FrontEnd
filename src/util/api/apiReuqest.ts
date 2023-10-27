@@ -5,7 +5,7 @@ import {
     RegisterDTO, SendBackEndDTO,
     TourDetailInterface,
     TourIdEndToken,
-    UserDTO, userExperience,
+    UserDTO, userExperience, UserExperiencesDTO,
     UserRequestDTO,
     voteDTO
 } from "@/types";
@@ -420,7 +420,7 @@ export const getAllFeedsPostPage = async (currentPage: number,title?:string | nu
             throw new Error("can not found");
         }
         const data = res.data;
-        return data as userExperience[]
+        return data as UserExperiencesDTO
     } catch (err) {
         throw new Error('Error');
     }

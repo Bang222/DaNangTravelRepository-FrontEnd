@@ -13,6 +13,7 @@ import {useDebounce} from "@/components/hooks/UseDebounce";
 import ButtonBackToTop from "@/components/buttonBackToTop/ButtonBackToTop";
 import {CircularProgress} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import { RootState } from '@/redux/store';
 
 interface PageProps {
 }
@@ -20,7 +21,7 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
-    const userIdInStore = useSelector((state) => state.auth.value?.user.id)
+    const userIdInStore = useSelector((state:RootState) => state.auth.value?.user.id)
     const [value, setValue] = React.useState<string>('')
     const [loading, setLoading] = React.useState<boolean>(false)
     const [isStickyLeft, setIsStickyLeft] = React.useState(false);
@@ -101,6 +102,7 @@ const Page: FC<PageProps> = ({}) => {
         setIsStickyLeft(!isStickyLeft);
     };
     const [dataSearch, setDataSearch] = React.useState({
+        name:"",
         start: "",
         min: "",
         max: "",

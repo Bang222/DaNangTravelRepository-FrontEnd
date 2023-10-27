@@ -4,6 +4,8 @@ import Experience from "@/components/user/Expericence";
 import CreateExperience from "@/components/user/CreateExperience";
 import NavLeft from "@/components/user/navbar/NavLeft";
 import ButtonBackToTop from "@/components/buttonBackToTop/ButtonBackToTop";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 export default async function Home() {
     return (
