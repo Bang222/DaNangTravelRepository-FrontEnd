@@ -9,14 +9,14 @@ import {FC} from "react";
 
 interface HomeManagerProps {
     text:string;
-    total:number;
+    total:number |undefined;
 }
 
 //seller/pages
 
 const CardComponent: FC<HomeManagerProps> = ({text,total}) => {
     const optionVND = {style: 'currency', currency: 'VND'}
-    let VNDChange:string
+    let VNDChange:string |undefined
     if(text === 'Total Income'){
         VNDChange= total?.toLocaleString('vi-VN', optionVND)
     }

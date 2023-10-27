@@ -7,7 +7,7 @@ import {DataDashBoardDTO} from "@/types/seller";
 import Paragraph from "@/components/ui/Paragraph";
 
 interface CharAndBodyProps {
-    dataManagerAMonth:DataDashBoardDTO
+    dataManagerAMonth:DataDashBoardDTO |undefined
 }
 
 //bang
@@ -23,14 +23,14 @@ const ChartAndBody: FC<CharAndBodyProps> = ({dataManagerAMonth}) => {
             </div>
             <div className={'py-3'}> <LineCustom size={'100%'}/> </div>
             <div className={'py-3 px-5 flex flex-wrap justify-center bg-gray-600'}>
-                <StatisticalOfTourComponent text={'Like'} total={dataManagerAMonth.totalLike}/>
-                <StatisticalOfTourComponent text={'Comment'} total={dataManagerAMonth.totalComments}/>
-                <StatisticalOfTourComponent text={'Adults'} total={dataManagerAMonth.totalAdults}/>
-                <StatisticalOfTourComponent text={'Children'} total={dataManagerAMonth.totalChildren}/>
-                <StatisticalOfTourComponent text={'Toddler'} total={dataManagerAMonth.totalToddler}/>
-                <StatisticalOfTourComponent text={'Infants'} total={dataManagerAMonth.totalInfants}/>
-                <StatisticalOfTourComponent text={'Women'} total={dataManagerAMonth.totalWomen}/>
-                <StatisticalOfTourComponent text={'Men'} total={dataManagerAMonth.totalMen}/>
+                <StatisticalOfTourComponent text={'Like'} total={dataManagerAMonth?.totalLike}/>
+                <StatisticalOfTourComponent text={'Comment'} total={dataManagerAMonth?.totalComments}/>
+                <StatisticalOfTourComponent text={'Adults'} total={dataManagerAMonth?.totalAdults}/>
+                <StatisticalOfTourComponent text={'Children'} total={dataManagerAMonth?.totalChildren}/>
+                <StatisticalOfTourComponent text={'Toddler'} total={dataManagerAMonth?.totalToddler}/>
+                <StatisticalOfTourComponent text={'Infants'} total={dataManagerAMonth?.totalInfants}/>
+                <StatisticalOfTourComponent text={'Women'} total={dataManagerAMonth?.totalWomen}/>
+                <StatisticalOfTourComponent text={'Men'} total={dataManagerAMonth?.totalMen}/>
             </div>
         </Card>
     );

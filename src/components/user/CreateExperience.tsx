@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {createAxios, createExperience} from "@/util/api/apiReuqest";
 import {toast} from "react-toastify";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -43,20 +43,20 @@ const CreateExperience: React.FC = () => {
     const handleClose = () => setOpen(false);
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux,dispatch)
 
-    const user = useSelector<userDTO>((state) => state.auth.value?.user)
-    const userId = useSelector((state) => state.auth.value?.user.id)
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const user = useSelector((state:RootState) => state.auth.value?.user)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const queryClient = useQueryClient()
 
-    const [previewImage, setPreviewImage] = React.useState<>()
+    const [previewImage, setPreviewImage] = React.useState<any>()
     const {mutate: mutateCreateTour, isLoading: isLoadingCreateTour} = useMutation(
         async (data: any) => {
             try {
                 const res = await createExperience(accessToken, userId, data ,axiosJWT )
-            } catch (e) {
+            } catch (e:any) {
                 throw new Error(e)
             }
         }, {
@@ -68,7 +68,7 @@ const CreateExperience: React.FC = () => {
                 setPreviewImage(null)
 
             },
-            onError(e) {
+            onError(e:any) {
                 toast.error(e)
             }
         }
@@ -182,7 +182,9 @@ const CreateExperience: React.FC = () => {
                                     accept="image/*"
                                     hidden
                                     onChange={event => {
+                                        // @ts-ignore
                                         formik.setFieldValue("file", event.target.files[0]);
+                                        // @ts-ignore
                                         setPreviewImage(URL.createObjectURL(event.target.files[0]));
                                     }}
                                 />
