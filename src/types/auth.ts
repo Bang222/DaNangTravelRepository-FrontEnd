@@ -42,11 +42,20 @@ export interface UserDTO {
     sex: string;
     isEmailValidated: boolean;
     address: string;
-    isActive: boolean
     phone: string;
     createdTime: Date;
     profilePicture: string;
     role: string;
+    store: {
+        id: string,
+        name:string,
+        slogan:string,
+        imgUrl:string,
+        isActive:string,
+        userId:string,
+        paymentId:string,
+        createdAt:Date,
+    }
 }
 
 export interface TourIdEndToken {

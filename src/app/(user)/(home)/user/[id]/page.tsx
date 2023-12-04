@@ -6,15 +6,16 @@ import UserInformationCard from "@/components/user/userInformationCard";
 import {useRouter} from "next/navigation";
 import {Container} from "@mui/material";
 import OrderHistory from "@/components/user/OrderHistory";
+import {RootState} from "@/redux/store";
 
 interface PageProps {
 }
 
 //bang
 
-const Page: FC<PageProps> = ({}) => {
-    const user = useSelector((state) => state.auth.value?.user)
-    const isAuth = useSelector((state) => state.auth.value?.isAuth)
+const Page: ({}: {}) => React.JSX.Element | void = ({}) => {
+    const user = useSelector((state:RootState) => state.auth.value?.user)
+    const isAuth = useSelector((state:RootState) => state.auth.value?.isAuth)
     const router = useRouter()
     const [value, setValue] = React.useState(0);
     React.useEffect(() => {

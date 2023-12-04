@@ -2,7 +2,7 @@
 import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {createAxios, getBillOfStore} from "@/util/api/apiReuqest";
 import {BillTotalPagesDTO} from "@/types/seller";
 import {adminGetAllStore, adminUpdateProfit, banStoreAdmin, unBanStoreAdmin} from "@/util/api/apiReuqestAdmin";
@@ -16,15 +16,15 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const currentDay = new Date()
     const [page, setPage] = React.useState(1);
     const queryClient = useQueryClient()
     const [month, setMonth] = React.useState<number>(currentDay.getMonth());
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
 
     const {data, isLoading, isError} = useQuery(['getAllStoreAdmin', userId],
@@ -40,7 +40,7 @@ const Page: FC<PageProps> = ({}) => {
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }
@@ -69,7 +69,7 @@ const Page: FC<PageProps> = ({}) => {
                 queryClient.fetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("Confirmed")
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 return toast.warn(error)
             }
         }
@@ -87,7 +87,7 @@ const Page: FC<PageProps> = ({}) => {
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }, {
@@ -98,7 +98,7 @@ const Page: FC<PageProps> = ({}) => {
                 queryClient.prefetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("Baned")
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 return toast.warn(error)
             }
         }
@@ -132,7 +132,7 @@ const Page: FC<PageProps> = ({}) => {
                 queryClient.prefetchQuery(['getAllStoreAdmin', userId]).then(r => console.log('oke f'))
                 toast.success("un Band Success")
             },
-            onError: (error) => {
+            onError: (error:any) => {
                 return toast.warn(error)
             }
         }
@@ -208,7 +208,7 @@ const Page: FC<PageProps> = ({}) => {
             </div>
             <Stack sx={{paddingTop: '12px'}} spacing={2}>
                 <Pagination sx={{display: 'flex', justifyContent: 'center'}} color="secondary"
-                            count={Math.ceil(data?.totalStore / 10)} page={page}
+                            count={Math.ceil(Number(data?.totalStore) / 10)} page={page}
                             onChange={handleChange}/>
             </Stack>
         </>

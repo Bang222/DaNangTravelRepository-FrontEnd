@@ -25,6 +25,7 @@ import 'swiper/css/scrollbar';
 import {Keyboard, Navigation, Pagination} from "swiper/modules";
 import {AppDispatch, RootState} from "@/redux/store";
 import {AuthState} from "@/redux/feature/auth-slice";
+import FormatPriceToVnd from "@/components/ui/FormatPriceToVND";
 
 
 interface InputCreateTourProps {
@@ -270,7 +271,7 @@ const InputCreateTour: FC<InputCreateTourProps> = ({}) => {
                                value={formik.values.price}
                                onChange={formik.handleChange}
                         />
-                        <Paragraph size={'sx'}>Formatted Price:<b>{price}</b></Paragraph>
+                        <Paragraph size={'sx'}>Formatted Price:<b><FormatPriceToVnd price={Number(formik.values.price)}/></b></Paragraph>
                         <p className="errorMsg pl-[4px] text-red-600 text-[12px]">{formik.errors.price}</p>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
 import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {createAxios, DashboardDataManagerAMonth} from "@/util/api/apiReuqest";
 import {CircularProgress} from "@mui/material";
 import HomeManager from "@/components/seller/dasboard/HomeManager";
@@ -16,15 +16,15 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const [loading,setLoading] = React.useState<boolean>(false);
-    const userId = useSelector((state) => state.auth.value?.user?.id)
+    const userId = useSelector((state:RootState) => state.auth.value?.user?.id)
     const currenDay = new Date()
     const [month, setMonth] = React.useState<number>(currenDay.getMonth());
     const queryClient = useQueryClient()
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
     const {
         data: dataAdminAMonth,
@@ -43,7 +43,7 @@ const Page: FC<PageProps> = ({}) => {
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }
@@ -58,14 +58,14 @@ const Page: FC<PageProps> = ({}) => {
                 let time: number = 2000;
                 let randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
                 const res = await getDataProfitAdminEachMonth(accessToken,axiosJWT,userId)
-                if (res.message) {
+                if (res?.message) {
                     setTimeout(async () => {
                         const res = await getDataProfitAdminEachMonth(accessToken,axiosJWT,userId)
                         return res
                     }, time + randomNumber)
                 }
                 return res
-            } catch (e) {
+            } catch (e:any) {
                 throw new e
             }
         }
@@ -78,7 +78,7 @@ const Page: FC<PageProps> = ({}) => {
         }
     }, [loading]);
     React.useEffect(() => {
-        queryClient.prefetchQuery(['dataDashBoardAdmin', userId])
+        queryClient.prefetchQuery(['dataDashBoardAdmin', userId]).then((data) => {})
     }, [month]);
     useEffect(() => {
         document.title = `Admin`

@@ -73,6 +73,7 @@ const LoginForm: () => JSX.Element = () => {
         },
         validationSchema: Yup.object({
             email: Yup.string()
+                .email("Invalid email address")
                 .max(50, "Maximum 20 characters")
                 .min(6, "Minimum 6 characters")
                 .required("Please Input UserName"),

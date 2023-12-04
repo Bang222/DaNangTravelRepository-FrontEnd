@@ -23,9 +23,9 @@ export const LogOutButton:FC<LogOutButtonProps>  = ({logOutAPI,setLoadingLogOut,
             if(data.statusCode > 200) {
                 toast.error(data.message)
             }
-            dispatch(logOut())
             removeCookie('token')
-            router.push('/')
+            router.push('/login')
+            dispatch(logOut())
             setLoadingLogOut(false)
             toast.success("GoodBye")
         } , error => toast.error("LogOut Again"))

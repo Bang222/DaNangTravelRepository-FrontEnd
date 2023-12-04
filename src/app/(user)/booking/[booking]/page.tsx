@@ -60,7 +60,7 @@ interface Passenger {
     sex: string
 }
 
-const Booking: NextPage<BookingProps> = ({params}) => {
+const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({params}) => {
     const tourId = params.booking
     const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const isAuth = useSelector((state:RootState) => state.auth.value.isAuth)
@@ -71,8 +71,8 @@ const Booking: NextPage<BookingProps> = ({params}) => {
     const [tourError, setTourError] = useState("");
     const [dataTour, setDataTour] = useState<TourDetailInterface>()
     const [dataBooking, setDataBooking] = React.useState<any>()
-    const [errorBooking, setErrorDataBooking] = React.useState<string>(null)
-    const [errorBookingBaking, setErrorDataBaking] = React.useState<string>(null)
+    const [errorBooking, setErrorDataBooking] = React.useState<string>("")
+    const [errorBookingBaking, setErrorDataBaking] = React.useState<string>("")
     const [Payment, setPayment] = React.useState<boolean>(false)
 
     const [adultCount, setAdultCount] = React.useState<number>(1)
@@ -303,6 +303,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                         dayOfBirth: field === 'dayOfBirth' ? value : 0,
                         type: 'Adult'
                     };
+                    // @ts-ignore
                     if (!(newAdult.dayOfBirth && !newAdult.name && !newAdult.type && !newAdult.sex && Number(newAdult.dayOfBirth)) === 0) {
                         setPassengerError('Can not null')
                     }
@@ -1081,7 +1082,7 @@ const Booking: NextPage<BookingProps> = ({params}) => {
                                                         name="radio-buttons-group"
                                                         value={infants[index]?.sex}
                                                         onChange={(e) => handleInformationChange('infants', index, "sex", e.target.value)}
-                                                        disabled={true}
+                                                        disabled
                                                     >
                                                         <FormControlLabel disabled={true} value="Men" control={<Radio/>}
                                                                           label="Male"/>

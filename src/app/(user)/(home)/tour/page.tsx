@@ -127,6 +127,7 @@ const Page: FC<PageProps> = ({}) => {
         validate: (values) => {
             const errors = {};
             if (!vietnamCities.includes(values.start)) {
+                //ts-ignore
                 errors.start = "Invalid city";
             }
             return errors;

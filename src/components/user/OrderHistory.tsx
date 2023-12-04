@@ -7,7 +7,7 @@ import {useQuery} from "@tanstack/react-query";
 import {getDataProfitAdminAMonth} from "@/util/api/apiReuqestAdmin";
 import {UserDTO} from "@/types";
 import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import LoadingComponent from "@/components/LoadingComponent";
 import OrderHistoryTable from "@/components/user/table/OrderHistoryTable";
 
@@ -19,9 +19,9 @@ interface OrderHistoryProps {
 
 const OrderHistory: FC<OrderHistoryProps> = ({user}) => {
 
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
     const {
         data: dataOrder,

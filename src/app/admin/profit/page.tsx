@@ -2,7 +2,7 @@
 import React, {FC, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {AppDispatch} from "@/redux/store";
+import {AppDispatch, RootState} from "@/redux/store";
 import {createAxios} from "@/util/api/apiReuqest";
 import {adminGetAllStore, adminGetProfit, adminUpdateProfit} from "@/util/api/apiReuqestAdmin";
 import {CircularProgress, Pagination, Stack} from "@mui/material";
@@ -17,8 +17,8 @@ interface PageProps {
 //bang
 
 const Page: FC<PageProps> = ({}) => {
-    const accessToken = useSelector((state) => state.auth.value?.token.access)
-    const userId = useSelector((state) => state.auth.value?.user.id)
+    const accessToken = useSelector((state:RootState) => state.auth.value?.token.access)
+    const userId = useSelector((state:RootState) => state.auth.value?.user.id)
     const [page, setPage] = React.useState(1);
     const [loadingMonth, setLoadingMonth] = React.useState<boolean>(false);
     const [profit, setProfit] = React.useState<number>(0);
@@ -30,7 +30,7 @@ const Page: FC<PageProps> = ({}) => {
 
 
     const dispatch = useDispatch<AppDispatch>()
-    const dataRedux = useSelector((state) => state.auth?.value)
+    const dataRedux = useSelector((state:RootState) => state.auth?.value)
     let axiosJWT = createAxios(dataRedux, dispatch)
     const {data, isLoading, isError} = useQuery(['getProfitOfStoreAdmin', userId],
         async () => {
@@ -71,7 +71,7 @@ const Page: FC<PageProps> = ({}) => {
         }
     }, [loadingMonth]);
     React.useEffect(() => {
-        queryClient.fetchQuery(['getProfitOfStoreAdmin', userId])
+        queryClient.fetchQuery(['getProfitOfStoreAdmin', userId]).then((response) => {})
     }, [page, month, queryClient, userId])
     useEffect(() => {
         document.title = `Profit`

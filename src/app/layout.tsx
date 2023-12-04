@@ -5,13 +5,18 @@ import QueryClientProvider from "@/app/util/Provider";
 import ReduxProvider from "@/redux/Provider";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import ProvidersWrapper from "@/components/authForm/ProvidersWrapper";
+import {Metadata} from "next";
+import icon from '../../public/iconDaNangTraVelPage.png'
 
 const inter = Inter({subsets: ['latin']})
 
-export const metadata = {
+export const metadata:Metadata = {
     title: 'Travel Page',
     description: 'Final year of mine',
+    icons: {
+        icon: icon.src,
+        apple:icon.src,
+    }
 }
 export default function RootLayout({children,}: { children: React.ReactNode }) {
     return (

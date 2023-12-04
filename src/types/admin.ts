@@ -18,11 +18,13 @@ interface AdminAStoreDTO {
 
 export interface dataAllStoreAdminDTO {
     data: AdminAStoreDTO[]
-    totalStore: number
+    totalStore?: number
+    message?:string;
 }
 
 export interface getAllUserDTO {
     data: UserDTO[]
+    message:string
     totalUser: number
 }
 
@@ -57,11 +59,13 @@ interface TotalDataAMonthDTO {
 export interface getProfileAMonthDTO {
     data:TotalDataAMonthDTO[]
     totalData:number;
+    message:string;
 }
 export interface getDataAMonthOfAdmin {
     storeCreate: number,
     totalProfitSum: number,
     userCreate: number
+    message?:string,
 }
 export interface dataEachMonthOfAdmin {
     totalIncomeAMonthAdmin: number,
