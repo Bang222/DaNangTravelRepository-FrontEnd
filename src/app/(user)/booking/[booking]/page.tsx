@@ -58,6 +58,7 @@ interface Passenger {
     dayOfBirth: number
     type: string
     sex: string
+    danh?: string
 }
 
 const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({params}) => {
