@@ -108,7 +108,7 @@ const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({param
             }
         }, {
             onSuccess: (dataBookingTour) => {
-                if (dataBookingTour.message) return toast.error(dataBookingTour.message)
+                if (dataBookingTour.statusCode === 500) return toast.error(dataBookingTour.message)
                 query.invalidateQueries(['TourOfStore', userId]);
                 setErrorDataBooking('')
             },
@@ -426,7 +426,7 @@ const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({param
         mutate(data)
     }, [accessToken, mutate, tourId])
     useEffect(() => {
-            if (!dataBookingTour?.message && isSuccess) {
+            if (!dataBookingTour?.statusCode === 200) {
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
                 setToddlers([])
