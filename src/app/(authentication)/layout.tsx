@@ -1,11 +1,6 @@
 'use client'
 import React from 'react'
 import {GoogleOAuthProvider} from "@react-oauth/google";
-import bg from '../../images/image_4K.png'
-import {useSelector} from "react-redux";
-import {RootState} from "@/redux/store";
-import {useRouter} from "next/navigation";
- // `url(${'https://vietravelasia.com/api/files/202306271350-27d15e1f93-MAIN%20BANNER-01.jpg'})`
 
 export default function RootLayout({children,}: { children: React.ReactNode }) {
     const isAuth = useSelector((state:RootState) => state.auth.value.isAuth);
