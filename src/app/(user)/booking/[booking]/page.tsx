@@ -108,7 +108,7 @@ const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({param
             }
         }, {
             onSuccess: (dataBookingTour) => {
-                if (dataBookingTour.statusCode > 200) return toast.error(dataBookingTour.message)
+                if (dataBookingTour.statusCode === 500) return toast.error(dataBookingTour.message)
                 query.invalidateQueries(['TourOfStore', userId]);
                 setErrorDataBooking('')
             },
