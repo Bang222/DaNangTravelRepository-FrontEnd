@@ -427,6 +427,7 @@ const Booking: ({params}: { params: any }) => React.JSX.Element | void = ({param
     }, [accessToken, mutate, tourId])
     useEffect(() => {
             if (!dataBookingTour?.statusCode === 200) {
+
                 setAdults([{name: "", sex: "", dayOfBirth: Number(''), type: ""}])
                 setChildren([])
                 setToddlers([])
